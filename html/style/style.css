@@ -1,0 +1,125 @@
+.active {
+    background-color: #e2e2e2;
+	color: black;
+}
+
+.header {
+  background: #eb0029;
+  color: white;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.sticky + .content{
+  padding-top: 102px;
+}
+
+#joystick {
+    width: 400px;
+	height:400px;
+	margin: auto;
+    border: 0px solid white;
+	background-color: white;
+	overflow	: hidden;
+	padding		: 0;
+}
+
+body {
+	font-family: helvetica, sans-serif;
+	font-size: 1vw;
+	text-align: center;
+	}
+
+header, footer {
+	font-family: helvetica, sans-serif;
+	width: 100%;
+	font-size: 1vw;
+	color: white;
+	background-color: #eb0029;
+	clear: left;
+	text-align: center;
+	
+	}
+	
+h1 {
+	font-family: helvetica, sans-serif;
+	width: 100%;
+	font-size: 3vw;
+	color: white;
+	clear: left;
+	text-align: center;
+}
+
+h2 {
+	font-family: helvetica, sans-serif;
+	width: 100%;
+	font-size: 2vw;
+	color: white;
+	clear: left;
+	text-align: center;
+}
+
+h3 {
+	font-family: helvetica, sans-serif;
+	padding: 1em;
+	width: 100%;
+	font-size: 1vw;
+	color: black;
+	clear: left;
+	text-align: center;
+}
+
+table {
+	font-family: helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	}
+
+td, th {
+	border: 1px solid white;
+	text-align: center;
+	padding: 10px;
+	width: 100%;
+	}
+	
+input[type=submit] {
+	border-radius: 8px;
+	border: 0;
+	color: white;
+	width: 180px;
+	height:40px;
+	font-family: helvetica, sans-serif;
+	background: #eb0029;
+	}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #eb0029;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #b30624;
+}
+	
