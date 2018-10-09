@@ -9,14 +9,16 @@
 //Pin Definitions
 #define RightMotorDirection 24 //DIR Input on Board
 #define LeftMotorDirection 22 //DIR Input on Board
-#define RightMotorSpeed 3 //PWM Input on Board
-#define LeftMotorSpeed 2 //PWM Input on Board
 #define RightMotorCoast 28 //SLP Input on Board
 #define LeftMotorCoast 26  //SLP Input on Board
+#define RightMotorFault 32 //FLT Pin on Board
+#define LeftMotorFault 30  //FLT Pin on Board
+#define RightMotorSpeed 3 //PWM Input on Board
+#define LeftMotorSpeed 2 //PWM Input on Board
 #define RightMotorCurrent 1 //CS Pin on Board
 #define LeftMotorCurrent 0  //CS Pin on Board
 
-#define MotorBrakes 30 //Relay to apply mechanical brake
+#define MotorBrakes 34 //Relay to apply mechanical brake
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
