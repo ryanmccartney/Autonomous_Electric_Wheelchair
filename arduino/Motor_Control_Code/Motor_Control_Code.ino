@@ -33,6 +33,8 @@ bool stringComplete = false;
 float batteryVoltage = 0.00;
 float rightMotorCurrent = 0.00;
 float leftMotorCurrent = 0.00;
+int rightMotorFault = 0;
+int leftMotorFault = 0;
 String statusMessage = "";
 
 //Motor Driver Output Variables
@@ -61,9 +63,11 @@ void setup() {
   digitalWrite(MotorBrakes, LOW);
   
   //Setup Input Pins
-  pinMode (BatteryIndication, INPUT_PULLUP);
-  pinMode (RightMotorCurrent, INPUT_PULLUP);
-  pinMode (LeftMotorCurrent, INPUT_PULLUP);
+  pinMode(BatteryIndication, INPUT_PULLUP);
+  pinMode(RightMotorCurrent, INPUT_PULLUP);
+  pinMode(LeftMotorCurrent, INPUT_PULLUP);
+  pinMode(RightMotorFault, OUTPUT);
+  pinMode(LeftMotorFault, OUTPUT);
 
   //Serial Communications Setup
   Serial.begin(115200);
@@ -106,7 +110,6 @@ bool mapOutputs() {
     else{
       status = true;
       }
-
 
     if(status == true){
       statusMessage = "Data Mapped Succesfully";
@@ -252,16 +255,7 @@ bool executeCommands() {
     
   }
   else if(command == "SEND"){
-
-    //Send Serial Information
-    Serial.println(rightMotorCurrent);
-    Serial.print(",");
-    Serial.print(leftMotorCurrent);
-    Serial.print(",");
-    Serial.print(batteryVoltage);
-    Serial.print(",");
-    Serial.println(statusMessage);    
-
+    sendData();
     status = true;
 
   }
@@ -306,7 +300,48 @@ void stopWheelchair() {
 
    //Apply Brakes
    digitalWrite(MotorBrakes, 1);
+
+   return;
 }
+
+//------------------------------------------------------------------------------------------------------------------
+//Reads variables and Send Data
+//------------------------------------------------------------------------------------------------------------------
+void sendData() {
+
+   //Contants for variable conversion
+   float voltageFactor = 0.024438; //Voltage in Volts
+   float currentFactor = 0.244379; //Current in Amps
+   float currentOffset = 10.23;
+
+   //Read sensor data to update variables 
+   batteryVoltage = analogRead(BatteryIndication)*voltageFactor;
+   rightMotorCurrent = (analogRead(RightMotorCurrent)-currentOffset)*currentFactor;
+   leftMotorCurrent = (analogRead(LeftMotorCurrent)-currentOffset)*currentFactor;
+   rightMotorFault = digitalRead(RightMotorFault);
+   leftMotorFault = digitalRead(LeftMotorFault);
+
+   if(rightMotorFault == 0){
+
+   statusMessage = "Right motor has developed a fault.";
+   }
+   else if(leftMotorFault == 0){
+   
+   statusMessage = "Left motor has developed a fault.";
+   }
+   
+   //Send Serial Information
+   Serial.println(rightMotorCurrent);
+   Serial.print(",");
+   Serial.print(leftMotorCurrent);
+   Serial.print(",");
+   Serial.print(batteryVoltage);
+   Serial.print(",");
+   Serial.println(statusMessage);    
+   
+   return; 
+}
+
 //------------------------------------------------------------------------------------------------------------------
 //Main Programme operating loop
 //------------------------------------------------------------------------------------------------------------------
