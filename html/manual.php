@@ -52,7 +52,7 @@
 			var serialData = '0,0,RUN'
 			
 			//Node.js SerialPort 
-			var SerialPort = require('/node_modules/serialport');
+			var SerialPort = require('serialport');
 			var serialPort = new SerialPort('/dev/ttyACM0', {
 			baudrate: 115200
 			});
