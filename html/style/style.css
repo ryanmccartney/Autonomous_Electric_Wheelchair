@@ -19,13 +19,13 @@
 }
 
 #joystick {
-    width: 400px;
-	height:400px;
-	margin: auto;
-    border: 0px solid white;
-	background-color: white;
-	overflow	: hidden;
-	padding		: 0;
+    width: 100%;
+	height:600px;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	-webkit-user-select	: none;
+	-moz-user-select: none;
 }
 
 body {
@@ -90,8 +90,11 @@ input[type=submit] {
 	border-radius: 8px;
 	border: 0;
 	color: white;
-	width: 180px;
-	height:40px;
+	width: 20%;
+	margin: auto;
+	padding: 10px;
+	height:5%;
+	font-size: 2vw;
 	font-family: helvetica, sans-serif;
 	background: #eb0029;
 	}

@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Autonomous Wheelchair</title>
 		<link rel="shortcut icon" href="media/favicon.ico" />	
 		<link rel="stylesheet" href="style/style.css">
@@ -33,7 +34,6 @@
 		<form align="center" method="post">
 
 				<input type="submit" value="Stop Wheelchair" name="Stop">
-				
 				<input type="submit" value="Update Values" name="Update">
 
 		</form>
@@ -43,18 +43,26 @@
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 			
-		<div id="joystick">
-        
+	<div id="joystick">
+	      
 			<script src="scripts/virtualjoystick.js"></script>
 			<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
-	
+			
+			var serialData = '0,0,RUN'
+			
+			//Node.js SerialPort 
+			var SerialPort = require('/node_modules/serialport');
+			var serialPort = new SerialPort('/dev/ttyACM0', {
+			baudrate: 115200
+			});
+			
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
 				mouseSupport	: true,
-				stationaryBase: true,
-                      baseX: 200,
-                      baseY: 200,
+				//stationaryBase: true,
+                //      baseX: 200,
+                //      baseY: 200,
 				limitStickTravel: true,
 				stickRadius	: 100
 				
@@ -75,111 +83,33 @@
 
 			setInterval(function(){
 				var outputEl	= document.getElementById('result');
-				outputEl.innerHTML	= '<b>Joystick Output:</b> '
-					+ ' dx:'+joystick.deltaX()
-					+ ' dy:'+joystick.deltaY()	
+				outputEl.innerHTML	= ' dx:'
+					+ joystick.deltaX()
+					+ ' dy:'
+					+ joystick.deltaY()
+				
+				var setSpeed = Math.round( joystick.deltaY() );
+				var setAngle = Math.round( joystick.deltaX() );
+				
+				serialData	= document.getElementById('serialdata');
+				serialData.innerHTML	= setSpeed
+					+ ','
+					+ setAngle
+					+ ',RUN'
 			}, 1/30 * 1000);
 		</script>
 				
-        </div>
+    </div>
 	
 	<h3>Debug Data</h3>
 	
-	<p><b>PHP executing as: </b>
-	<?php
-		echo exec('whoami');
-	?>
-	</p>
+	<p><b>PHP executing as: </b><?php echo exec('whoami');?></p>
 	
-	<p id="result"></p>
+	<p><b>Joystick Output: </b><i id="result"></i></p>
+	
+	<p><b>Data sent to serial line: </b><i id="serialdata"></i></p>
 		
-	<p id="output"></p>
-	
-	<?php
 		
-		echo"<p>";		
-		error_reporting(E_ALL);
-		ini_set('display_errors', '1');
-		echo"</p>";
-		
-		//Load the serial port class 	
-		include 'scripts/PhpSerial.php';
-		
-		// New instance of class
-		$serial = new PhpSerial;
-				
-		// First we must specify the device. This works on both linux and windows (if
-		// your linux serial device is /dev/ttyS0 for COM1, etc)
-		$serial->deviceSet("/dev/ttyACM0");
-
-		// We can change the baud rate, parity, length, stop bits, flow control
-		$serial->confBaudRate(115200);
-		$serial->confParity("none");
-		$serial->confCharacterLength(8);
-		$serial->confStopBits(1);
-		$serial->confFlowControl("none");
-
-		// Then we need to open it
-		$serial->deviceOpen();
-		
-		//Delay before writing data
-		sleep(0.2);
-		
-		// To write into
-		$data = "0,0,SEND";
-		$serial->sendMessage($data);
-		
-		$read = $serial->readPort();
-				
-	?>
-	
-	<?php
-	
-	$data = "0,0,STOP";
-						
-		if (isset($_POST['Stop']))
-			{
-			$data = "0,0,STOP";
-			$serial->sendMessage($data);	
-			}
-		if (isset($_POST['Update']))
-			{
-			$data = "0,0,SEND";
-			$serial->sendMessage($data);	
-			}
-			
-	echo"<p><b>Data sent to serial port: </b>";
-	echo $data;
-	echo"</p>";
-			
-	$read = $serial->readPort();
-	echo"<p><b>Data received from serial line: </b> ";
-	echo $read;
-	echo"</p>";
-			
-	?>
-	
-	
-	<?php
-	
-	$speed = "0";
-	$angle = "0";
-	
-	//Combine Strings
-	$data = $speed . ',' . $angle.',RUN';
-	
-	//Send Data
-	$serial->sendMessage($data);
-
-	echo"<p><b>Realtime Data Sent: </b> ";
-	echo $data;
-	echo"</p>";
-				
-					
-	?>
-	
-	<br>
-	
 	<h3>Emergency Stop</h3>
 	
 	<script>
