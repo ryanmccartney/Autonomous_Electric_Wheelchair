@@ -22,6 +22,9 @@
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
+float maxCurrent = 3.00;
+
+//Receive Data Variables
 String inputString = "";
 String command = ""; //Override commands to STOP, indicate ERRORs, etc.
 int setSpeed = 0; // -100 to +100 (Reverse to Forward)
@@ -41,7 +44,6 @@ String statusMessage = "";
 int leftMotorSpeed = 0; // 0 to 255
 int rightMotorSpeed = 0; // 0 to 255
 String direction = "Forward";
-String angle = "";
 
 //------------------------------------------------------------------------------------------------------------------
 //Main Programme operating loop
@@ -71,7 +73,8 @@ void setup() {
 
   //Serial Communications Setup
   Serial.begin(115200);
-  Serial.println("Motor Control Program Starting...");
+  statusMessage = "STATUS = System restarting.";
+  sendData();
   //Reserve Memory Sapce for Incomming Bytes
   inputString.reserve(200);
 
@@ -83,39 +86,47 @@ void setup() {
 bool mapOutputs() {
 
   bool status = false;
-  
-  if(setSpeed < 0){
-      setSpeed = -setSpeed;
-      direction = "Reverse";
-    }
-    else{
-      direction = "Forward";
-    }
-    
-    //Map Inputs to motor PWM
-    map(leftMotorSpeed, 0, 100, 0, 255);
-    map(rightMotorSpeed, 0, 100, 0, 255);
-    
-    if (setAngle < 0) {
-      setAngle = -setAngle;
-      map(setAngle, 0, 100, 1, 0);
-      leftMotorSpeed = leftMotorSpeed*setAngle;
-      status = true;
-    }
-    else if (setAngle > 0){
-      map(setAngle, 0, 100, 1, 0);
-      rightMotorSpeed = rightMotorSpeed*setAngle;
-      status = true;
-      }
-    else{
-      status = true;
-      }
 
+  //Check the range of speed data
+  if((setSpeed <= 100 && setSpeed >= -100) || setSpeed == 0){
+
+     //Check the range of angle data
+    if((setAngle <= 100 && setAngle >= -100) || setAngle == 0){
+    
+      if(setSpeed < 0){
+        setSpeed = -setSpeed;
+        direction = "Reverse";
+      }
+      else{
+        direction = "Forward";
+      }
+    
+      //Map Inputs to motor PWM
+      map(leftMotorSpeed, 0, 100, 0, 255);
+      map(rightMotorSpeed, 0, 100, 0, 255);
+    
+      if (setAngle < 0) {
+        setAngle = -setAngle;
+        map(setAngle, 0, 100, 1, 0);
+        leftMotorSpeed = leftMotorSpeed*setAngle;
+        status = true;
+      }
+      else if (setAngle > 0){
+        map(setAngle, 0, 100, 1, 0);
+        rightMotorSpeed = rightMotorSpeed*setAngle;
+        status = true;
+        }
+      else{
+        status = true;
+      }
+    }
+  }
+  
     if(status == true){
-      statusMessage = "Data Mapped Succesfully";
+      statusMessage = "STATUS = Data Mapped Succesfully";
     }
     else{
-      statusMessage = "Failed to map sent data to output. Check range of sent data.";
+      statusMessage = "ERROR = Failed to map sent data to output. Check range of sent data.";
     }
     return status;
   }
@@ -232,10 +243,10 @@ bool proccessInput() {
   serialInputs++;
 
   if(status == true){
-      statusMessage = "Data succesfully received.";
+      statusMessage = "STATUS = Data succesfully received.";
     }
     else{
-      statusMessage = "Data not received. Check the format of your data.";
+      statusMessage = "ERROR = Data not received. Check the format of your data.";
     }
     
   return status;
@@ -251,6 +262,7 @@ bool executeCommands() {
 
   if(command == "ERROR"){
     stopWheelchair();
+    sendData();
     status = true;
     
   }
@@ -261,20 +273,36 @@ bool executeCommands() {
   }
   else if(command == "STOP"){
     stopWheelchair();
+    status = true;
   }
   else if(command == "RUN"){
-    
+    status = true;    
   }
   else if(command == "BRAKEOFF"){
+
+   //Allow wheelchair to be stopped
+   setSpeed = 0;
+   setAngle = 0;
+  
+   //Stop Wheelchair Coasting
+   digitalWrite(RightMotorCoast, 1);
+   digitalWrite(LeftMotorCoast, 1);
+
+   //Turn off Brakes
+   digitalWrite(MotorBrakes, 0);
     
+   status = true;
   }
   else if(command == "RESET"){
-    
+    sendData();
+    status = true;
   }
+  
   else{
      status = false;
-     statusMessage = "No valid command to execute. Declaring Error.";
+     statusMessage = "ERROR = No valid command to execute. Declaring Error.";
      command = "ERROR";
+     sendData();
      stopWheelchair();
   }
   return status; 
@@ -305,33 +333,43 @@ void stopWheelchair() {
 }
 
 //------------------------------------------------------------------------------------------------------------------
-//Reads variables and Send Data
+//Reads input ariables
 //------------------------------------------------------------------------------------------------------------------
-void sendData() {
+void readInputs() {
 
    //Contants for variable conversion
    float voltageFactor = 0.024438; //Voltage in Volts
+   float voltageOffset = 0.00;
    float currentFactor = 0.244379; //Current in Amps
-   float currentOffset = 10.23;
+   float currentOffset = 0.00;
 
    //Read sensor data to update variables 
-   batteryVoltage = analogRead(BatteryIndication)*voltageFactor;
-   rightMotorCurrent = (analogRead(RightMotorCurrent)-currentOffset)*currentFactor;
-   leftMotorCurrent = (analogRead(LeftMotorCurrent)-currentOffset)*currentFactor;
+   batteryVoltage = (analogRead(BatteryIndication)*voltageFactor)-voltageOffset;
+   rightMotorCurrent = (analogRead(RightMotorCurrent)*currentFactor)-currentOffset;
+   leftMotorCurrent = (analogRead(LeftMotorCurrent)*currentFactor)-currentOffset;
+
    rightMotorFault = digitalRead(RightMotorFault);
    leftMotorFault = digitalRead(LeftMotorFault);
 
-   if(rightMotorFault == 0){
+   return;
+}
 
-   statusMessage = "Right motor has developed a fault.";
-   }
-   else if(leftMotorFault == 0){
+//------------------------------------------------------------------------------------------------------------------
+//Send input variables and stauts over serial
+//------------------------------------------------------------------------------------------------------------------
+void sendData() {
+
+   readInputs();
    
-   statusMessage = "Left motor has developed a fault.";
+   if(rightMotorFault == 1){
+      statusMessage = "ERROR = Right motor has developed a fault.";
+   }
+   else if(leftMotorFault == 1){
+      statusMessage = "ERROR = Left motor has developed a fault.";
    }
    
    //Send Serial Information
-   Serial.println(rightMotorCurrent);
+   Serial.print(rightMotorCurrent);
    Serial.print(",");
    Serial.print(leftMotorCurrent);
    Serial.print(",");
@@ -356,9 +394,9 @@ void loop() {
 
       if (proccessInput() == true){
 
-        if (executeCommands() == true){
+        if (mapOutputs() == true){
         
-          if (mapOutputs() == true){
+          if (executeCommands() == true){
 
             //Set Direction to DIR pin
             if(direction =="Forward"){
@@ -377,22 +415,52 @@ void loop() {
    
             analogWrite(RightMotorSpeed, rightMotorSpeed);
             analogWrite(LeftMotorSpeed, leftMotorSpeed);
+            status = true;
           }
           else{
             stopWheelchair();
+            sendData();
             }
         }
         else{
           stopWheelchair();
+          sendData();
           }
       }
       else{
         stopWheelchair();
+        sendData();
         }
     }
-    else{
-      stopWheelchair();
-    }  
+
+  readInputs();
+
+  //Current limiting code
+  if(rightMotorCurrent > maxCurrent || rightMotorCurrent > maxCurrent){
+  
+  if(setSpeed > 0){
+  setSpeed = setSpeed - 1;
+  }
+  else if(setSpeed < 0){
+  setSpeed = setSpeed + 1;
+  }
+
+  inputString = setSpeed;
+  inputString += ",";
+  inputString += setAngle;
+  inputString += ",RUN";
+  
+  statusMessage = "WARNING = Overcurrent Warning, recitfying issue.";
+  stringComplete = true;
+  sendData;
+  }
+  
+  if(status == false){
+  
+  inputString = "0,0,ERROR";
+  statusMessage = "ERROR = Main Loop program error.";
+  stringComplete = true;
+  }
 }
 
 //------------------------------------------------------------------------------------------------------------------
