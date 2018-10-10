@@ -92,12 +92,21 @@ input[type=submit] {
 	color: white;
 	width: 20%;
 	margin: auto;
-	padding: 10px;
-	height:5%;
-	font-size: 2vw;
+	padding: 8px;
+	font-size: 1.5vw;
 	font-family: helvetica, sans-serif;
 	background: #eb0029;
 	}
+	
+input[type=text] {
+	padding:8px;
+	margin: auto;
+	display:block;
+	border:1px solid #ccc;
+	width:60%
+	font-size: 1.5vw;
+	font-family: helvetica, sans-serif;
+	}	
 
 ul {
     list-style-type: none;

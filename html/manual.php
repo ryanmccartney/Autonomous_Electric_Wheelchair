@@ -46,17 +46,12 @@
 	<div id="joystick">
 	      
 			<script src="scripts/virtualjoystick.js"></script>
+			
 			<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 			
-			var serialData = '0,0,RUN'
-			
-			//Node.js SerialPort 
-			var SerialPort = require('serialport');
-			var serialPort = new SerialPort('/dev/ttyACM0', {
-			baudrate: 115200
-			});
-			
+			var serialDataPrevious = '0,0,RUN'
+						
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
 				mouseSupport	: true,
@@ -91,11 +86,41 @@
 				var setSpeed = Math.round( joystick.deltaY() );
 				var setAngle = Math.round( joystick.deltaX() );
 				
-				serialData	= document.getElementById('serialdata');
-				serialData.innerHTML	= setSpeed
+				var serialData = setSpeed
 					+ ','
 					+ setAngle
-					+ ',RUN'
+					+ ',RUN';
+				
+				var batteryVoltage = 25.4;
+				var batteryPercent = ((batteryVoltage - 23.6)/2)*100;
+				batteryPercent = Math.round(batteryPercent * 100) / 100
+				batteryPercent = batteryPercent +'%';
+				var rCurrent = "3A";
+				var lCurrent = "3A";
+				var status = "status goes here.";
+
+				outputSerial = document.getElementById('serialdata');
+				outputBatteryVoltage = document.getElementById('batteryVoltage');
+				outputBatteryPercent = document.getElementById('batteryPercent');
+				outputRCurrent = document.getElementById('rCurrent');
+				outputLCurrent = document.getElementById('lCurrent');
+				outputStatus = document.getElementById('status');
+				
+				
+				outputBatteryVoltage.innerHTML = batteryVoltage;
+				outputBatteryPercent.innerHTML = batteryPercent;
+				outputRCurrent.innerHTML = rCurrent;
+				outputLCurrent.innerHTML = lCurrent;
+				outputStatus.innerHTML = status;
+				
+				if(serialData != serialDataPrevious){
+				outputSerial.innerHTML	= serialData;
+				document.myform.extra.value = serialData;
+				//window.location.href = "serialSend.php?serialData="+ serialData;
+				}
+				
+				serialDataPrevious = serialData;
+				
 			}, 1/30 * 1000);
 		</script>
 				
@@ -108,8 +133,61 @@
 	<p><b>Joystick Output: </b><i id="result"></i></p>
 	
 	<p><b>Data sent to serial line: </b><i id="serialdata"></i></p>
+	
+	<p><b>Battery Voltage: </b><i id="batteryVoltage"></i></p>
+	
+	<p><b>Battery Percentage: </b><i id="batteryPercent"></i></p>
+	
+	<p><b>Right Motor Current: </b><i id="rCurrent"></i></p>
+	
+	<p><b>Left Motor Current: </b><i id="lCurrent"></i></p>
+	
+	<p><b>Status: </b><i id="status"></i></p>
+	
+	
+	<?php
 		
+		echo"<p>";		
+		error_reporting(E_ALL);
+		ini_set('display_errors', '1');
+		echo"</p>";
 		
+		//Load the serial port class 	
+		include 'scripts/PhpSerial.php';
+		
+		// New instance of class
+		$serial = new PhpSerial;
+				
+		// First we must specify the device. This works on both linux and windows (if
+		// your linux serial device is /dev/ttyS0 for COM1, etc)
+		$serial->deviceSet("/dev/ttyACM0");
+
+		// We can change the baud rate, parity, length, stop bits, flow control
+		$serial->confBaudRate(115200);
+		$serial->confParity("none");
+		$serial->confCharacterLength(8);
+		$serial->confStopBits(1);
+		$serial->confFlowControl("none");
+
+		// Then we need to open it
+		$serial->deviceOpen();
+		
+		//Delay before writing data
+		sleep(0.2);
+		
+		// To write into
+		$data = "0,0,SEND";
+		$serial->sendMessage($data);
+	?>
+	
+	<h3>Manual Data Input</h3>
+	
+	<form  method="post" name="myform" action="serialSend.php">
+    <input type="text" name="extra" value="0,0,STOP" >
+	<br>
+    <input type="submit" value="Submit" >
+	</form>
+			
 	<h3>Emergency Stop</h3>
 	
 	<script>
