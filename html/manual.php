@@ -30,27 +30,49 @@
 	
 	<h3>Command Buttons</h3>
 	
-		<p>
-		<form align="center" method="post">
-
-				<input type="submit" value="Stop Wheelchair" name="Stop">
-				<input type="submit" value="Update Values" name="Update">
-
-		</form>
-		<p>
+	<p>
+	<form  method="get" name="stop" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,STOP" >
+    <input type="submit" value="Stop Wheelchair" >
+	</form>
+	</p>
 	
+	<p>
+	<form  method="get" name="update" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,SEND" >
+    <input type="submit" value="Update Variables" >
+	</form>
+	</p>
+	
+	<p>
+	<form  method="get" name="reset" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,RESET" >
+    <input type="submit" value="Reset Arduino" >
+	</form>
+	</p>
+	
+	<p>
+	<form  method="get" name="brake" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,BRAKEOFF" >
+    <input type="submit" value="Turn Off Brakes" >
+	</form>
+	</p>
+		
 	<h3>Control Gamepad</h3>
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 			
 	<div id="joystick">
-	      
+	
+			
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
 			
 			<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 			
 			var serialDataPrevious = '0,0,RUN'
+			var receivedData = '0,0,0,STATUS'
 						
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
@@ -89,34 +111,56 @@
 				var serialData = setSpeed
 					+ ','
 					+ setAngle
-					+ ',RUN';
+					+ ',SEND';
 				
-				var batteryVoltage = 25.4;
-				var batteryPercent = ((batteryVoltage - 23.6)/2)*100;
-				batteryPercent = Math.round(batteryPercent * 100) / 100
-				batteryPercent = batteryPercent +'%';
-				var rCurrent = "3A";
-				var lCurrent = "3A";
-				var status = "status goes here.";
-
 				outputSerial = document.getElementById('serialdata');
-				outputBatteryVoltage = document.getElementById('batteryVoltage');
-				outputBatteryPercent = document.getElementById('batteryPercent');
-				outputRCurrent = document.getElementById('rCurrent');
-				outputLCurrent = document.getElementById('lCurrent');
-				outputStatus = document.getElementById('status');
-				
-				
-				outputBatteryVoltage.innerHTML = batteryVoltage;
-				outputBatteryPercent.innerHTML = batteryPercent;
-				outputRCurrent.innerHTML = rCurrent;
-				outputLCurrent.innerHTML = lCurrent;
-				outputStatus.innerHTML = status;
-				
+								
 				if(serialData != serialDataPrevious){
-				outputSerial.innerHTML	= serialData;
-				document.myform.extra.value = serialData;
-				//window.location.href = "serialSend.php?serialData="+ serialData;
+				
+					outputSerial.innerHTML	= serialData;
+					document.manualEntry.serialData.value = serialData;
+				
+					var sendData = "scripts/serialSend.php?serialData="+ serialData;
+				
+					$.ajax({
+						type: "GET",
+						url: sendData,
+						datatype: "text",
+						success: function(result) {
+							
+							//If there was data read...
+							if(result != ""){
+							
+							//Parse Data
+							var dataRead = result.split("\r\n");
+							receivedData = dataRead[0].split(",");
+							
+							//Print Data to console
+							console.log(receivedData);
+							
+							var batteryVoltage = receivedData[0];
+							var batteryPercent = ((batteryVoltage - 23.6)/2)*100;
+							batteryPercent = Math.round(batteryPercent * 100) / 100
+							var rCurrent = receivedData[1];
+							var lCurrent = receivedData[2];
+							var status = receivedData[3];
+							
+							outputBatteryVoltage = document.getElementById('batteryVoltage');
+							outputBatteryPercent = document.getElementById('batteryPercent');
+							outputRCurrent = document.getElementById('rCurrent');
+							outputLCurrent = document.getElementById('lCurrent');
+							outputStatus = document.getElementById('status');
+							
+							outputBatteryVoltage.innerHTML = batteryVoltage+'V';
+							outputBatteryPercent.innerHTML = batteryPercent+'%';
+							outputRCurrent.innerHTML = rCurrent+'A';
+							outputLCurrent.innerHTML = lCurrent+'A';
+							outputStatus.innerHTML = status;
+							
+							}
+							
+						}
+					});
 				}
 				
 				serialDataPrevious = serialData;
@@ -133,7 +177,7 @@
 	<p><b>Joystick Output: </b><i id="result"></i></p>
 	
 	<p><b>Data sent to serial line: </b><i id="serialdata"></i></p>
-	
+		
 	<p><b>Battery Voltage: </b><i id="batteryVoltage"></i></p>
 	
 	<p><b>Battery Percentage: </b><i id="batteryPercent"></i></p>
@@ -182,8 +226,8 @@
 	
 	<h3>Manual Data Input</h3>
 	
-	<form  method="post" name="myform" action="serialSend.php">
-    <input type="text" name="extra" value="0,0,STOP" >
+	<form  method="get" name="manualEntry" action="scripts/serialSend.php">
+    <input type="text" name="serialData" value="0,0,STOP" >
 	<br>
     <input type="submit" value="Submit" >
 	</form>
