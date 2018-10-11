@@ -10,6 +10,8 @@
 	</head>
 
 <body>
+
+	<div id="container"></div>
 	
 	<header>
 		<br>
@@ -62,7 +64,8 @@
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 			
-	<div id="joystick">
+	<div class="content" id="joystick">
+	
 	
 			
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -78,8 +81,8 @@
 				container	: document.getElementById('joystick'),
 				mouseSupport	: true,
 				//stationaryBase: true,
-                //      baseX: 200,
-                //      baseY: 200,
+                //    baseX: 300,
+                //    baseY: 300,
 				limitStickTravel: true,
 				stickRadius	: 100
 				
@@ -187,43 +190,7 @@
 	<p><b>Left Motor Current: </b><i id="lCurrent"></i></p>
 	
 	<p><b>Status: </b><i id="status"></i></p>
-	
-	
-	<?php
 		
-		echo"<p>";		
-		error_reporting(E_ALL);
-		ini_set('display_errors', '1');
-		echo"</p>";
-		
-		//Load the serial port class 	
-		include 'scripts/PhpSerial.php';
-		
-		// New instance of class
-		$serial = new PhpSerial;
-				
-		// First we must specify the device. This works on both linux and windows (if
-		// your linux serial device is /dev/ttyS0 for COM1, etc)
-		$serial->deviceSet("/dev/ttyACM0");
-
-		// We can change the baud rate, parity, length, stop bits, flow control
-		$serial->confBaudRate(115200);
-		$serial->confParity("none");
-		$serial->confCharacterLength(8);
-		$serial->confStopBits(1);
-		$serial->confFlowControl("none");
-
-		// Then we need to open it
-		$serial->deviceOpen();
-		
-		//Delay before writing data
-		sleep(0.2);
-		
-		// To write into
-		$data = "0,0,SEND";
-		$serial->sendMessage($data);
-	?>
-	
 	<h3>Manual Data Input</h3>
 	
 	<form  method="get" name="manualEntry" action="scripts/serialSend.php">
