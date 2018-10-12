@@ -102,18 +102,18 @@ bool mapOutputs() {
       }
     
       //Map Inputs to motor PWM
-      map(leftMotorSpeed, 0, 100, 0, 255);
-      map(rightMotorSpeed, 0, 100, 0, 255);
-    
+      leftMotorSpeed = map(setSpeed, 0, 100, 0, 255);
+      rightMotorSpeed = map(setSpeed, 0, 100, 0, 255);
+      
       if (setAngle < 0) {
         setAngle = -setAngle;
-        map(setAngle, 0, 100, 1, 0);
         leftMotorSpeed = leftMotorSpeed*setAngle;
+        leftMotorSpeed = leftMotorSpeed/100;
         status = true;
       }
       else if (setAngle > 0){
-        map(setAngle, 0, 100, 1, 0);
         rightMotorSpeed = rightMotorSpeed*setAngle;
+        rightMotorSpeed = rightMotorSpeed/100;
         status = true;
         }
       else{
@@ -128,6 +128,10 @@ bool mapOutputs() {
     else{
       statusMessage = "ERROR = Failed to map sent data to output. Check range of sent data.";
     }
+
+    Serial.println("Right Motor Speed is = ");
+    Serial.println(rightMotorSpeed);
+    
     return status;
   }
 
@@ -320,6 +324,9 @@ void stopWheelchair() {
    
    //Speed to Zero
    analogWrite(RightMotorSpeed, 0);
+   Serial.print("Right Motor PWM Value = ");
+   Serial.println(RightMotorSpeed);
+
    analogWrite(LeftMotorSpeed, 0);
  
    //Stop Wheelchair Coasting
@@ -348,6 +355,10 @@ void readInputs() {
    rightMotorCurrent = (analogRead(RightMotorCurrent)*currentFactor)-currentOffset;
    leftMotorCurrent = (analogRead(LeftMotorCurrent)*currentFactor)-currentOffset;
 
+   //For debug purposes
+   leftMotorCurrent = 0; 
+   rightMotorCurrent = 0;
+   
    rightMotorFault = digitalRead(RightMotorFault);
    leftMotorFault = digitalRead(LeftMotorFault);
 
@@ -376,6 +387,7 @@ void sendData() {
    Serial.print(batteryVoltage);
    Serial.print(",");
    Serial.println(statusMessage);    
+   Serial.println("");
    
    return; 
 }
@@ -412,7 +424,7 @@ void loop() {
             else{
               status = false;
             }
-   
+            
             analogWrite(RightMotorSpeed, rightMotorSpeed);
             analogWrite(LeftMotorSpeed, leftMotorSpeed);
             status = true;
@@ -437,29 +449,33 @@ void loop() {
 
   //Current limiting code
   if(rightMotorCurrent > maxCurrent || rightMotorCurrent > maxCurrent){
-  
+
   if(setSpeed > 0){
   setSpeed = setSpeed - 1;
+  stringComplete = true;
   }
   else if(setSpeed < 0){
   setSpeed = setSpeed + 1;
+  stringComplete = true;
   }
-
+  else{
+    status = false;
+  }
   inputString = setSpeed;
   inputString += ",";
   inputString += setAngle;
   inputString += ",RUN";
   
   statusMessage = "WARNING = Overcurrent Warning, recitfying issue.";
-  stringComplete = true;
-  sendData;
+  sendData();
   }
   
   if(status == false){
   
   inputString = "0,0,ERROR";
   statusMessage = "ERROR = Main Loop program error.";
-  stringComplete = true;
+  stopWheelchair();
+  sendData();
   }
 }
 

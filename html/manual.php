@@ -74,8 +74,9 @@
 			<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 			
-			var serialDataPrevious = '0,0,RUN'
-			var receivedData = '0,0,0,STATUS'
+			var serialDataPrevious = '0,0,RUN';
+			var receivedData = '0,0,0,STATUS';
+			var loops = 0;
 						
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
@@ -110,16 +111,26 @@
 				
 				var setSpeed = Math.round( joystick.deltaY() );
 				var setAngle = Math.round( joystick.deltaX() );
-				
+									
 				var serialData = setSpeed
 					+ ','
-					+ setAngle
-					+ ',SEND';
-				
-				outputSerial = document.getElementById('serialdata');
-								
+					+ setAngle;		
+												
 				if(serialData != serialDataPrevious){
-				
+					
+					serialDataPrevious = serialData;
+					
+					if(loops > 10){
+						serialData += ',SEND';
+						loops = 0;
+					}
+					else{
+						serialData += ',RUN';
+						loops++;
+					}
+					
+					//Output Serial data to webpage
+					outputSerial = document.getElementById('serialdata');
 					outputSerial.innerHTML	= serialData;
 					document.manualEntry.serialData.value = serialData;
 				
@@ -161,13 +172,9 @@
 							outputStatus.innerHTML = status;
 							
 							}
-							
 						}
 					});
-				}
-				
-				serialDataPrevious = serialData;
-				
+				}	
 			}, 1/30 * 1000);
 		</script>
 				
