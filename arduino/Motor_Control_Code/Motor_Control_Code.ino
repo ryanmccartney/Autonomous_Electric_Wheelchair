@@ -128,9 +128,6 @@ bool mapOutputs() {
     else{
       statusMessage = "ERROR = Failed to map sent data to output. Check range of sent data.";
     }
-
-    Serial.println("Right Motor Speed is = ");
-    Serial.println(rightMotorSpeed);
     
     return status;
   }
