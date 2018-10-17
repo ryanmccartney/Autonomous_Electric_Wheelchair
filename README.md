@@ -1,12 +1,19 @@
-# Autonomous_Electric_Wheelchair
+# Autonomous Electric Wheelchair
 Computer vision has many applications in robotics. This project aim to use computer vision as a feedback loop for an electric wheelchair . Allowing it to navigate the indoor enviroment.
 
 ## Dependencies
+This prject is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
+
+### Software Dependencies
 * OpenCV-4.0.0-alpha (https://github.com/opencv)
 * OpenKinect Library (https://github.com/OpenKinect/libfreenect)
 * MJPG Streamer (https://github.com/jacksonliam/mjpg-streamer)
 * Apache 
 
+### Hardware Dependencies
+* Arduino MEGA
+* RaspberryPi 3
+* Microsoft Kinect V1
 
 ## Installation
 
