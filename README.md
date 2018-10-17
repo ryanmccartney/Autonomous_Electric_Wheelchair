@@ -8,7 +8,7 @@ Computer vision has many applications in robotics. This project aim to use compu
 * Apache 
 
 
-##Installation
+## Installation
 
 1. Installation of Apache (Any web-server will do, but I prefer Apache) iincluding PHP. This guide from howtoraspberrypi is helpful for beginners (https://howtoraspberrypi.com/how-to-install-web-server-raspberry-pi-lamp/)
 1. Build and Install OpenCV. I used '4.0.0-alpha'. However, you can use the most up to date version. This tutorial will get you started at [pyimagesearch]https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/
