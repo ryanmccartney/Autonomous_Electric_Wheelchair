@@ -2,7 +2,7 @@
 Computer vision has many applications in robotics. This project aim to use computer vision as a feedback loop for an electric wheelchair . Allowing it to navigate the indoor enviroment.
 
 ## Dependencies
-This prject is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
+This project is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
 
 ### Software Dependencies
 * OpenCV-4.0.0-alpha (https://github.com/opencv)
@@ -26,7 +26,7 @@ This prject is based largely on interfacing with a physcial hardware, such as mo
 
 
 ## Copyright
-This source code is copyright, All rights reserve, Ryan McCartney, 2018
+This source code is copyright, All rights reserved, Ryan McCartney, 2018
 
 
 
