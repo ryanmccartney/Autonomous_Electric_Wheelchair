@@ -3,19 +3,24 @@ import datetime
 import cv2
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import json
 
-#Resolution of matrix units in milimeters
-unitSize = 100
+#Load user adjustable variables from json file
+settingsFile = open('navigation\settings.json').read()
+settings = json.loads(settingsFile)
+
+#Resolution of matrix
+unitSize = settings['map']['unitSize']
 
 #Map Length, Width and Height (in milimeters)
-mapLength = 10000
-mapWidth = 10000
-mapHieght =5000
+mapLength = settings['map']['length']
+mapWidth = settings['map']['width']
+mapHieght = settings['map']['hieght']
 
 #Dimenisions of Autonomous Vechile(in milimeters)
-vechileLength = 900
-vechileWidth = 600
-vechileHieght = 1200
+vechileLength = settings['vechile']['length']
+vechileWidth = settings['vechile']['width']
+vechileHieght = settings['vechile']['hieght']
 
 #Determine matrix for map's size
 mapLengthUnits = mapLength/unitSize
@@ -56,15 +61,15 @@ print("STATUS: Plotting 3D Graph")
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x, y, z, zdir='z', c= 'red')
+ax.scatter(x, y, z, zdir='z', c= 'blue')
 #ax.view_init(60, 35)
 
 #Label Map
-ax.set_xlabel('Length (mm)')
-ax.set_ylabel('Width (mm)')
-ax.set_zlabel('Hieght (mm)')
+ax.set_xlabel('Length Units')
+ax.set_ylabel('Width Units')
+ax.set_zlabel('Hieght Units')
 ax.set_zlim(0,mapHieghtUnits)
 
-plt.savefig("navigation\map.png")
+plt.savefig('navigation\map.png')
 
 print("STATUS: Program Finished Running")

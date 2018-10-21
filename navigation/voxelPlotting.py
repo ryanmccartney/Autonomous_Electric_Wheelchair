@@ -2,19 +2,24 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import json
 
-#SResolution of matrix units in milimeters
-unitSize = 100
+#Load user adjustable variables from json file
+settingsFile = open('navigation\settings.json').read()
+settings = json.loads(settingsFile)
+
+#Resolution of matrix
+unitSize = settings['map']['unitSize']
 
 #Map Length, Width and Height (in milimeters)
-mapLength = 10000
-mapWidth = 10000
-mapHieght =5000
+mapLength = settings['map']['length']
+mapWidth = settings['map']['width']
+mapHieght = settings['map']['hieght']
 
 #Dimenisions of Autonomous Vechile(in milimeters)
-vechileLength = 900
-vechileWidth = 600
-vechileHieght = 1200
+vechileLength = settings['vechile']['length']
+vechileWidth = settings['vechile']['width']
+vechileHieght = settings['vechile']['hieght']
 
 #Determine matrix for map's size
 mapLengthUnits = mapLength/unitSize

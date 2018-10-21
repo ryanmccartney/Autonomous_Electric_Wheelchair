@@ -1,0 +1,24 @@
+{  
+    "map":{
+        "unitSize":100, 
+        "length":10000, 
+        "width":10000,
+        "hieght":5000
+    },
+    "vechile":{
+        "length":900, 
+        "width":600,
+        "hieght":160,
+        "maxSpeed":100,
+        "minSpeed":-100,
+        "maxAngle":100,
+        "minAngle":-100,
+        "commands":[ "STOP", "RUN", "SEND", "ERROR" ]
+    },
+    "host":{
+        "command_url":"http://xaiver.local/scripts/", 
+        "camera_url":"http://xaiver.local/scripts/",
+        "depth_url":"http://xaiver.local/scripts/"
+    },
+    
+}
