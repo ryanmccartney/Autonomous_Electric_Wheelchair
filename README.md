@@ -33,6 +33,7 @@ For autonomous navigation the above dependencies and the follow are requird;
 
 ## Acknowledgents
 * Queen's University Belfast
+* PyImageSearch
 
 
 ## Copyright
