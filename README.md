@@ -13,12 +13,12 @@ For manual control via web browser the following dependencies are required;
 * Apache 
 
 For autonomous navigation the above dependencies and the follow are requird;
-*Anaconda Python Platform (https://anaconda.com) with the following packages installed
-*Numpy `conda install -c anaconda numpy` 
-*Opencv `conda install -c conda-forge opencv`
-*Matlibplot `conda install -c conda-forge matplotlib`
-*pip `conda install pip`
-*imutils `pip install imutils`
+* Anaconda Python Platform (https://anaconda.com) with the following packages installed
+* Numpy `conda install -c anaconda numpy` 
+* Opencv `conda install -c conda-forge opencv`
+* Matlibplot `conda install -c conda-forge matplotlib`
+* pip `conda install pip`
+* imutils `pip install imutils`
 
 ### Hardware Dependencies
 * Arduino MEGA
@@ -34,7 +34,6 @@ For autonomous navigation the above dependencies and the follow are requird;
 ## Acknowledgents
 * Queen's University Belfast
 * PyImageSearch
-
 
 ## Copyright
 This source code is copyright, All rights reserved, Ryan McCartney, 2018
