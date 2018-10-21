@@ -5,10 +5,20 @@ Computer vision has many applications in robotics. This project aim to use compu
 This project is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
 
 ### Software Dependencies
+
+For manual control via web browser the following dependencies are required;
 * OpenCV-4.0.0-alpha (https://github.com/opencv)
 * OpenKinect Library (https://github.com/OpenKinect/libfreenect)
 * MJPG Streamer (https://github.com/jacksonliam/mjpg-streamer)
 * Apache 
+
+For autonomous navigation the above dependencies and the follow are requird;
+*Anaconda Python Platform (https://anaconda.com) with the following packages installed
+*Numpy `conda install -c anaconda numpy` 
+*Opencv `conda install -c conda-forge opencv`
+*Matlibplot `conda install -c conda-forge matplotlib`
+*pip `conda install pip`
+*imutils `pip install imutils`
 
 ### Hardware Dependencies
 * Arduino MEGA
