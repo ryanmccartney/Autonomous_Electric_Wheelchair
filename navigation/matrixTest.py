@@ -4,55 +4,67 @@ import cv2
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-#SResolution of matrix units in milimeters
+#Resolution of matrix units in milimeters
 unitSize = 100
 
-#Map Length and Width (in milimeters)
-length = 100000
-width = 100000
-#Map Height (in milimeters)
-hieght =10000
+#Map Length, Width and Height (in milimeters)
+mapLength = 10000
+mapWidth = 10000
+mapHieght =5000
 
-lengthUnits = length/unitSize
-widthUnits = width/unitSize
-hieghtUnits = hieght/unitSize
+#Dimenisions of Autonomous Vechile(in milimeters)
+vechileLength = 900
+vechileWidth = 600
+vechileHieght = 1200
+
+#Determine matrix for map's size
+mapLengthUnits = mapLength/unitSize
+mapWidthUnits = mapWidth/unitSize
+mapHieghtUnits = mapHieght/unitSize
 
 #Cast to integars
-lengthUnits = int(lengthUnits)
-widthUnits = int(widthUnits)
-hieghtUnits = int(hieghtUnits)
+mapLengthUnits = int(mapLengthUnits)
+mapWidthUnits = int(mapWidthUnits)
+mapHieghtUnits = int(mapHieghtUnits)
 
-print("Length units of map matrix is = ",lengthUnits)
-print("Width units of map matrix is = ",widthUnits)
-print("Hieght units of map matrix is = ",hieghtUnits)
+#Print Status and some information
+print("STATUS: Matrix Processing has started")
+print("INFO: Length units of map matrix is = ",mapLengthUnits)
+print("INFO: Width units of map matrix is = ",mapWidthUnits)
+print("INFO: Hieght units of map matrix is = ",mapHieghtUnits)
 
-map = np.zeros((lengthUnits,widthUnits,hieghtUnits))
+map = np.zeros((mapLengthUnits,mapWidthUnits,mapHieghtUnits))
 
 #Add the ground to the plot
-groundDepth = hieghtUnits/3
-groundDepth = int(groundDepth)
+print("STATUS: Adding Ground to the map")
 
-for i in range (0,groundDepth):
+mapGroundDepth = mapHieghtUnits/4
+mapGroundDepth = int(mapGroundDepth)
 
-    for j in range (0,widthUnits):
+for i in range (0,mapGroundDepth):
 
-        for k in range (0,lengthUnits):
+    for j in range (0,mapWidthUnits):
+
+        for k in range (0,mapLengthUnits):
             
-            map[i,j,k] = 1
-
-
-fig = plt.figure()
-ax = fig.axes(projection='3d')
+            map[k,j,i] = 1
 
 # Data for three-dimensional scattered points
-zdata = 15 * np.random.random(100)
-xdata = np.sin(zdata) + 0.1 * np.random.randn(100)
-ydata = np.cos(zdata) + 0.1 * np.random.randn(100)
-ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
+y,x,z = map.nonzero()
+
+print("STATUS: Plotting 3D Graph")
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(x, y, z, zdir='z', c= 'red')
+#ax.view_init(60, 35)
 
 #Label Map
 ax.set_xlabel('Length (mm)')
 ax.set_ylabel('Width (mm)')
 ax.set_zlabel('Hieght (mm)')
+ax.set_zlim(0,mapHieghtUnits)
 
-plt.savefig("map.png")
+plt.savefig("navigation\map.png")
+
+print("STATUS: Program Finished Running")
