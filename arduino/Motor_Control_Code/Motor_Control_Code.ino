@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------------------------------------------
 // NAME: Electric Wheelchair Motor Control Alogtrithm
 // AUTH: Ryan McCartney
-// DATE: 9th October 2018
+// DATE: 24th October 2018
 // DESC: Recieves serial communications containing control commands for the electric wheelchair
 // NOTE: All Rights Reserved, 2018, Queen's University Belfast
 //------------------------------------------------------------------------------------------------------------------
@@ -9,16 +9,24 @@
 //Pin Definitions
 #define RightMotorDirection 24 //DIR Input on Board
 #define LeftMotorDirection 22 //DIR Input on Board
+
 #define RightMotorCoast 28 //SLP Input on Board
 #define LeftMotorCoast 26  //SLP Input on Board
+
 #define RightMotorFault 32 //FLT Pin on Board
 #define LeftMotorFault 30  //FLT Pin on Board
+
+#define RightMotorIsolate 36 //Relay Isolating Supply to Right Motor
+#define LeftMotorIsolate 34  //Relay Isolating Supply to Left Motor
+
 #define RightMotorSpeed 3 //PWM Input on Board
 #define LeftMotorSpeed 2 //PWM Input on Board
+
 #define RightMotorCurrent 1 //CS Pin on Board
 #define LeftMotorCurrent 0  //CS Pin on Board
 
-#define MotorBrakes 34 //Relay to apply mechanical brake
+#define MotorBrakes 38 //Relay to apply mechanical brake
+#define spareRelay 39 //Relay to apply mechanical brake
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
@@ -43,7 +51,8 @@ String statusMessage = "";
 //Motor Driver Output Variables
 int leftMotorSpeed = 0; // 0 to 255
 int rightMotorSpeed = 0; // 0 to 255
-String direction = "Forward";
+int leftDirection = 1;
+int rightDirection = 1;
 
 //------------------------------------------------------------------------------------------------------------------
 //Main Programme operating loop
@@ -55,7 +64,10 @@ void setup() {
   pinMode(LeftMotorDirection, OUTPUT);
   pinMode(RightMotorSpeed, OUTPUT);
   pinMode(LeftMotorSpeed, OUTPUT);
+  pinMode(RightMotorIsolate, OUTPUT);
+  pinMode(LeftMotorIsolate, OUTPUT);   
   pinMode(MotorBrakes, OUTPUT);
+  pinMode(spareRelay, OUTPUT);
 
   //Set Initial State
   digitalWrite(RightMotorDirection, LOW);
@@ -68,8 +80,8 @@ void setup() {
   pinMode(BatteryIndication, INPUT_PULLUP);
   pinMode(RightMotorCurrent, INPUT_PULLUP);
   pinMode(LeftMotorCurrent, INPUT_PULLUP);
-  pinMode(RightMotorFault, OUTPUT);
-  pinMode(LeftMotorFault, OUTPUT);
+  pinMode(RightMotorFault, INPUT_PULLUP);
+  pinMode(LeftMotorFault, INPUT_PULLUP);
 
   //Serial Communications Setup
   Serial.begin(115200);
@@ -95,10 +107,12 @@ bool mapOutputs() {
     
       if(setSpeed < 0){
         setSpeed = -setSpeed;
-        direction = "Reverse";
+        leftDirection = 1;
+        rightDirection = 1;
       }
       else{
-        direction = "Forward";
+        leftDirection = 0;
+        rightDirection = 0;
       }
     
       //Map Inputs to motor PWM
@@ -109,15 +123,26 @@ bool mapOutputs() {
         setAngle = -setAngle;
         leftMotorSpeed = leftMotorSpeed*setAngle;
         leftMotorSpeed = leftMotorSpeed/100;
+        if(leftDirection == 1){
+            leftDirection = 0;
+        }
+        else if(leftDirection == 0){
+            leftDirection = 1;
+        }
+        
         status = true;
       }
       else if (setAngle > 0){
         rightMotorSpeed = rightMotorSpeed*setAngle;
         rightMotorSpeed = rightMotorSpeed/100;
+        rightDirection = 0;
         status = true;
         }
+      else if (setAngle == 0){
+         status = true; 
+        }
       else{
-        status = true;
+        status = false;
       }
     }
   }
@@ -321,17 +346,18 @@ void stopWheelchair() {
    
    //Speed to Zero
    analogWrite(RightMotorSpeed, 0);
-   Serial.print("Right Motor PWM Value = ");
-   Serial.println(RightMotorSpeed);
-
    analogWrite(LeftMotorSpeed, 0);
  
    //Stop Wheelchair Coasting
    digitalWrite(RightMotorCoast, 1);
    digitalWrite(LeftMotorCoast, 1);
 
+   //Isolate the motor power supply
+   digitalWrite(RightMotorIsolate, 0);
+   digitalWrite(LeftMotorIsolate, 0);
+   
    //Apply Brakes
-   digitalWrite(MotorBrakes, 1);
+   digitalWrite(MotorBrakes, 0);
 
    return;
 }
@@ -421,9 +447,21 @@ void loop() {
             else{
               status = false;
             }
-            
+
+            //Disable Electrical Brake
+            digitalWrite(RightMotorCoast, 1);
+            digitalWrite(LeftMotorCoast, 1);
+   
+            //Connect motor power supply
+            digitalWrite(RightMotorIsolate, 1);
+            digitalWrite(LeftMotorIsolate, 1);
+   
+            //Disable Brakes
+            digitalWrite(MotorBrakes, 1);
+
             analogWrite(RightMotorSpeed, rightMotorSpeed);
             analogWrite(LeftMotorSpeed, leftMotorSpeed);
+            
             status = true;
           }
           else{
