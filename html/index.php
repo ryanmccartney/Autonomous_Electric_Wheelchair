@@ -33,6 +33,10 @@
 	<p>This project allows full autonomous control of an electric wheelchair. This web interface allows the user to access debug information, issue commands and take manual control of the wheelchair if necessary.</p>
 	<p>See the various sections of this interface for further controls.</p>
 	
+	<div class="stream">
+	<img src="http://xavier.local:8080/?action=stream">
+	</div>
+
 	<h3>Manual Control of Wheelchair</h3>
 	
 	

@@ -10,8 +10,6 @@
 	</head>
 
 <body>
-
-	<div id="container"></div>
 	
 	<header>
 		<br>
@@ -27,8 +25,6 @@
 		</ul>
 	</div>
 	</header>
-	
-	<div class="content">
 	
 	<h3>Command Buttons</h3>
 	
@@ -63,12 +59,12 @@
 	<h3>Control Gamepad</h3>
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
-			
-	<div class="content" id="joystick">
+
+	<div class="stream" id="joystick">
 	
-	
-			
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<img src="http://xavier.local:8080/?action=stream">
+
+		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
 			
 			<script>
@@ -177,8 +173,9 @@
 				}	
 			}, 1/30 * 1000);
 		</script>
-				
-    </div>
+	
+	</div>
+
 	
 	<h3>Debug Data</h3>
 	
@@ -220,7 +217,6 @@
 	
 	<img alt="" src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" id="emergency" onclick="changeImage();"/>
 		
-	</div>
 	<br>
 	
 	<footer>
@@ -232,21 +228,6 @@
 	</a>
 	
 	</footer>
-	
-	<script>
-		window.onscroll = function() {myFunction()};
-
-		var header = document.getElementById("myHeader");
-		var sticky = header.offsetTop;
-
-		function myFunction() {
-			if (window.pageYOffset > sticky) {
-				header.classList.add("sticky");
-			} else {
-				header.classList.remove("sticky");
-			}
-		}
-	</script>
 	
 	
 </body>

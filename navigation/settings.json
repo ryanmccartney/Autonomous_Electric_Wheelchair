@@ -16,9 +16,8 @@
         "commands":[ "STOP", "RUN", "SEND", "ERROR" ]
     },
     "host":{
-        "command_url":"http://xaiver.local/scripts/", 
-        "camera_url":"http://xaiver.local/scripts/",
-        "depth_url":"http://xaiver.local/scripts/"
-    },
-    
+        "command_url":"http://xavier.local/scripts/serialSend.php?serialData=", 
+        "camera_url":"http://192.168.1.102:8080/?action=stream",
+        "depth_url":"http://192.168.1.102/scripts/"
+    }
 }

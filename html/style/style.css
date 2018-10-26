@@ -18,10 +18,18 @@
   padding-top: 102px;
 }
 
+.stream{
+	border: 0px solid #eb0029;
+	overflow: hidden;
+	padding-top: 0;
+	margin: auto;
+	-webkit-user-select	: none;
+	-moz-user-select: none;
+}
+
+
 #joystick {
-    width: 80%;
-	height: 400px;
-	border: 1px solid #eb0029;
+    border: 1px solid #eb0029;
 	overflow: hidden;
 	padding-top: 0;
 	margin: auto;

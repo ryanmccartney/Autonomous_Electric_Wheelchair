@@ -25,8 +25,8 @@
 #define RightMotorCurrent 1 //CS Pin on Board
 #define LeftMotorCurrent 0  //CS Pin on Board
 
-#define MotorBrakes 38 //Relay to apply mechanical brake
-#define spareRelay 39 //Relay to apply mechanical brake
+#define MotorBrakes 40 //Relay to apply mechanical brake
+#define spareRelay 38 //Relay to apply mechanical brake
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
@@ -433,20 +433,9 @@ void loop() {
         
           if (executeCommands() == true){
 
-            //Set Direction to DIR pin
-            if(direction =="Forward"){
-              DIR = 0;
-              digitalWrite(RightMotorDirection, DIR);
-              digitalWrite(LeftMotorDirection, DIR);
-            }
-            else if(direction =="Reverse"){
-              DIR = 1;
-              digitalWrite(RightMotorDirection, DIR);
-              digitalWrite(LeftMotorDirection, DIR);
-            }
-            else{
-              status = false;
-            }
+            //Set the Motor Direction
+            digitalWrite(RightMotorDirection, rightDirection);
+            digitalWrite(LeftMotorDirection, leftDirection);
 
             //Disable Electrical Brake
             digitalWrite(RightMotorCoast, 1);

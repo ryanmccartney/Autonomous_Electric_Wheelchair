@@ -17,6 +17,8 @@ def get_depth():
  
 if __name__ == "__main__":
     while 1:
+
+        
         #get a frame from RGB camera
         frame = get_video()
         #get a frame from depth sensor
