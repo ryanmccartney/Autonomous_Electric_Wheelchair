@@ -10,14 +10,14 @@
 #define RightMotorDirection 24 //DIR Input on Board
 #define LeftMotorDirection 22 //DIR Input on Board
 
-#define RightMotorCoast 28 //SLP Input on Board
-#define LeftMotorCoast 26  //SLP Input on Board
+#define RightMotorSleep 28 //SLP Input on Board
+#define LeftMotorSleep 26  //SLP Input on Board
 
 #define RightMotorFault 32 //FLT Pin on Board
 #define LeftMotorFault 30  //FLT Pin on Board
 
-#define RightMotorIsolate 36 //Relay Isolating Supply to Right Motor
-#define LeftMotorIsolate 34  //Relay Isolating Supply to Left Motor
+#define RightMotorEnergise 36 //Relay Isolating Supply to Right Motor
+#define LeftMotorEnergise 34  //Relay Isolating Supply to Left Motor
 
 #define RightMotorSpeed 3 //PWM Input on Board
 #define LeftMotorSpeed 2 //PWM Input on Board
@@ -64,17 +64,20 @@ void setup() {
   pinMode(LeftMotorDirection, OUTPUT);
   pinMode(RightMotorSpeed, OUTPUT);
   pinMode(LeftMotorSpeed, OUTPUT);
-  pinMode(RightMotorIsolate, OUTPUT);
-  pinMode(LeftMotorIsolate, OUTPUT);   
+  pinMode(RightMotorEnergise, OUTPUT);
+  pinMode(LeftMotorEnergise, OUTPUT);   
   pinMode(MotorBrakes, OUTPUT);
   pinMode(spareRelay, OUTPUT);
 
   //Set Initial State
-  digitalWrite(RightMotorDirection, LOW);
-  digitalWrite(LeftMotorDirection, LOW);
-  digitalWrite(RightMotorSpeed, LOW);
-  digitalWrite(LeftMotorSpeed, LOW);
-  digitalWrite(MotorBrakes, LOW);
+  digitalWrite(RightMotorDirection, 1);
+  digitalWrite(LeftMotorDirection, 1);
+  digitalWrite(RightMotorEnergise, 1);
+  digitalWrite(LeftMotorEnergise, 1);
+  digitalWrite(RightMotorSpeed, 0);
+  digitalWrite(LeftMotorSpeed, 0);
+  digitalWrite(MotorBrakes, 0);
+  digitalWrite(spareRelay, 1);
   
   //Setup Input Pins
   pinMode(BatteryIndication, INPUT_PULLUP);
@@ -107,12 +110,12 @@ bool mapOutputs() {
     
       if(setSpeed < 0){
         setSpeed = -setSpeed;
-        leftDirection = 1;
-        rightDirection = 1;
-      }
-      else{
         leftDirection = 0;
         rightDirection = 0;
+      }
+      else{
+        leftDirection = 1;
+        rightDirection = 1;
       }
     
       //Map Inputs to motor PWM
@@ -311,8 +314,8 @@ bool executeCommands() {
    setAngle = 0;
   
    //Stop Wheelchair Coasting
-   digitalWrite(RightMotorCoast, 1);
-   digitalWrite(LeftMotorCoast, 1);
+   digitalWrite(RightMotorSleep, 1);
+   digitalWrite(LeftMotorSleep, 1);
 
    //Turn off Brakes
    digitalWrite(MotorBrakes, 0);
@@ -349,12 +352,12 @@ void stopWheelchair() {
    analogWrite(LeftMotorSpeed, 0);
  
    //Stop Wheelchair Coasting
-   digitalWrite(RightMotorCoast, 1);
-   digitalWrite(LeftMotorCoast, 1);
+   digitalWrite(RightMotorSleep, 0);
+   digitalWrite(LeftMotorSleep, 0);
 
    //Isolate the motor power supply
-   digitalWrite(RightMotorIsolate, 0);
-   digitalWrite(LeftMotorIsolate, 0);
+   digitalWrite(RightMotorEnergise, 1);
+   digitalWrite(LeftMotorEnergise, 1);
    
    //Apply Brakes
    digitalWrite(MotorBrakes, 0);
@@ -385,6 +388,7 @@ void readInputs() {
    rightMotorFault = digitalRead(RightMotorFault);
    leftMotorFault = digitalRead(LeftMotorFault);
 
+
    return;
 }
 
@@ -395,11 +399,14 @@ void sendData() {
 
    readInputs();
    
-   if(rightMotorFault == 1){
+   if(rightMotorFault == 0){
       statusMessage = "ERROR = Right motor has developed a fault.";
+      stopWheelchair();
+      
    }
-   else if(leftMotorFault == 1){
+   else if(leftMotorFault == 0){
       statusMessage = "ERROR = Left motor has developed a fault.";
+      stopWheelchair();
    }
    
    //Send Serial Information
@@ -422,8 +429,7 @@ void loop() {
 
   //Function Variables
   bool status = true;
-  int DIR = 0;
- 
+   
   //When new Serial Data Arrives
   if (stringComplete == true) {
 
@@ -436,14 +442,14 @@ void loop() {
             //Set the Motor Direction
             digitalWrite(RightMotorDirection, rightDirection);
             digitalWrite(LeftMotorDirection, leftDirection);
-
+  
             //Disable Electrical Brake
-            digitalWrite(RightMotorCoast, 1);
-            digitalWrite(LeftMotorCoast, 1);
+            digitalWrite(RightMotorSleep, 1);
+            digitalWrite(LeftMotorSleep, 1);
    
             //Connect motor power supply
-            digitalWrite(RightMotorIsolate, 1);
-            digitalWrite(LeftMotorIsolate, 1);
+            digitalWrite(RightMotorEnergise, 0);
+            digitalWrite(LeftMotorEnergise, 0);
    
             //Disable Brakes
             digitalWrite(MotorBrakes, 1);
