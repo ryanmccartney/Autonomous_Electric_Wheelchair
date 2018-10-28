@@ -3,7 +3,7 @@
 #NAME:  cameraData.py
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC:  A python class for aquiring image data from network streams
-#NOTE:  Copyright 2018, All Rights Reserved, Ryan McCartney
+#COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
 
 import numpy as np
 import cv2 as cv
