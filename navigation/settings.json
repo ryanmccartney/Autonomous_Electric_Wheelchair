@@ -17,7 +17,9 @@
     },
     "host":{
         "command_url":"http://xavier.local/scripts/serialSend.php?serialData=", 
-        "camera_url":"http://192.168.1.102:8080/?action=stream",
+        "kinectImage_url":"http://192.168.1.102:8080/?action=stream0",
+        "kinectDepth_url":"http://192.168.1.102:8080/?action=stream1",
+        "webcam_url":"http://192.168.1.102:8080/?action=stream",
         "depth_url":"http://192.168.1.102/scripts/"
     }
 }
