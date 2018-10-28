@@ -6,6 +6,7 @@
 import numpy as np
 import cv2 as cv
 import time
+import imutils
 
 class cameraData:
 
@@ -22,7 +23,7 @@ class cameraData:
 
         #read single frame
         self.ret, frame = image.read()
-        #frame = imutils.resize(frame, width=self.frameWidth)
+        frame = imutils.resize(frame, width=self.frameWidth)
 
         return frame
     

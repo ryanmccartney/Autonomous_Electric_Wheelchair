@@ -1,31 +1,55 @@
-#!/usr/bin/env python
-
-#NAME:  moveWheelchair.py
+#NAME:  move.py
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC:  A python class for sending and recieveing data to the wheelchair
-#NOTE:  Copyright 2018, All Rights Reserved, Ryan McCartney
+#DESC:  A python class for moving the wheelchair in an intuative manner
+#COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Imports, Global Variable Definitions & Initialisation
-#-----------------------------------------------------------------------------------------------------------------------
-
-from threading import Thread
 import numpy as np
-import cv2
+import time
+import urllib
+import csv
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Class for aquiring camera image data
-#-----------------------------------------------------------------------------------------------------------------------
-class streamImageData(stream_url):
+class move:
 
-    def openConnecion:
+    batteryVoltage = 0
+    rightMotorCurrent = 0
+    leftMotorCurrent = 0
+    status = 0 
+    logFile = "log.csv"
 
+    def __init__(self,host):
 
-    def transmitData:
+        #Open Connection
+        urllib.urlopen(self.host)
+       
+        # opening the file, clearing and applying headings
+        with open(logFile, 'rb') as file:
 
+          file.write("Battery Voltage(V),Right Current (A),Left Current (A),Status Message")
 
-    def parseRecievedData:
+    def transmitData(self, speed, angle, command):
 
+        command_url = self.host + speed + ',' + angle + ',' + command + '/r/n'
+        data = urllib.urlopen(self.host)
+        
+        if data != NULL:
 
+            parse data
 
+    #Method to allow data to logged to a file 
+    def logData(self):   
+
+        #Create string to write to file
+        dataEntry = batteryVoltage + ',' + rightMotorCurrent + ',' + leftMotorCurrent + ',' + status
+
+        #Open file and wirte string
+        with open(logFile, 'a') as file:
+          file.write(dataEntry)
+        
+
+    def rampSpeed(self,speed):
+        
+        previousSpeed
+
+        
+        return speed
     
