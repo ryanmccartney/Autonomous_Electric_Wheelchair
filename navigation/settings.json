@@ -16,6 +16,7 @@
         "commands":[ "STOP", "RUN", "SEND", "ERROR" ]
     },
     "host":{
+        "connection_url":"http://xavier.local/scripts/openSerial.php", 
         "command_url":"http://xavier.local/scripts/serialSend.php?serialData=", 
         "kinectImage_url":"http://192.168.1.102:8080/?action=stream0",
         "kinectDepth_url":"http://192.168.1.102:8080/?action=stream1",

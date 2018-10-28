@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-#NAME:  streamVideo.py
+#NAME:  moveWheelchair.py
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC:  A python class for streaming image data as a video using opencv
+#DESC:  A python class for sending and recieveing data to the wheelchair
 #NOTE:  Copyright 2018, All Rights Reserved, Ryan McCartney
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -18,19 +18,14 @@ import cv2
 #-----------------------------------------------------------------------------------------------------------------------
 class streamImageData(stream_url):
 
-    def streamVideo:
-        
-        stream_url = settings['host']['camera_url']
+    def openConnecion:
 
-        #Resolution of matrix
-        image = cv2.VideoCapture(stream_url)
 
-        while(1):
+    def transmitData:
 
-            #read frram
-            ret, frame = image.read()
-   
-            #display RGB image
-            cv2.imshow('RGB image',frame)
 
-        cv2.destroyAllWindows()
+    def parseRecievedData:
+
+
+
+    
