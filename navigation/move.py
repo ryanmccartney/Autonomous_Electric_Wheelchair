@@ -16,6 +16,8 @@ class move:
     status = 0 
     logFile = "log.csv"
 
+    previousSpeed = 0 
+
     def __init__(self,host):
 
         #Open Connection
@@ -48,8 +50,21 @@ class move:
 
     def rampSpeed(self,speed):
         
-        previousSpeed
+       #Accelerate
+        if speed > self.previousSpeed:
 
-        
+            while speed != self.previousSpeed:
+            
+                speed = self.previousSpeed + 1
+                transmitData (speed,self.angle,"SEND")
+
+        #Decelerate
+        else if speed < self.previousSpeed:
+
+            while speed != self.previousSpeed:
+            
+                speed = self.previousSpeed - 1
+                transmitData (speed,self.angle,"SEND")
+            
         return speed
     
