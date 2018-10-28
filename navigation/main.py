@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #NAME:  main.py
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC:  A python class for aquiring image data from network streams
