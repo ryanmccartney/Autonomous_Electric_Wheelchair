@@ -33,10 +33,7 @@ class move:
         command_url = self.host + speed + ',' + angle + ',' + command + '/r/n'
         data = urllib.urlopen(self.host)
         
-        if data != NULL:
-
-            parse data
-
+      
     #Method to allow data to logged to a file 
     def logData(self):   
 
@@ -47,24 +44,52 @@ class move:
         with open(logFile, 'a') as file:
           file.write(dataEntry)
         
-
-    def rampSpeed(self,speed):
+    def rampSpeed(self,speed,acceleration):
+         
+        delay = 1/acceleration
         
-       #Accelerate
-        if speed > self.previousSpeed:
-
-            while speed != self.previousSpeed:
+        #Direction Forward
+        if speed > 0:
             
-                speed = self.previousSpeed + 1
-                transmitData (speed,self.angle,"SEND")
+            #Accelerate
+            if speed > self.previousSpeed:
 
-        #Decelerate
-        else if speed < self.previousSpeed:
+                while speed != self.previousSpeed:
+            
+                    speed = self.previousSpeed + 1
+                    time.sleep(delay)
+                    transmitData (speed,self.angle,"SEND")
 
-            while speed != self.previousSpeed:
+            #Decelerate
+            else if speed < self.previousSpeed:
+
+                while speed != self.previousSpeed:
             
-                speed = self.previousSpeed - 1
-                transmitData (speed,self.angle,"SEND")
+                    speed = self.previousSpeed - 1
+                    time.sleep(delay)
+                    transmitData (speed,self.angle,"SEND")
+
+        #Direcion Reverse
+        if speed < 0:
             
+            #Accelerate
+            if speed < self.previousSpeed:
+
+                while speed != self.previousSpeed:
+            
+                    speed = self.previousSpeed - 1
+                    time.sleep(delay)
+                    transmitData (speed,self.angle,"SEND")
+
+            #Decelerate
+            else if speed > self.previousSpeed:
+
+                while speed != self.previousSpeed:
+            
+                    speed = self.previousSpeed + 1
+                    time.sleep(delay)
+                    transmitData (speed,self.angle,"SEND")
+
+        speed = self.previousSpeed 
         return speed
     
