@@ -27,12 +27,14 @@ class cameraStream:
         self.fps = fps
 
     #function to get RGB image from kinect
+    @staticmethod
     def get_video():
         array,_ = freenect.sync_get_video()
-        array = cv2.cvtColor(array,cv2.COLOR_RGB2BGR)
+        array = cv.cvtColor(array,cv.COLOR_RGB2BGR)
         return array
  
     #function to get depth image from kinect
+    @staticmethod
     def get_depth():
         array,_ = freenect.sync_get_depth()
         array = array.astype(np.uint8)
@@ -62,7 +64,7 @@ class cameraStream:
         while 1:
 
             #get a frame from depth sensor
-            depth = get_depth()
+            depth = self.get_depth()
             #write depth image to file
             cv.imwrite('/var/www/html/stream/depthImage.jpg',depth)
 
@@ -79,7 +81,7 @@ class cameraStream:
         while 1:
 
             #get a frame from depth sensor
-            image = get_video()
+            image = self.get_video()
             #write depth image to file
             cv.imwrite('/var/www/html/stream/image.jpg',image)
 
