@@ -1,12 +1,12 @@
 #import the necessary modules
 import freenect
-import cv2
+import cv2 as cv
 import numpy as np
  
 #function to get RGB image from kinect
 def get_video():
     array,_ = freenect.sync_get_video()
-    array = cv2.cvtColor(array,cv2.COLOR_RGB2BGR)
+    array = cv.cvtColor(array,cv.COLOR_RGB2BGR)
     return array
  
 #function to get depth image from kinect
@@ -23,13 +23,14 @@ if __name__ == "__main__":
         #get a frame from depth sensor
         depth = get_depth()
         #display RGB image
-        cv2.imshow('RGB image',frame)
+        cv.imshow('RGB image',frame)
         #display depth image
-        cv2.imshow('Depth image',depth)
+        cv.imshow('Depth image',depth)
  
         # quit program when 'esc' key is pressed
-        k = cv2.waitKey(5) & 0xFF
+        k = cv.waitKey(5) & 0xFF
         if k == 27:
             break
             
-    cv2.destroyAllWindows()
+    freenect.sync_stop()
+    cv.destroyAllWindows()

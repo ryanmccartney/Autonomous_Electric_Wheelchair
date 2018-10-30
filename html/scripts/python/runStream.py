@@ -7,11 +7,22 @@ import threading
 from cameraStream import cameraStream
 import time
 
-fps = 20
+try:
+    #framerate variable
+    fps = 10
 
-stream = cameraStream(fps)
-stream.streamKinectImage()
-stream.streamKinectDepth()
-stream.streamWebcam()
-stream.startServer()
+    #new instance of 'cameraStream' class
+    stream = cameraStream(fps)
 
+    #Add streams
+    #stream.streamWebcam()
+    stream.streamKinectImage()
+    stream.streamKinectDepth()
+
+    #Start the streams
+    stream.startServer()
+
+except KeyboardInterrupt:
+
+            stream.running = False
+            print('INFO: Stopping Program')
