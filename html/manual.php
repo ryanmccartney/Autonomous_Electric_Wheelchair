@@ -62,7 +62,7 @@
 
 	<div class="stream" id="joystick">
 	
-	<img src="http://xavier.local:8080/?action=stream">
+	<img src="http://xavier.local:8080/?action=stream_1" alt="media/nostream.jpg">
 
 		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>

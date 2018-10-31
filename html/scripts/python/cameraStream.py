@@ -51,8 +51,7 @@ class cameraStream:
             self.serverCommand = self.serverCommand + " -o 'output_http.so -w ./www/html'"
 
             #Run commands to start server
-            os.system ("sudo mount -t tmpfs tmpfs /var/www/html/stream/image")
-            os.system ("sudo mount -t tmpfs tmpfs /var/www/html/stream/depthImage")
+            os.system ("sudo mount -t tmpfs tmpfs /var/www/html/stream")
             os.system(self.serverCommand)
 
         except self.running==False:
@@ -66,19 +65,23 @@ class cameraStream:
 
         self.serverCommand = self.serverCommand + " -i input_uvc.so"
 
+        print('INFO: Adding V4L Wecam to Stream') 
+
     #Threaded method for adding kinect data to the stream
     @threaded
     def streamKinectDepth(self):
 
         delay = 1/self.fps
-        self.serverCommand = self.serverCommand + ' -i "input_file.so -f /var/www/html/stream/depthImage -n depthImage.jpg -d 0"'
+        self.serverCommand = self.serverCommand + ' -i "input_file.so -f /var/www/html/stream -n depthImage.jpg -d 0"'
+        
+        print('INFO: Adding Kinect Depth Video to Stream') 
 
         while self.running:
 
             #get a frame from depth sensor
             depth = self.get_depth()
             #write depth image to file
-            cv.imwrite('/var/www/html/stream/depthImage/depthImage.jpg',depth)
+            cv.imwrite('/var/www/html/stream/depthImage.jpg',depth)
 
             #frame delay
             time.sleep(delay)
@@ -90,14 +93,16 @@ class cameraStream:
     def streamKinectImage(self):
 
         delay = 1/self.fps
-        self.serverCommand = self.serverCommand + ' -i "input_file.so -f /var/www/html/stream/image -n image.jpg -d 0"'
+        self.serverCommand = self.serverCommand + ' -i "input_file.so -f /var/www/html/stream -n image.jpg -d 0"'
+        
+        print('INFO: Adding Kinect RGB Video to Stream') 
 
         while self.running:
 
             #get a frame from depth sensor
             image = self.get_video()
             #write depth image to file
-            cv.imwrite('/var/www/html/stream/image/image.jpg',image)
+            cv.imwrite('/var/www/html/stream/image.jpg',image)
 
             #frame delay
             time.sleep(delay)

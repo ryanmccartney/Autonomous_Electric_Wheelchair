@@ -19,7 +19,7 @@ def threaded(fn):
 
 class cameraData:
 
-    frameWidth = 800
+    frameWidth = 500
     
     def __init__(self,stream_url,stream_name):
         
@@ -58,16 +58,12 @@ class cameraData:
     @threaded
     def streamVideo(self):
         
-        font = cv.FONT_HERSHEY_SIMPLEX
-        fps = self.getFramerate()
-
         while(1):
                 
             #Get frame from stream
             frame = self.getFrame()
 
-            #Add FPS and  display the frame
-            cv.putText(frame,"FPS:{0}".format(fps),(10,500), font, 1,(255,255,255),2,cv.LINE_AA)
+            #Show the frame
             cv.imshow('Stream of {}'.format(self.stream_name),frame)         
         
             # quit program when 'esc' key is pressed
