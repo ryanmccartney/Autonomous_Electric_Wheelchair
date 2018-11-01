@@ -52,7 +52,7 @@ map = mapDepth(unitSize,mapLength,mapWidth,mapHieght)
 #Set the Frame Size
 map.readFrameSize(kinectDepth.getFrame())
 
-for i in range (0,5):
+while 1:
     
     depthFrame = kinectDepth.getFrame()
     mappedDepth = map.mapFrame(depthFrame)

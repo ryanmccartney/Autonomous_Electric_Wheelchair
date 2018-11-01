@@ -47,7 +47,7 @@ class mapDepth:
 
     def mapFrame(self,frame):
 
-        factor = 10
+        factor = 15
         mapped_height = int(self.height/factor)
         mapped_width = int(self.width/factor)
         
