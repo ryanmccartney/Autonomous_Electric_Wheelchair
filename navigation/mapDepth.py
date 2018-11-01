@@ -7,6 +7,7 @@ import threading
 import numpy as np
 import cv2 as cv
 import imutils
+import csv
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -46,7 +47,7 @@ class mapDepth:
 
     def mapFrame(self,frame):
 
-        factor = 15
+        factor = 10
         mapped_height = int(self.height/factor)
         mapped_width = int(self.width/factor)
         
@@ -71,10 +72,10 @@ class mapDepth:
  
         return mappedDepth
         
-    def plotMap(self,mappedArray):
+    def plotPointCloud(self,mappedArray):
 
         # Data for three-dimensional scattered points
-        y,x,z = mappedArray.nonzero()
+        z,x,y = mappedArray.nonzero()
 
         print("STATUS: Plotting 3D Graph")
 
@@ -91,3 +92,25 @@ class mapDepth:
         plt.savefig('navigation\map.png')
 
         print("STATUS: 3D Point Cloud Plotted")
+
+    @threaded
+    def writeCSV(self,mappedArray):
+
+        arrayDimensions = mappedArray.shape
+        print("INFO: The dimensions of the inputted array are ",arrayDimensions)
+
+        with open('navigation\pointCloud.csv', mode='w') as pointCloud:
+
+            writePoints = csv.writer(pointCloud, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+            writePoints.writerow(['X', 'Y', 'Z'])
+
+            for x in range (0,):
+
+                for y in range (0,self.width):
+
+                    for z in range (0,255):
+
+                        if mappedArray != 0:
+
+                            writePoints.writerow([x, y, z])

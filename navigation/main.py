@@ -52,14 +52,15 @@ map = mapDepth(unitSize,mapLength,mapWidth,mapHieght)
 #Set the Frame Size
 map.readFrameSize(kinectDepth.getFrame())
 
-while 1:
+for i in range (0,5):
     
     depthFrame = kinectDepth.getFrame()
     mappedDepth = map.mapFrame(depthFrame)
     
     cv.imshow('Original Depth Frame',depthFrame)
 
-    map.plotMap(mappedDepth)
+    map.plotPointCloud(mappedDepth)
+    #map.writeCSV(mappedDepth)
 
     time.sleep(2)
     
