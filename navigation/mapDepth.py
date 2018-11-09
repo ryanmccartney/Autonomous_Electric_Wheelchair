@@ -10,6 +10,7 @@ import imutils
 import csv
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import time
 
 #define threading wrapper
 def threaded(fn):
@@ -60,6 +61,10 @@ class mapDepth:
         #Create 3D Array of Curent View
         mappedDepth = np.zeros((mapped_height,mapped_width,256))
         
+        file = open("processingTime.csv","w+")
+        file.write("Hieght(Pixels),Width(Pixels),Processing Time(S)\r\n")
+        start = time.time()
+
         #Populate Array with Data
         for h in range (0,mapped_height):
 
@@ -69,6 +74,11 @@ class mapDepth:
                 print("STATUS: Depth is ",depth)
 
                 mappedDepth[h,w,depth] = 1
+
+        end = time.time()
+        processingTime = end-start
+        file.write(mapped_height,",",mapped_width,",",processingTime,"\r\n")
+        file.close() 
  
         return mappedDepth
         

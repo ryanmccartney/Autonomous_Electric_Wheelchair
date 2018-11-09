@@ -15,8 +15,18 @@ import time
 # Load user adjustable variables from json file
 #--------------------------------------------------------------------------------
 
+#open a txt file to use for logging 
+logFile = open("log.txt","w+")
+currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write(currentDateTime,": INFO = Program has started running.\r\n")
+
+#load settings file
 settingsFile = open('navigation\settings.json').read()
 settings = json.loads(settingsFile)
+
+#write status to log file
+currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write(currentDateTime,": INFO = Settings file loaded.\r\n")
 
 #Resolution of matrix
 unitSize = settings['map']['unitSize']
@@ -26,13 +36,26 @@ mapLength = settings['map']['length']
 mapWidth = settings['map']['width']
 mapHieght = settings['map']['hieght']
 
+#write status to log file
+currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write(currentDateTime,": INFO = Map created.\r\n")
+
 #--------------------------------------------------------------------------------
 #Data Streams Setup
 #--------------------------------------------------------------------------------
 
+
+#write status to log file
+currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write(currentDateTime,": INFO = Loading camera streams.\r\n")
+
 kinectImage_url = settings['host']['kinectImage_url']
 kinectDepth_url = settings['host']['kinectDepth_url']
 webcam_url = settings['host']['webcam_url']
+
+#write status to log file
+currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write(currentDateTime,": STATUS = Camera streams loaded.\r\n")
 
 #Class instances for various streams
 #kinectImage = cameraData(kinectImage_url,"Kinect RGB Data")
