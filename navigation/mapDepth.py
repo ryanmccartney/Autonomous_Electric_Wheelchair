@@ -11,6 +11,8 @@ import csv
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import time
+import numba as nb
+import timeit
 
 #define threading wrapper
 def threaded(fn):
@@ -24,6 +26,7 @@ class mapDepth:
 
     height = 640
     width = 640
+    closest = 255
 
     def __init__(self,unitSize,mapLength,mapWidth,mapHieght):
 
@@ -61,8 +64,7 @@ class mapDepth:
         #Create 3D Array of Curent View
         mappedDepth = np.zeros((mapped_height,mapped_width,256))
         
-        file = open("processingTime.csv","w+")
-        file.write("Hieght(Pixels),Width(Pixels),Processing Time(S)\r\n")
+        file = open("processingTimePython.csv","a")
         start = time.time()
 
         #Populate Array with Data
@@ -71,17 +73,64 @@ class mapDepth:
             for w in range (0,mapped_width):
 
                 depth = int(resizedFrame[h,w])
-                print("STATUS: Depth is ",depth)
-
                 mappedDepth[h,w,depth] = 1
 
         end = time.time()
-        processingTime = end-start
-        file.write(mapped_height,",",mapped_width,",",processingTime,"\r\n")
+        processingTime = (end-start)*1000
+        fileData = str(mapped_height) + "," + str(mapped_width) + "," + str(processingTime) + "\n"
+        print(fileData)
+        file.write(fileData)
         file.close() 
  
         return mappedDepth
+
+    @staticmethod
+    @nb.jit(nopython=True)
+    def scanImage(image):
+
+        height = image.shape[0]
+        width = image.shape[1]
+
+        #Initialise with worst case
+        distance = 255
         
+        #Populate Array with Data
+        for h in range (0,height):
+
+            for w in range (0,width):
+
+                if  distance < image[h,w]:
+                    distance = image[h,w]
+                
+        return distance
+
+    def closestPoint(self,frame):
+       
+        factor = 1
+        mapped_height = int(self.height/factor)
+        mapped_width = int(self.width/factor)
+        
+        #Ensure image is grayscale
+        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        #Reduce Resolution of Kinetic Depth to a Managable Size
+        resizedFrame = cv.resize(frame, (mapped_width, mapped_height), interpolation = cv.INTER_CUBIC)
+
+        #Open file to record timing results     
+        file = open("processingTimeNumba.csv","a")
+        
+        #Time processing of the image
+        start = time.time()
+        self.closest = self.scanImage(resizedFrame)
+        end = time.time()
+        
+        #Calculate time and write to file
+        processingTime = (end-start)
+        fileData = str(mapped_height) + "," + str(mapped_width) + "," + str(processingTime) + "\n"
+        print(fileData)
+        file.write(fileData)
+        file.close() 
+  
     def plotPointCloud(self,mappedArray):
 
         # Data for three-dimensional scattered points
