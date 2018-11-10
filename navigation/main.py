@@ -80,15 +80,20 @@ logFile.write(logEntry)
 navigate = Navigation(unitSize,mapLength,mapWidth,mapHieght)
 
 #Adjust Scall Factor to Improve Optimisation
-navigate.scaleFactor = 1
-
+navigate.scaleFactor = 10
+navigate.fps = 800
+delay = 1/navigate.fps
 #Start Closest Point in Path Analysis
 navigate.closestPoint(test_url,True)
 
 previousMaxSpeed = 0
 
+pointCloud = 0
+frames = 25
+
 while 1:
 
+    #Write Max Speed to Log File
     if navigate.maxSpeed != previousMaxSpeed:
         #write status to log file
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -99,10 +104,17 @@ while 1:
     depthFrame = kinectDepth.getFrame()
     cv.imshow('Original Depth Frame',depthFrame)
 
-    #mappedDepth = map.mapFrameSlow(depthFrame)
-    #map.plotPointCloud(mappedDepth)
-    #map.writeCSV(mappedDepth)
-    
+    if frames ==25:
+        #pointCloud = navigate.createPointCloud(depthFrame)
+        #navigate.plotPointCloud(pointCloud)
+        #navigate.writeCSV(pointCloud)
+
+        frames = 0
+
+    #Delay for video frame
+    time.sleep(delay)
+    frames = frames + 1
+
     # quit program when 'esc' key is pressed
     k = cv.waitKey(5) & 0xFF
     if k == 27:

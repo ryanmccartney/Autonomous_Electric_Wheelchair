@@ -28,7 +28,7 @@ class Navigation:
     scaleFactor = 1
     closestDistance = 255
     maxSpeed = 0
-    fps = 40
+    fps = 30
 
     def __init__(self,unitSize,mapLength,mapWidth,mapHieght):
 
@@ -42,7 +42,28 @@ class Navigation:
         self.mapWidthUnits = int(self.mapWidthUnits)
         self.mapHieghtUnits = int(self.mapHieghtUnits)
         
-    def mapFrame(self,frame):
+    
+    #Optimised method for plotting a point point cloud in a matrix
+    @staticmethod
+    @nb.jit(nopython=True)
+    def populateMatrix(image):
+
+        height = image.shape[0]
+        width = image.shape[1]
+
+        pointCloud = np.empty((height,width,256))
+    
+        #Populate Array with Data
+        for x in range (0,height):
+
+            for y in range (0,width):
+
+                z = image[x,y]
+                pointCloud[x,y,z] = 1
+                    
+        return pointCloud
+    
+    def createPointCloud(self,frame):
         
         height = frame.shape[0]
         width = frame.shape[1]
@@ -50,34 +71,15 @@ class Navigation:
         mappedHeight = int(height/self.scaleFactor)
         mappedWidth = int(width/self.scaleFactor)
         
-        #Ensure image is grayscale
+        #Ensure image is grayscale for depth values
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
         #Reduce Resolution of Kinetic Depth to a Managable Size
         resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
         
-        #Create 3D Array of Curent View
-        mappedDepth = np.zeros((mappedHeight,mappedWidth,256))
-        
-        file = open("processingTimePython.csv","a")
-        start = time.time()
-
-        #Populate Array with Data
-        for h in range (0,mappedHeight):
-
-            for w in range (0,mappedWidth):
-
-                depth = int(resizedFrame[h,w])
-                mappedDepth[h,w,depth] = 1
-
-        end = time.time()
-        processingTime = (end-start)*1000
-        fileData = str(mappedHeight) + "," + str(mappedWidth) + "," + str(processingTime) + "\n"
-        print(fileData)
-        file.write(fileData)
-        file.close() 
+        pointCloud = self.populateMatrix(resizedFrame)
  
-        return mappedDepth
+        return pointCloud
 
     #Function to Calculate Speed Lmit bases on the value of the closest point
     @staticmethod
@@ -206,17 +208,15 @@ class Navigation:
 
             time.sleep(delay)
     
-  
-    def plotPointCloud(self,mappedArray):
+    @threaded
+    def plotPointCloud(self,pointCloud):
 
         # Data for three-dimensional scattered points
-        z,x,y = mappedArray.nonzero()
-
-        print("STATUS: Plotting 3D Graph")
+        z,x,y = pointCloud.nonzero()
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(x, y, z, zdir='z', c= 'blue')
+        ax.scatter(x, -y, -z, zdir='z', c= 'blue')
         #ax.view_init(60, 35)
 
         #Label Map
@@ -227,25 +227,36 @@ class Navigation:
         plt.savefig('navigation\map.png')
 
         print("STATUS: 3D Point Cloud Plotted")
-
+   
     @threaded
-    def writeCSV(self,mappedArray):
+    def writeCSV(self,pointCloud):
 
-        arrayDimensions = mappedArray.shape
+        arrayDimensions = pointCloud.shape
+
+        #Create a file for each frame depending on time
+        currentDateTime = time.strftime("%d%m%Y-%H%M%S")
+        filename = "Point Cloud -" + currentDateTime + ".csv"
+
+        #create a CSV file for the frame data 
+        pointCloudFile = open(filename,"w+")
+        dataEntry = "X,Y,Z\n"
+        pointCloudFile.write(dataEntry)
+
         print("INFO: The dimensions of the inputted array are ",arrayDimensions)
 
-        with open('navigation\pointCloud.csv', mode='w') as pointCloud:
+        #Write data into CSV file
+        for x in range (0,arrayDimensions[0]):
 
-            writePoints = csv.writer(pointCloud, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            for y in range (0,arrayDimensions[1]):
 
-            writePoints.writerow(['X', 'Y', 'Z'])
+                for z in range (0,arrayDimensions[2]):
 
-            for x in range (0,):
+                    if pointCloud[x,y,z] != 0:
+                        
+                        #create a data entry
+                        dataEntry = str(x) + "," + str(y) + "," + str(z) + "\n"
+                        pointCloudFile.write(dataEntry)
+        
+        pointCloudFile.close()
 
-                for y in range (0,self.width):
 
-                    for z in range (0,255):
-
-                        if mappedArray != 0:
-
-                            writePoints.writerow([x, y, z])
