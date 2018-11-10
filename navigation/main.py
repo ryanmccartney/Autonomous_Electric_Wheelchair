@@ -80,7 +80,7 @@ logFile.write(logEntry)
 navigate = Navigation(unitSize,mapLength,mapWidth,mapHieght)
 
 #Adjust Scall Factor to Improve Optimisation
-navigate.scaleFactor = 5
+navigate.scaleFactor = 2
 navigate.fps = 30
 delay = 1/navigate.fps
 #Start Closest Point in Path Analysis

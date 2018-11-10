@@ -224,7 +224,11 @@ class Navigation:
         ax.set_ylabel('Width Units')
         ax.set_zlabel('Hieght Units')
 
-        plt.savefig('navigation\map.png')
+        
+        #Create a file for each frame depending on time
+        currentDateTime = time.strftime("%d%m%Y-%H%M%S")
+        filename = "data\pointCloudPlots\Point Cloud Plot -" + currentDateTime + ".png"
+        plt.savefig(filename)
 
         print("STATUS: 3D Point Cloud Plotted")
    
@@ -235,7 +239,7 @@ class Navigation:
 
         #Create a file for each frame depending on time
         currentDateTime = time.strftime("%d%m%Y-%H%M%S")
-        filename = "Point Cloud -" + currentDateTime + ".csv"
+        filename = "data\pointCloudData\Point Cloud Data -" + currentDateTime + ".csv"
 
         #create a CSV file for the frame data 
         pointCloudFile = open(filename,"w+")
