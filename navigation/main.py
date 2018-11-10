@@ -80,8 +80,8 @@ logFile.write(logEntry)
 navigate = Navigation(unitSize,mapLength,mapWidth,mapHieght)
 
 #Adjust Scall Factor to Improve Optimisation
-navigate.scaleFactor = 10
-navigate.fps = 800
+navigate.scaleFactor = 5
+navigate.fps = 30
 delay = 1/navigate.fps
 #Start Closest Point in Path Analysis
 navigate.closestPoint(test_url,True)
@@ -105,7 +105,7 @@ while 1:
     cv.imshow('Original Depth Frame',depthFrame)
 
     if frames ==25:
-        #pointCloud = navigate.createPointCloud(depthFrame)
+        pointCloud = navigate.createPointCloud(depthFrame)
         #navigate.plotPointCloud(pointCloud)
         #navigate.writeCSV(pointCloud)
 
