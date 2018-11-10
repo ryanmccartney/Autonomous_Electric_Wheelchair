@@ -27,6 +27,7 @@ class Navigation:
 
     scaleFactor = 1
     closestDistance = 255
+    maxSpeed = 0
     fps = 40
 
     def __init__(self,unitSize,mapLength,mapWidth,mapHieght):
@@ -78,6 +79,16 @@ class Navigation:
  
         return mappedDepth
 
+    #Function to Calculate Speed Lmit bases on the value of the closest point
+    @staticmethod
+    @nb.jit(nopython=True)
+    def calcMaxSpeed(distance):
+        
+        speedLimit = int((distance/255)*100)
+
+        return speedLimit
+
+    #Optimised method for finding the closest point in an image
     @staticmethod
     @nb.jit(nopython=True)
     def scanImage(image):
@@ -86,7 +97,7 @@ class Navigation:
         width = image.shape[1]
 
         #Initialise with worst case
-        pointValue = 255
+        pointValue = 0
         pointHeight = 0
         pointWidth = 0
         
@@ -101,9 +112,10 @@ class Navigation:
                     pointWidth = w
                     
         results = [pointValue, pointWidth, pointHeight]
-
+       
         return results
 
+    #Closest point main function for collision avoidance.
     @threaded
     def closestPoint(self,streamURL,showStream):
         
@@ -122,6 +134,24 @@ class Navigation:
         mappedHeight = int(height/self.scaleFactor)
         mappedWidth = int(width/self.scaleFactor)
 
+        cropPathWidth = int(200/self.scaleFactor)
+        cropPathHeight = int(300/self.scaleFactor)
+
+        x1 = int((mappedWidth/2) - (cropPathWidth/2))
+        x2 = int(x1 + cropPathWidth)
+
+        y1 = int(mappedHeight-cropPathHeight)
+        y2 = int(mappedHeight)
+
+        pathWidth = int(cropPathWidth*self.scaleFactor)
+        pathHeight = int(cropPathHeight*self.scaleFactor)
+
+        topW = int((width/2) - (pathWidth/2))
+        topH = int(height - pathHeight)
+
+        bottomW = int((width/2) + (pathWidth/2))
+        bottomH = int(height)
+
         while 1:
             
             frame = depth.getFrame()
@@ -132,27 +162,41 @@ class Navigation:
             #Reduce Resolution of Kinetic Depth to a Managable Size
             resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
             frame = cv.resize(resizedFrame, (width, height), interpolation = cv.INTER_CUBIC)
-
+            resizedFrame = resizedFrame[y1:y2, x1:x2]
 
             #Scan Pixel by Pixel for Closest Point
             closestPoint = self.scanImage(resizedFrame)
             self.closestDistance = closestPoint[0]
             
+            #Set Max Speed with this reading
+            self.maxSpeed = self.calcMaxSpeed(self.closestDistance)
+
             if showStream == True:
 
                 #Convert Back to Colour
                 frame = cv.cvtColor(frame,cv.COLOR_GRAY2RGB) 
+                
+                #Map Width and Height back to normal
+                closestPoint[1] = int(topW + (closestPoint[1]*self.scaleFactor))
+                closestPoint[2] = int(topH + (closestPoint[2]*self.scaleFactor))
 
                 #Crosshair Calculations
-                crosshariRatio = 25
-                crosshairHeight = int(mappedHeight/crosshariRatio)
-                crosshairWidth = int(mappedWidth/crosshariRatio)
+                crosshairRatio = int(25/self.scaleFactor)
+                crosshairHeight = int(mappedHeight/crosshairRatio)
+                crosshairWidth = int(mappedWidth/crosshairRatio)
                 
                 #Horizontal Line
                 cv.line(frame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,0,255),2)
                 #Vertical Line
                 cv.line(frame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,0,255),2)
-            
+                #Path Rectangle
+                cv.rectangle(frame,(topW,topH),(bottomW,bottomH),(0,255,0),2)
+
+                #Add text with details
+                font = cv.FONT_HERSHEY_SIMPLEX
+                text = 'Closest Point is ' + str(self.closestDistance) +'m away.'
+                cv.putText(frame,text,(topW,(topH-5)), font, 0.4,(0,0,255),1,cv.LINE_AA)
+
                 cv.imshow(name,frame)
 
                 #Quit program when 'esc' key is pressed

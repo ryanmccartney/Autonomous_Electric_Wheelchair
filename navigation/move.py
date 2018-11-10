@@ -61,7 +61,7 @@ class move:
                     transmitData (speed,self.angle,"SEND")
 
             #Decelerate
-            else if speed < self.previousSpeed:
+            elif speed < self.previousSpeed:
 
                 while speed != self.previousSpeed:
             
@@ -82,7 +82,7 @@ class move:
                     transmitData (speed,self.angle,"SEND")
 
             #Decelerate
-            else if speed > self.previousSpeed:
+            elif speed > self.previousSpeed:
 
                 while speed != self.previousSpeed:
             

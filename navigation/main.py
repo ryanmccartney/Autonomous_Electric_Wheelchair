@@ -79,15 +79,22 @@ logFile.write(logEntry)
 #Initilise Class
 navigate = Navigation(unitSize,mapLength,mapWidth,mapHieght)
 
+#Adjust Scall Factor to Improve Optimisation
+navigate.scaleFactor = 1
+
 #Start Closest Point in Path Analysis
 navigate.closestPoint(test_url,True)
 
+previousMaxSpeed = 0
+
 while 1:
 
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Processing Depth Data" + "\n"
-    logFile.write(logEntry)
+    if navigate.maxSpeed != previousMaxSpeed:
+        #write status to log file
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "STATUS = The Maximum Wheelchair Speed has been set as "+str(navigate.maxSpeed)+ "\n"
+        logFile.write(logEntry)
+        previousMaxSpeed = navigate.maxSpeed
     
     depthFrame = kinectDepth.getFrame()
     cv.imshow('Original Depth Frame',depthFrame)
