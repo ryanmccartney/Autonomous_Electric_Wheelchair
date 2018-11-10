@@ -21,6 +21,7 @@
         "kinectImage_url":"http://192.168.1.102:8080/?action=stream_0",
         "kinectDepth_url":"http://192.168.1.102:8080/?action=stream_1",
         "webcam_url":"http://192.168.1.102:8080/?action=stream_2",
-        "depth_url":"http://192.168.1.102/scripts/"
+        "test_url": "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov",
+        "test_url1": "rtsp://192.168.1.114:554/11"
     }
 }

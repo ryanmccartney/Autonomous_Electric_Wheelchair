@@ -10,6 +10,7 @@ import imutils
 import csv
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from cameraData import cameraData
 import time
 import numba as nb
 import timeit
@@ -22,11 +23,11 @@ def threaded(fn):
         return thread
     return wrapper
 
-class mapDepth:
+class Navigation:
 
-    height = 640
-    width = 640
-    closest = 255
+    scaleFactor = 1
+    closestDistance = 255
+    fps = 40
 
     def __init__(self,unitSize,mapLength,mapWidth,mapHieght):
 
@@ -40,44 +41,37 @@ class mapDepth:
         self.mapWidthUnits = int(self.mapWidthUnits)
         self.mapHieghtUnits = int(self.mapHieghtUnits)
         
-    def readFrameSize(self,frame):
-
-        #Find it's Width and Hieght 
-        self.height = np.size(frame, 0)
-        self.width = np.size(frame, 1)
-
-        #Print some information
-        print("INFO: The width of the depth image is ",self.width," and its height is ",self.height)
-
     def mapFrame(self,frame):
+        
+        height = frame.shape[0]
+        width = frame.shape[1]
 
-        factor = 15
-        mapped_height = int(self.height/factor)
-        mapped_width = int(self.width/factor)
+        mappedHeight = int(height/self.scaleFactor)
+        mappedWidth = int(width/self.scaleFactor)
         
         #Ensure image is grayscale
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
         #Reduce Resolution of Kinetic Depth to a Managable Size
-        resizedFrame = cv.resize(frame, (mapped_width, mapped_height), interpolation = cv.INTER_CUBIC)
+        resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
         
         #Create 3D Array of Curent View
-        mappedDepth = np.zeros((mapped_height,mapped_width,256))
+        mappedDepth = np.zeros((mappedHeight,mappedWidth,256))
         
         file = open("processingTimePython.csv","a")
         start = time.time()
 
         #Populate Array with Data
-        for h in range (0,mapped_height):
+        for h in range (0,mappedHeight):
 
-            for w in range (0,mapped_width):
+            for w in range (0,mappedWidth):
 
                 depth = int(resizedFrame[h,w])
                 mappedDepth[h,w,depth] = 1
 
         end = time.time()
         processingTime = (end-start)*1000
-        fileData = str(mapped_height) + "," + str(mapped_width) + "," + str(processingTime) + "\n"
+        fileData = str(mappedHeight) + "," + str(mappedWidth) + "," + str(processingTime) + "\n"
         print(fileData)
         file.write(fileData)
         file.close() 
@@ -92,44 +86,82 @@ class mapDepth:
         width = image.shape[1]
 
         #Initialise with worst case
-        distance = 255
+        pointValue = 255
+        pointHeight = 0
+        pointWidth = 0
         
         #Populate Array with Data
         for h in range (0,height):
 
             for w in range (0,width):
 
-                if  distance < image[h,w]:
-                    distance = image[h,w]
+                if  image[h,w] >= pointValue:
+                    pointValue = image[h,w]
+                    pointHeight = h
+                    pointWidth = w
+                    
+        results = [pointValue, pointWidth, pointHeight]
+
+        return results
+
+    @threaded
+    def closestPoint(self,streamURL,showStream):
+        
+        #Caculate Delay to prevent unneccesary processing
+        delay = 1/self.fps
+        name = "Closest Point in Path Detection"
+
+        depth = cameraData(streamURL,name)
+        frame = depth.getFrame()
+
+        #Get Height and Width in Pixels of the Frame
+        height = frame.shape[0]
+        width = frame.shape[1]
+
+        #Reduced Resolution
+        mappedHeight = int(height/self.scaleFactor)
+        mappedWidth = int(width/self.scaleFactor)
+
+        while 1:
+            
+            frame = depth.getFrame()
+
+            #Ensure image is grayscale
+            frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+            #Reduce Resolution of Kinetic Depth to a Managable Size
+            resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
+            frame = cv.resize(resizedFrame, (width, height), interpolation = cv.INTER_CUBIC)
+
+
+            #Scan Pixel by Pixel for Closest Point
+            closestPoint = self.scanImage(resizedFrame)
+            self.closestDistance = closestPoint[0]
+            
+            if showStream == True:
+
+                #Convert Back to Colour
+                frame = cv.cvtColor(frame,cv.COLOR_GRAY2RGB) 
+
+                #Crosshair Calculations
+                crosshariRatio = 25
+                crosshairHeight = int(mappedHeight/crosshariRatio)
+                crosshairWidth = int(mappedWidth/crosshariRatio)
                 
-        return distance
+                #Horizontal Line
+                cv.line(frame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,0,255),2)
+                #Vertical Line
+                cv.line(frame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,0,255),2)
+            
+                cv.imshow(name,frame)
 
-    def closestPoint(self,frame):
-       
-        factor = 1
-        mapped_height = int(self.height/factor)
-        mapped_width = int(self.width/factor)
-        
-        #Ensure image is grayscale
-        frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+                #Quit program when 'esc' key is pressed
+                k = cv.waitKey(5) & 0xFF
+                if k == 27:
+                    break
 
-        #Reduce Resolution of Kinetic Depth to a Managable Size
-        resizedFrame = cv.resize(frame, (mapped_width, mapped_height), interpolation = cv.INTER_CUBIC)
-
-        #Open file to record timing results     
-        file = open("processingTimeNumba.csv","a")
-        
-        #Time processing of the image
-        start = time.time()
-        self.closest = self.scanImage(resizedFrame)
-        end = time.time()
-        
-        #Calculate time and write to file
-        processingTime = (end-start)
-        fileData = str(mapped_height) + "," + str(mapped_width) + "," + str(processingTime) + "\n"
-        print(fileData)
-        file.write(fileData)
-        file.close() 
+            time.sleep(delay)
+    
   
     def plotPointCloud(self,mappedArray):
 
