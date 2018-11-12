@@ -262,5 +262,3 @@ class Navigation:
                         pointCloudFile.write(dataEntry)
         
         pointCloudFile.close()
-
-

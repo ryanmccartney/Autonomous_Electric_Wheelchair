@@ -5,6 +5,7 @@
 
 from cameraData import cameraData
 from navigation import Navigation
+from control import Control
 from threading import Thread
 from queue import Queue
 import cv2 as cv
@@ -48,11 +49,11 @@ logFile.write(logEntry)
 #--------------------------------------------------------------------------------
 
 #Assign URLs from Settings File to Variables
+control_url = settings['host']['command_url']
 kinectImage_url = settings['host']['kinectImage_url']
 kinectDepth_url = settings['host']['kinectDepth_url']
 webcam_url = settings['host']['webcam_url']
 test_url = settings['host']['test_url']
-
 
 #write status to log file
 currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -72,6 +73,18 @@ currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
 logEntry = currentDateTime + ": " + "STATUS = Camera streams loaded." + "\n"
 logFile.write(logEntry)
 
+
+
+#--------------------------------------------------------------------------------
+#Intialise Control Session for Wheelchair
+#--------------------------------------------------------------------------------
+
+#Initialise Control of Wheelchair
+wheelchair = Control(control_url)
+
+#Ramp Speed
+wheelchair.rampSpeed(100,100)
+
 #--------------------------------------------------------------------------------
 #Intialise Navigation Techniques
 #--------------------------------------------------------------------------------
@@ -81,7 +94,7 @@ navigate = Navigation(unitSize,mapLength,mapWidth,mapHieght)
 
 #Adjust Scall Factor to Improve Optimisation
 navigate.scaleFactor = 2
-navigate.fps = 30
+navigate.fps = 60
 delay = 1/navigate.fps
 #Start Closest Point in Path Analysis
 navigate.closestPoint(test_url,True)
@@ -121,5 +134,3 @@ while 1:
         break
 
 cv.destroyAllWindows()
-
-    
