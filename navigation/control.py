@@ -1,8 +1,8 @@
-
-#NAME:  move.py
-#AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC:  A python class for moving the wheelchair in an intuative manner
-#COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
+#NAME: move.py
+#DATE: 12/11/2018
+#AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
+#DESC: A python class for moving the wheelchair in an intuative manner
+#COPY: Copyright 2018, All Rights Reserved, Ryan McCartney
 
 import numpy as np
 import time

@@ -124,21 +124,37 @@ bool mapOutputs() {
       
       if (setAngle < 0) {
         setAngle = -setAngle;
-        leftMotorSpeed = leftMotorSpeed*setAngle;
-        leftMotorSpeed = leftMotorSpeed/100;
-        if(leftDirection == 1){
+        if(setAngle < 50){
+          leftMotorSpeed = map(setAngle,100,0,0,leftMotorSpeed);
+          leftMotorSpeed = (int)leftMotorSpeed;
+        }
+        else if(setAngle > 50){
+          leftMotorSpeed = map(setAngle,0,100,0,leftMotorSpeed);
+          leftMotorSpeed = (int)leftMotorSpeed;
+          if(leftDirection == 1){
             leftDirection = 0;
-        }
-        else if(leftDirection == 0){
+          }
+          else if(leftDirection == 0){
             leftDirection = 1;
+          }
         }
-        
         status = true;
       }
       else if (setAngle > 0){
-        rightMotorSpeed = rightMotorSpeed*setAngle;
-        rightMotorSpeed = rightMotorSpeed/100;
-        rightDirection = 0;
+        if(setAngle < 50){
+          rightMotorSpeed = map(setAngle,100,0,0,rightMotorSpeed);
+          rightMotorSpeed = (int)rightMotorSpeed;
+        }
+        else if(setAngle > 50){
+          rightMotorSpeed = map(setAngle,0,100,0,rightMotorSpeed);
+          rightMotorSpeed = (int)rightMotorSpeed;
+          if(rightDirection == 1){
+            rightDirection = 0;
+          }
+          else if(rightDirection == 0){
+            rightDirection = 1;
+          }
+        }
         status = true;
         }
       else if (setAngle == 0){

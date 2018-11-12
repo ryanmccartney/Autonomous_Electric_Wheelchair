@@ -146,8 +146,6 @@ except:
     logFile.write(logEntry)
     print(logEntry)
 
-
-
 previousMaxSpeed = 0
 pointCloud = 0
 frames = 25
