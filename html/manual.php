@@ -22,6 +22,7 @@
 			<li><a href="auto.php">Autonomous</a></li>
 			<li><a class="active" href="manual.php">Manual</a></li>
 			<li><a href="about.php">About</a></li>
+			<li><a href="stats.php">Logging</a></li>
 		</ul>
 	</div>
 	</header>
@@ -45,14 +46,14 @@
 	<p>
 	<form  method="get" name="reset" action="scripts/serialSend.php">
     <input type="hidden" name="serialData" value="0,0,RESET" >
-    <input type="submit" value="Reset Arduino" >
+    <input type="submit" value="Reset Controller" >
 	</form>
 	</p>
 	
 	<p>
 	<form  method="get" name="brake" action="scripts/serialSend.php">
     <input type="hidden" name="serialData" value="0,0,BRAKEOFF" >
-    <input type="submit" value="Turn Off Brakes" >
+    <input type="submit" value="Release Brakes" >
 	</form>
 	</p>
 		
@@ -62,7 +63,7 @@
 
 	<div class="stream" id="joystick">
 	
-	<img src="http://xavier.local:8080/?action=stream_1" alt="media/nostream.jpg">
+	<img src="http://xavier.local:8080/?action=stream" alt="media/nostream.jpg">
 
 		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
@@ -70,10 +71,9 @@
 			<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 			
-			var serialDataPrevious = '0,0,RUN';
+			var serialDataPrevious = '0,0,SEND';
 			var receivedData = '0,0,0,STATUS';
-			var loops = 0;
-						
+									
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
 				mouseSupport	: true,
@@ -115,15 +115,7 @@
 				if(serialData != serialDataPrevious){
 					
 					serialDataPrevious = serialData;
-					
-					if(loops > 10){
-						serialData += ',SEND';
-						loops = 0;
-					}
-					else{
-						serialData += ',RUN';
-						loops++;
-					}
+					serialData += ',SEND';
 					
 					//Output Serial data to webpage
 					outputSerial = document.getElementById('serialdata');
@@ -148,11 +140,11 @@
 							//Print Data to console
 							console.log(receivedData);
 							
-							var batteryVoltage = receivedData[0];
+							var batteryVoltage = receivedData[2];
 							var batteryPercent = ((batteryVoltage - 23.6)/2)*100;
 							batteryPercent = Math.round(batteryPercent * 100) / 100
 							var rCurrent = receivedData[1];
-							var lCurrent = receivedData[2];
+							var lCurrent = receivedData[0];
 							var status = receivedData[3];
 							
 							outputBatteryVoltage = document.getElementById('batteryVoltage');
@@ -206,16 +198,33 @@
 	<h3>Emergency Stop</h3>
 	
 	<script>
+		var off = "media/Emergency Stop Off.png";
+		var	on = "media/Emergency Stop On.png";
+		var serialData = "0,0,STOP"
+		var sendData = "scripts/serialSend.php?serialData="+ serialData;
+
 		function changeImage() {
-		var Off = "media/Emergency Stop Off.png",
-			On = "media/Emergency Stop On.png";
-		var imgElement = document.getElementById('emergency');
-   
-		imgElement.src = (imgElement.src === Off)? On : Off;
+		{
+			alert(window.document.emergency.src);
+
+			if(document.emergency.src==off){
+				document.emergency.src=on;
+		
+				$.ajax({
+					type: "GET",
+					url: sendData,
+					datatype: "text"
+				})
+
+			}
+
+			else if(document.emergency.src==on){
+				document.emergency.src=off;
+			}
 		}
 	</script>
 	
-	<img alt="" src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" id="emergency" onclick="changeImage();"/>
+	<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
 		
 	<br>
 	
@@ -228,7 +237,6 @@
 	</a>
 	
 	</footer>
-	
 	
 </body>
 </html> 

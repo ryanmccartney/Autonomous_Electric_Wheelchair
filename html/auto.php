@@ -23,6 +23,7 @@
 			<li><a class="active" href="auto.php">Autonomous</a></li>
 			<li><a href="manual.php">Manual</a></li>
 			<li><a href="about.php">About</a></li>
+			<li><a href="stats.php">Logging</a></li>
 		</ul>
 	</div>
 	</header>

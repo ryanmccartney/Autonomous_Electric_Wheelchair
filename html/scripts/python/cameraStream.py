@@ -55,8 +55,8 @@ class cameraStream:
     def streamWebcam(self):
 
         try:
-            print('INFO: Adding V4L Webcam to stream on port ',self.port,'.') 
-            startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ self.port +"' -i input_uvc.so"
+            print('INFO: Adding V4L Webcam to stream on port ',str(self.port),'.') 
+            startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(self.port)+"' -i input_uvc.so"
             os.system(startWebcamStream)
             self.port = self.port + 1
 
@@ -71,8 +71,8 @@ class cameraStream:
         
         try:
             self.getKinectImage()
-            print('INFO: Adding kinect RGB image to stream on port ',self.port,'.') 
-            startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ self.port +'" -i "input_file.so -f /var/www/html/stream -n image.jpg -d 0"'
+            print('INFO: Adding kinect RGB image to stream on port ',str(self.port),'.') 
+            startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(self.port) +'" -i "input_file.so -f /var/www/html/stream -n image.jpg -d 0"'
             os.system(startWebcamStream)
             self.port = self.port + 1
 
@@ -88,8 +88,8 @@ class cameraStream:
 
         try:
             self.getKinectDepth()
-            print('INFO: Adding kinect depth images to stream on port ',self.port,'.') 
-            startWebcamStream = self.serverCommand + ' -o "output_http.so -w ./www/html -p '+ self.port +'"-i "input_file.so -f /var/www/html/stream -n depthImage.jpg -d 0"'
+            print('INFO: Adding kinect depth images to stream on port ',str(self.port),'.') 
+            startWebcamStream = self.serverCommand + ' -o "output_http.so -w ./www/html -p '+ str(self.port) +'"-i "input_file.so -f /var/www/html/stream -n depthImage.jpg -d 0"'
             os.system(startWebcamStream)
             self.port = self.port + 1
 

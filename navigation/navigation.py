@@ -161,6 +161,9 @@ class Navigation:
             #Ensure image is grayscale
             frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
+            #Blur Image
+            frame = cv.GaussianBlur(frame,(5,5),0)
+
             #Reduce Resolution of Kinetic Depth to a Managable Size
             resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
             frame = cv.resize(resizedFrame, (width, height), interpolation = cv.INTER_CUBIC)

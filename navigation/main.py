@@ -1,5 +1,5 @@
 #NAME: main.py
-#DATE: 12/11/2018
+#DATE: 28/11/2018
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC: Main python script for automous navigation of a two wheeled robot.
 #COPY: Copyright 2018, All Rights Reserved, Ryan McCartney
@@ -15,7 +15,7 @@ import time
 
 #Create a file for logging
 try:
-    #open a txt file to use for logging 
+    #open a txt file to duse for logging 
     logFile = open("log.txt","w+")
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
@@ -74,7 +74,7 @@ except:
 try: 
     #Class instances for various streams
     #kinectImage = cameraData(kinectImage_url,"Kinect RGB Data")
-    kinectDepth = cameraData(test_url,"Kinect Depth Data")
+    kinectDepth = cameraData(webcam_url,"Kinect Depth Data")
 
     #Stream Data
     #kinectImage.streamVideo()
@@ -131,7 +131,7 @@ try:
     navigate.fps = 60
     delay = 1/navigate.fps
     #Start Closest Point in Path Analysis
-    navigate.closestPoint(test_url,True)
+    navigate.closestPoint(webcam_url,True)
     
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")

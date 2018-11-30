@@ -26,11 +26,13 @@
 #define LeftMotorCurrent 0  //CS Pin on Board
 
 #define MotorBrakes 40 //Relay to apply mechanical brake
-#define spareRelay 38 //Relay to apply mechanical brake
+#define SpareRelay 38 //Relay to apply mechanical brake
+#define Reset 42 //Pin attached to reset for instrinsic program reset
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
-float maxCurrent = 3.00;
+float maxCurrent = 20.00;
+int maxSpeed = 100;
 
 //Receive Data Variables
 String inputString = "";
@@ -58,6 +60,8 @@ int rightDirection = 1;
 //Main Programme operating loop
 //------------------------------------------------------------------------------------------------------------------
 void setup() {
+  //Deal with RESET Pin
+  digitalWrite(Reset, HIGH);
   
   //Initialise Ourput Pins
   pinMode(RightMotorDirection, OUTPUT);
@@ -67,7 +71,8 @@ void setup() {
   pinMode(RightMotorEnergise, OUTPUT);
   pinMode(LeftMotorEnergise, OUTPUT);   
   pinMode(MotorBrakes, OUTPUT);
-  pinMode(spareRelay, OUTPUT);
+  pinMode(SpareRelay, OUTPUT);
+  pinMode(Reset, OUTPUT);
 
   //Set Initial State
   digitalWrite(RightMotorDirection, 1);
@@ -77,7 +82,7 @@ void setup() {
   digitalWrite(RightMotorSpeed, 0);
   digitalWrite(LeftMotorSpeed, 0);
   digitalWrite(MotorBrakes, 0);
-  digitalWrite(spareRelay, 1);
+  digitalWrite(SpareRelay, 1);
   
   //Setup Input Pins
   pinMode(BatteryIndication, INPUT_PULLUP);
@@ -88,11 +93,11 @@ void setup() {
 
   //Serial Communications Setup
   Serial.begin(115200);
-  statusMessage = "STATUS = System restarting.";
-  sendData();
   //Reserve Memory Sapce for Incomming Bytes
   inputString.reserve(200);
-
+  statusMessage = "STATUS = System restarting.";
+  sendData();
+  delay(250);  
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -110,13 +115,18 @@ bool mapOutputs() {
     
       if(setSpeed < 0){
         setSpeed = -setSpeed;
-        leftDirection = 0;
-        rightDirection = 0;
-      }
-      else{
         leftDirection = 1;
         rightDirection = 1;
       }
+      else{
+        leftDirection = 0;
+        rightDirection = 0;
+      }
+
+      //Limit Speed
+      if(setSpeed > maxSpeed){
+          setSpeed = maxSpeed;
+        }
     
       //Map Inputs to motor PWM
       leftMotorSpeed = map(setSpeed, 0, 100, 0, 255);
@@ -125,34 +135,34 @@ bool mapOutputs() {
       if (setAngle < 0) {
         setAngle = -setAngle;
         if(setAngle < 50){
-          leftMotorSpeed = map(setAngle,100,0,0,leftMotorSpeed);
+          leftMotorSpeed = map(setAngle,50,0,0,leftMotorSpeed);
           leftMotorSpeed = (int)leftMotorSpeed;
         }
         else if(setAngle > 50){
-          leftMotorSpeed = map(setAngle,0,100,0,leftMotorSpeed);
+          leftMotorSpeed = map(setAngle,50,100,0,leftMotorSpeed);
           leftMotorSpeed = (int)leftMotorSpeed;
-          if(leftDirection == 1){
-            leftDirection = 0;
-          }
-          else if(leftDirection == 0){
+          if(leftDirection == 0){
             leftDirection = 1;
+          }
+          else if(leftDirection == 1){
+            leftDirection = 0;
           }
         }
         status = true;
       }
       else if (setAngle > 0){
         if(setAngle < 50){
-          rightMotorSpeed = map(setAngle,100,0,0,rightMotorSpeed);
+          rightMotorSpeed = map(setAngle,50,0,0,rightMotorSpeed);
           rightMotorSpeed = (int)rightMotorSpeed;
         }
         else if(setAngle > 50){
-          rightMotorSpeed = map(setAngle,0,100,0,rightMotorSpeed);
+          rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
           rightMotorSpeed = (int)rightMotorSpeed;
-          if(rightDirection == 1){
-            rightDirection = 0;
-          }
-          else if(rightDirection == 0){
+          if(rightDirection == 0){
             rightDirection = 1;
+          }
+          else if(rightDirection == 1){
+            rightDirection = 0;
           }
         }
         status = true;
@@ -314,7 +324,6 @@ bool executeCommands() {
   else if(command == "SEND"){
     sendData();
     status = true;
-
   }
   else if(command == "STOP"){
     stopWheelchair();
@@ -325,21 +334,35 @@ bool executeCommands() {
   }
   else if(command == "BRAKEOFF"){
 
-   //Allow wheelchair to be stopped
-   setSpeed = 0;
-   setAngle = 0;
+    //Allow wheelchair to be stopped
+    setSpeed = 0;
+    setAngle = 0;
   
-   //Stop Wheelchair Coasting
-   digitalWrite(RightMotorSleep, 1);
-   digitalWrite(LeftMotorSleep, 1);
-
-   //Turn off Brakes
-   digitalWrite(MotorBrakes, 0);
+    //Speed to Zero
+    analogWrite(RightMotorSpeed, 0);
+    analogWrite(LeftMotorSpeed, 0);
+ 
+    //Turn Off Brakes
+    digitalWrite(MotorBrakes, 1);
     
-   status = true;
+    //Enable Wheelchair Coasting
+    digitalWrite(RightMotorSleep, 0);
+    digitalWrite(LeftMotorSleep, 0);
+
+    //Isolate the motor power supply
+    digitalWrite(RightMotorEnergise, 1);
+    digitalWrite(LeftMotorEnergise, 1);
+       
+    statusMessage =  "WARNING = Brakes Not Engaged, beware of vechile movement.";
+    sendData();
+
+    status = true;
   }
   else if(command == "RESET"){
+    statusMessage =  "WARNING = Controller is resseting, expect abnormal behaviour.";
     sendData();
+    delay(250);
+    digitalWrite(Reset, 0);
     status = true;
   }
   
@@ -361,49 +384,43 @@ void stopWheelchair() {
    //Set Variables to Appropriate Values to stop chair further moving.
    setSpeed = 0;
    setAngle = 0;
-   command = "STOP";
-   
+     
    //Speed to Zero
    analogWrite(RightMotorSpeed, 0);
    analogWrite(LeftMotorSpeed, 0);
  
+   //Isolate the motor power supply
+   digitalWrite(RightMotorEnergise, 1);
+   digitalWrite(LeftMotorEnergise, 1);
+    
    //Stop Wheelchair Coasting
    digitalWrite(RightMotorSleep, 0);
    digitalWrite(LeftMotorSleep, 0);
 
-   //Isolate the motor power supply
-   digitalWrite(RightMotorEnergise, 1);
-   digitalWrite(LeftMotorEnergise, 1);
-   
    //Apply Brakes
    digitalWrite(MotorBrakes, 0);
-
+   
    return;
 }
 
 //------------------------------------------------------------------------------------------------------------------
-//Reads input ariables
+//Reads input variables
 //------------------------------------------------------------------------------------------------------------------
 void readInputs() {
 
    //Contants for variable conversion
-   float voltageFactor = 0.024438; //Voltage in Volts
-   float voltageOffset = 0.00;
+   float voltageFactor = 0.02932551; //Voltage in Volts
+   float voltageOffset = 1.65;
    float currentFactor = 0.244379; //Current in Amps
-   float currentOffset = 0.00;
+   float currentOffset = 1.2;
 
    //Read sensor data to update variables 
    batteryVoltage = (analogRead(BatteryIndication)*voltageFactor)-voltageOffset;
    rightMotorCurrent = (analogRead(RightMotorCurrent)*currentFactor)-currentOffset;
    leftMotorCurrent = (analogRead(LeftMotorCurrent)*currentFactor)-currentOffset;
-
-   //For debug purposes
-   leftMotorCurrent = 0; 
-   rightMotorCurrent = 0;
    
    rightMotorFault = digitalRead(RightMotorFault);
    leftMotorFault = digitalRead(LeftMotorFault);
-
 
    return;
 }
@@ -426,13 +443,13 @@ void sendData() {
    }
    
    //Send Serial Information
-   Serial.print(rightMotorCurrent);
+   Serial.print(leftMotorCurrent,2);
    Serial.print(",");
-   Serial.print(leftMotorCurrent);
+   Serial.print(rightMotorCurrent,2);
    Serial.print(",");
-   Serial.print(batteryVoltage);
+   Serial.print(batteryVoltage,2);
    Serial.print(",");
-   Serial.println(statusMessage);    
+   Serial.print(statusMessage);    
    Serial.println("");
    
    return; 
@@ -455,25 +472,34 @@ void loop() {
         
           if (executeCommands() == true){
 
-            //Set the Motor Direction
-            digitalWrite(RightMotorDirection, rightDirection);
-            digitalWrite(LeftMotorDirection, leftDirection);
+            if (setSpeed != 0){
+              //Set the Motor Direction
+              digitalWrite(RightMotorDirection, rightDirection);
+              digitalWrite(LeftMotorDirection, leftDirection);
   
-            //Disable Electrical Brake
-            digitalWrite(RightMotorSleep, 1);
-            digitalWrite(LeftMotorSleep, 1);
+              //Disable Electrical Brake
+              digitalWrite(RightMotorSleep, 1);
+              digitalWrite(LeftMotorSleep, 1);
    
-            //Connect motor power supply
-            digitalWrite(RightMotorEnergise, 0);
-            digitalWrite(LeftMotorEnergise, 0);
-   
-            //Disable Brakes
-            digitalWrite(MotorBrakes, 1);
+              //Connect motor power supply
+              digitalWrite(RightMotorEnergise, 0);
+              digitalWrite(LeftMotorEnergise, 0);
+                 
+              //Disable Brakes
+              digitalWrite(MotorBrakes, 1);
 
-            analogWrite(RightMotorSpeed, rightMotorSpeed);
-            analogWrite(LeftMotorSpeed, leftMotorSpeed);
+              analogWrite(RightMotorSpeed, rightMotorSpeed);
+              analogWrite(LeftMotorSpeed, leftMotorSpeed);
             
-            status = true;
+              status = true;
+            }
+            else if(command == "BRAKEOFF"){
+              status = true;
+              }
+            else{
+              stopWheelchair();
+              status = true;
+            }
           }
           else{
             stopWheelchair();
@@ -492,36 +518,36 @@ void loop() {
     }
 
   readInputs();
-
-  //Current limiting code
-  if(rightMotorCurrent > maxCurrent || rightMotorCurrent > maxCurrent){
-
-  if(setSpeed > 0){
-  setSpeed = setSpeed - 1;
-  stringComplete = true;
-  }
-  else if(setSpeed < 0){
-  setSpeed = setSpeed + 1;
-  stringComplete = true;
-  }
-  else{
-    status = false;
-  }
-  inputString = setSpeed;
-  inputString += ",";
-  inputString += setAngle;
-  inputString += ",RUN";
+  //Current Limiting Algorithm
   
-  statusMessage = "WARNING = Overcurrent Warning, recitfying issue.";
-  sendData();
+  if(rightMotorCurrent > maxCurrent || leftMotorCurrent > maxCurrent){
+
+    float maxMotorCurrent = leftMotorCurrent;
+    
+    if(rightMotorCurrent > maxMotorCurrent){
+      maxMotorCurrent = rightMotorCurrent;
+    }
+
+    maxSpeed = (int)(maxSpeed/(maxMotorCurrent/maxCurrent));
+    
+    inputString = setSpeed;
+    inputString += ",";
+    inputString += setAngle;
+    inputString += ",RUN";
+    stringComplete = true;
+    status = true;
+
+    //Send Warning Message
+    statusMessage = "WARNING = Overcurrent Warning. Max Speed now set to " + maxSpeed;
+    sendData();
   }
   
   if(status == false){
   
-  inputString = "0,0,ERROR";
-  statusMessage = "ERROR = Main Loop program error.";
-  stopWheelchair();
-  sendData();
+    inputString = "0,0,ERROR";
+    statusMessage = "ERROR = Main Loop program error.";
+    stopWheelchair();
+    sendData();
   }
 }
 

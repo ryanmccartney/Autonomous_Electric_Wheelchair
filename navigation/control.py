@@ -65,8 +65,8 @@ class Control:
 
         self.decodeResponse(receivedMessage)
 
-        setSpeed = speed
-        setAngle = angle
+        self.setSpeed = speed
+        self.setAngle = angle
 
     #parse response
     def decodeResponse(self, receivedMessage):
@@ -77,6 +77,21 @@ class Control:
         self.rightMotorCurrent = data[1]
         self.leftMotorCurrent = data[2]
         self.status = data[3]
+
+    #Determine Power Consumption
+    def powerConsumed(self):
+
+        self.transmitCommand(self.setSpeed,self.setAngle,"SEND")
+
+        #Accounting for Baseload Current Consumption (A)
+        current = 1.25
+
+        #Calculation Carried out using simple P=VI Equation
+        current =  current + self.rightMotorCurrent + self.leftMotorCurrent
+
+        power = self.batteryVoltage*current
+
+        return power
 
     #Speed Ramping Function   
     def rampSpeed(self,speed,acceleration):
