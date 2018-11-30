@@ -28,34 +28,12 @@
 	</header>
 	
 	<h3>Command Buttons</h3>
-	
-	<p>
-	<form  method="get" name="stop" action="scripts/serialSend.php">
-    <input type="hidden" name="serialData" value="0,0,STOP" >
-    <input type="submit" value="Stop Wheelchair" >
-	</form>
-	</p>
-	
-	<p>
-	<form  method="get" name="update" action="scripts/serialSend.php">
-    <input type="hidden" name="serialData" value="0,0,SEND" >
-    <input type="submit" value="Update Variables" >
-	</form>
-	</p>
-	
-	<p>
-	<form  method="get" name="reset" action="scripts/serialSend.php">
-    <input type="hidden" name="serialData" value="0,0,RESET" >
-    <input type="submit" value="Reset Controller" >
-	</form>
-	</p>
-	
-	<p>
-	<form  method="get" name="brake" action="scripts/serialSend.php">
-    <input type="hidden" name="serialData" value="0,0,BRAKEOFF" >
-    <input type="submit" value="Release Brakes" >
-	</form>
-	</p>
+		<div class="grid-container">
+  			<div class="grid-item"><button onclick="sendData('0,0,STOP')">Stop Wheelchair</button></div>
+  			<div class="grid-item"><button onclick="sendData('0,0,SEND')">Update Log File</button></div>
+  			<div class="grid-item"><button onclick="sendData('0,0,RESET')">Reset Controller</button></div>
+  			<div class="grid-item"><button onclick="sendData('0,0,BRAKEOFF')">Release Brakes</button></div>
+		</div>
 		
 	<h3>Control Gamepad</h3>
 	
@@ -63,7 +41,7 @@
 
 	<div class="stream" id="joystick">
 	
-	<img src="http://xavier.local:8080/?action=stream" alt="media/nostream.jpg">
+	<img src="http://xavier.local:8080/?action=stream">
 
 		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
@@ -197,25 +175,37 @@
 			
 	<h3>Emergency Stop</h3>
 	
+	
+
+	<script>
+		var command = "scripts/serialSend.php?serialData=";
+
+		function sendData(var payload) {
+
+			command = command + payload;
+
+			$.ajax({
+					type: "GET",
+					url: command,
+					datatype: "text"
+				})
+
+		}
+	</script>
+		
+
 	<script>
 		var off = "media/Emergency Stop Off.png";
 		var	on = "media/Emergency Stop On.png";
 		var serialData = "0,0,STOP"
 		var sendData = "scripts/serialSend.php?serialData="+ serialData;
 
-		function changeImage() {
-		{
+		function changeImage(){
 			alert(window.document.emergency.src);
 
 			if(document.emergency.src==off){
 				document.emergency.src=on;
-		
-				$.ajax({
-					type: "GET",
-					url: sendData,
-					datatype: "text"
-				})
-
+				sendData('0,0,STOP')				
 			}
 
 			else if(document.emergency.src==on){
