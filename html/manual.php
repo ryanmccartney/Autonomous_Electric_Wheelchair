@@ -39,32 +39,30 @@
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 
-	<div class="stream" id="joystick">
-	
-	<img src="http://xavier.local:8080/?action=stream">
+	<div class="stream" id="joystick"><img src="http://xavier.local:8080/?action=stream"></div>
 
-		<script src="scripts/jquery.min.js"></script>
-			<script src="scripts/virtualjoystick.js"></script>
+	<script src="scripts/jquery.min.js"></script>
+	<script src="scripts/virtualjoystick.js"></script>
 			
-			<script>
-			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
-			
-			var serialDataPrevious = '0,0,SEND';
-			var receivedData = '0,0,0,STATUS';
-									
+	<script>
+		console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
+		
+		var serialDataPrevious = '0,0,SEND';
+		var receivedData = '0,0,0,STATUS';
+
+		//Define the Joystick and it's behaviour					
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
-				mouseSupport	: true,
-				//stationaryBase: true,
-                //    baseX: 300,
-                //    baseY: 300,
-				limitStickTravel: true,
-				stickRadius	: 100
-				
+			      mouseSupport: true,
+		      stationaryBase: true,
+                      baseX: window.innerWidth/2,
+                      baseY: window.innerHeight/2,
+		      limitStickTravel: true,
+		      stickRadius: 100
 			});
 			
 			joystick.addEventListener('touchStart', function(){
-				console.log('down')
+				console.log('INFO: Joystick Engaged')
 			})
 			
 			joystick.addEventListener('onTouchMove', function(){
@@ -73,7 +71,7 @@
 			})
 			
 			joystick.addEventListener('touchEnd', function(){
-				console.log('up')
+				console.log('INFO: Joystick Released')
 			})
 
 			setInterval(function(){
@@ -143,10 +141,7 @@
 				}	
 			}, 1/30 * 1000);
 		</script>
-	
-	</div>
-
-	
+		
 	<h3>Debug Data</h3>
 	
 	<p><b>PHP executing as: </b><?php echo exec('whoami');?></p>
