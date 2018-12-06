@@ -27,7 +27,6 @@ class Navigation:
 
     scaleFactor = 1
     closestDistance = 255
-    maxSpeed = 0
     fps = 30
 
     def __init__(self,unitSize,mapLength,mapWidth,mapHieght):
@@ -80,15 +79,6 @@ class Navigation:
         pointCloud = self.populateMatrix(resizedFrame)
  
         return pointCloud
-
-    #Function to Calculate Speed Lmit bases on the value of the closest point
-    @staticmethod
-    @nb.jit(nopython=True)
-    def calcMaxSpeed(distance):
-        
-        speedLimit = int((distance/255)*100)
-
-        return speedLimit
 
     #Optimised method for finding the closest point in an image
     @staticmethod

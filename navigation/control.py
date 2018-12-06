@@ -24,6 +24,9 @@ class Control:
 
     def __init__(self,host):
 
+    self.maxSpeed = 0
+    self.speedLimit = 100
+
         self.host = host
 
         #Create a file for both transmission and receive logs depending on time
@@ -141,4 +144,51 @@ class Control:
                     self.transmitCommand(speed,self.setAngle,self.command)
 
         return speed
-    
+
+
+    #Function to Calculate Speed Lmit bases on the value of the closest point
+    @staticmethod
+    @nb.jit(nopython=True)
+    def calcMaxSpeed(self,closestPoint):
+        
+        self.maxSpeed = int((closestPoint/255)*100)
+
+        #Prevent Speed higher than the limit set
+        if self.maxSpeed > self.speedLimit:
+
+            self.maxSpeed = self.speedLimit
+
+    #Collision Avoidance Algorithm
+    @threaded
+    def collisionAvoidance(self):
+
+        while 1:
+
+            #If Wheelchair is breaking the Speed Limit (Set by Closest Object)
+            if self.setSpeed > self.maxSpeed:
+                
+                #Determine Rate of Decelleration depending on delta
+                decceleration = self.setSpeed - self.maxSpeed
+
+                #Adjust Speed                
+                self.rampSpeed(self.maxSpeed,decceleration):
+
+            else if self.setSpeed < self.maxSpeed:
+
+                #Determine Rate of Acceleration depending on delta
+                acceleration = self.maxSpeed - self.setSpeed 
+
+                #Adjust Speed                
+                self.rampSpeed(self.maxSpeed,decceleration):
+
+
+
+
+
+
+            
+            
+
+
+
+        

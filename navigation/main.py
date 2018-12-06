@@ -146,19 +146,22 @@ except:
     logFile.write(logEntry)
     print(logEntry)
 
-previousMaxSpeed = 0
+previousClosestPoint = 0
 pointCloud = 0
 frames = 25
 
 while 1:
 
     #Write Max Speed to Log File
-    if navigate.maxSpeed != previousMaxSpeed:
+    if navigate.closestDistance != previousClosestPoint:
         #write status to log file
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "STATUS = The Maximum Wheelchair Speed has been set as "+str(navigate.maxSpeed)+ "\n"
+        logEntry = currentDateTime + ": " + "STATUS = The Maximum Wheelchair Speed has been set as "+str(navigate.closestDistance)+ "\n"
         logFile.write(logEntry)
-        previousMaxSpeed = navigate.maxSpeed
+        previousClosestPoint = navigate.closestDistance
+
+        #Change Speed Limit
+        wheelchair.calcMaxSpeed(navigate.closestDistance)
     
     depthFrame = kinectDepth.getFrame()
     cv.imshow('Original Depth Frame',depthFrame)
