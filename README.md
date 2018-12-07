@@ -23,7 +23,8 @@ For autonomous navigation the above dependencies and the follow are requird;
 ### Hardware Dependencies
 * Arduino MEGA
 * RaspberryPi 3
-* Microsoft Kinect V1
+* Microsoft Kinect V1 (Note that the V2 Kinect Sensor requires USB 3.0 Support)
+* Pololu G2 H-Bridge [Motor Driver](https://www.pololu.com/product/2995) (24v21)  
 
 ## Installation
 
@@ -37,6 +38,3 @@ For autonomous navigation the above dependencies and the follow are requird;
 
 ## Copyright
 This source code is copyright, All rights reserved, Ryan McCartney, 2018
-
-
-
