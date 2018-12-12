@@ -29,7 +29,7 @@ try:
     port = 8080
 
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Framerate of streams is set as "+fps+"fps and initial stream port is port "+port+"\n"
+    logEntry = currentDateTime + ": " + "INFO = Framerate of streams is set as "+str(fps)+"fps and initial stream port is port "+str(port)+"\n"
     logFile.write(logEntry)
     print(logEntry)
 
@@ -38,10 +38,13 @@ try:
 
     #Start streams
     try:
-        stream.streamWebcam()
         stream.streamKinectImage()
-        #stream.streamKinectDepth()
-
+        time.sleep(2)
+        stream.streamKinectDepth()
+        time.sleep(2)
+        stream.streamWebcam()
+        time.sleep(2)   
+ 
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
         logEntry = currentDateTime + ": " + "INFO = Camera Streams Started."+"\n"
         logFile.write(logEntry)
@@ -61,42 +64,6 @@ try:
         logEntry = currentDateTime + ": " + "INFO = Opened connection with wheelchair cotroller at "+wheelchair.name+"\n"
         logFile.write(logEntry)
         print(logEntry)
-
-        try:
-            #open a txt file to use for monitoring output  
-            dataFile = open("data.txt","w+")
-
-            wheelchairSerial = io.TextIOWrapper(io.BufferedRWPair(wheelchair, wheelchair))
-
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = Beginning logging of controller data."+"\n"
-            logFile.write(logEntry)
-            print(logEntry)
-
-            while 1:
-               
-                try:
-                    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-                    dataEntry = currentDateTime + "," + wheelchairSerial.readline()
-                    previousEntry = ""
-
-                    if dataEntry != previousEntry:
-
-                        #Write new data to file
-                        dataFile.write(dataEntry)
-                        previousEntry = dataEntry
-                
-                except:
-                    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-                    logEntry = currentDateTime + ": " + "ERROR = Logging controller data failed."+"\n"
-                    logFile.write(logEntry)
-                    print(logEntry)
-
-        except:
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "ERROR = Cannot start logging of controller data."+"\n"
-            logFile.write(logEntry)
-            print(logEntry)   
 
     except:
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")

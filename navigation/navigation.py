@@ -164,7 +164,7 @@ class Navigation:
             self.closestDistance = closestPoint[0]
             
             #Set Max Speed with this reading
-            self.maxSpeed = self.calcMaxSpeed(self.closestDistance)
+            #self.maxSpeed = self.calcMaxSpeed(self.closestDistance)
 
             if showStream == True:
 

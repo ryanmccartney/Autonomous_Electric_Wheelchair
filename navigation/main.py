@@ -73,8 +73,8 @@ except:
 #Get camera data
 try: 
     #Class instances for various streams
-    #kinectImage = cameraData(kinectImage_url,"Kinect RGB Data")
-    kinectDepth = cameraData(webcam_url,"Kinect Depth Data")
+    kinectImage = cameraData(kinectImage_url,"Kinect RGB Data")
+    kinectDepth = cameraData(kinectDepth_url,"Kinect Depth Data")
 
     #Stream Data
     #kinectImage.streamVideo()
@@ -131,7 +131,7 @@ try:
     navigate.fps = 60
     delay = 1/navigate.fps
     #Start Closest Point in Path Analysis
-    navigate.closestPoint(webcam_url,True)
+    navigate.closestPoint(kinectDepth_url,True)
     
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")

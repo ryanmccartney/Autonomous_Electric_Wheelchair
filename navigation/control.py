@@ -9,6 +9,14 @@ import time
 import urllib
 import requests
 
+#define threading wrapper
+def threaded(fn):
+    def wrapper(*args, **kwargs):
+        thread = threading.Thread(target=fn, args=args, kwargs=kwargs)
+        thread.start()
+        return thread
+    return wrapper
+    
 class Control:
 
     #Received Variables
@@ -22,10 +30,10 @@ class Control:
     setAngle = 0
     command = "SEND"
 
-    def __init__(self,host):
+    maxSpeed = 0
+    speedLimit = 100
 
-    self.maxSpeed = 0
-    self.speedLimit = 100
+    def __init__(self,host):
 
         self.host = host
 
@@ -147,8 +155,6 @@ class Control:
 
 
     #Function to Calculate Speed Lmit bases on the value of the closest point
-    @staticmethod
-    @nb.jit(nopython=True)
     def calcMaxSpeed(self,closestPoint):
         
         self.maxSpeed = int((closestPoint/255)*100)
@@ -171,15 +177,15 @@ class Control:
                 decceleration = self.setSpeed - self.maxSpeed
 
                 #Adjust Speed                
-                self.rampSpeed(self.maxSpeed,decceleration):
+                self.rampSpeed(self.maxSpeed,decceleration)
 
-            else if self.setSpeed < self.maxSpeed:
+            elif self.setSpeed < self.maxSpeed:
 
                 #Determine Rate of Acceleration depending on delta
                 acceleration = self.maxSpeed - self.setSpeed 
 
                 #Adjust Speed                
-                self.rampSpeed(self.maxSpeed,decceleration):
+                self.rampSpeed(self.maxSpeed,decceleration)
 
 
 

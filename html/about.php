@@ -32,12 +32,18 @@
 
 	<p>The Autonomous wheelchair project makes use of a number of freely avalible software libraries and tools documented below.</p>
 	
+	<div class="markdown">
 	<?php
-		include 'scripts/parsedown.php' ;
+		include 'scripts/Parsedown.php';
+		
+		$file = fopen('readme.html', 'w');
+
 		$html = file_get_contents('README.md');
 		$Parsedown = new Parsedown();
-		echo $Parsedown->text($html);
+		fwrite($file,($Parsedown->text($html)));
 	?>
+	<iframe src="readme.html" hieght="100%" width="80%" style="border:none; overflow:hidden;"></iframe>
+	</div>
 
 	</div>
 	

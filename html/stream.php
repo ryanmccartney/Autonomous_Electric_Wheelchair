@@ -10,8 +10,23 @@
 
 	<body>	
 	
-		<img width="60%" src="http://xavier.local:8080/?action=stream">
-		
+	<div class="grid-container">
+  		<div class="grid-item">Microsoft Kinect RGB Image<p>
+			
+		  <img src="http://xavier.local:8080/?action=stream" width="30%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		  </p></div>
+
+  		<div class="grid-item">Microsoft Kinect Depth Image<p>
+			
+		  <img src="http://xavier.local:8081/?action=stream" width="30%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		  </p></div>
+
+  		<div class="grid-item">Webcam Floor Image <p>
+			  
+		   <img src="http://xavier.local:8082/?action=stream" width="30%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		   </p></div>
+
+	</div>
 	</body>
 
 </html> 

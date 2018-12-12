@@ -18,6 +18,10 @@
   padding-top: 102px;
 }
 
+.markdown{
+	text-align: left;
+}
+
 .stream{
 	border: 0px solid #eb0029;
 	overflow: hidden;

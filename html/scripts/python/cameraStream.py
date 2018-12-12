@@ -24,6 +24,8 @@ class cameraStream:
     
     serverCommand = "mjpg_streamer"
     running = False
+    depth = False
+    image = False
 
     def __init__(self, fps, port):
 
@@ -33,8 +35,7 @@ class cameraStream:
 
         #Run command to mount directory in RAM
         os.system ("sudo mount -t tmpfs tmpfs /var/www/html/stream")
-
-        freenect.sync_stop()
+        self.getKinectData()
 
     #function to get RGB image from kinect
     @staticmethod
@@ -55,14 +56,14 @@ class cameraStream:
     def streamWebcam(self):
 
         try:
-            print('INFO: Adding V4L Webcam to stream on port ',str(self.port),'.') 
+            print "INFO: Adding V4L Webcam to stream on port ",str(self.port),"." 
             startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(self.port)+"' -i input_uvc.so"
             os.system(startWebcamStream)
             self.port = self.port + 1
 
         except self.running==False:
 
-            print('INFO: Shutting down the V4l Webcam Stream')    
+            print "INFO: Shutting down the V4l Webcam Stream"    
             sys.exit()     
 
     #Method for streaming kinect RGB image on a port
@@ -70,15 +71,17 @@ class cameraStream:
     def streamKinectImage(self):
         
         try:
-            self.getKinectImage()
-            print('INFO: Adding kinect RGB image to stream on port ',str(self.port),'.') 
-            startWebcamStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(self.port) +'" -i "input_file.so -f /var/www/html/stream -n image.jpg -d 0"'
-            os.system(startWebcamStream)
+            self.image = True
             self.port = self.port + 1
+            port = self.port -1
+            print "INFO: Adding kinect RGB image to stream on port ",str(port),"."
+            startKinectImageStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(port) +"' -i 'input_file.so -f /var/www/html/stream -n image.jpg -d 0'"
+            os.system(startKinectImageStream)
 
         except self.running==False:
 
-            print('INFO: Shutting down the kinect RGB image stream')
+            print "INFO: Shutting down the kinect RGB image stream"
+            self.image = False
             freenect.sync_stop()    
             sys.exit()   
 
@@ -87,51 +90,48 @@ class cameraStream:
     def streamKinectDepth(self):
 
         try:
-            self.getKinectDepth()
-            print('INFO: Adding kinect depth images to stream on port ',str(self.port),'.') 
-            startWebcamStream = self.serverCommand + ' -o "output_http.so -w ./www/html -p '+ str(self.port) +'"-i "input_file.so -f /var/www/html/stream -n depthImage.jpg -d 0"'
-            os.system(startWebcamStream)
+            self.depth = True
             self.port = self.port + 1
+            port = self.port -1
+            print "INFO: Adding kinect depth images to stream on port ",str(port),"." 
+            startKinectDepthStream = self.serverCommand + " -o 'output_http.so -w ./www/html -p "+ str(port) +"' -i 'input_file.so -f /var/www/html/stream -n depthImage.jpg -d 0'"
+            os.system(startKinectDepthStream)
 
         except self.running==False:
 
-            print('INFO: Shutting down the kinect dpeth image stream')    
+            print "INFO: Shutting down the kinect depth image stream"
+            self.depth = False    
             freenect.sync_stop()
             sys.exit()   
 
     #Threaded method for adding kinect data to the stream
     @threaded
-    def getKinectDepth(self):
+    def getKinectData(self):
 
         delay = 1/self.fps
-    
-        while self.running:
 
-            #get a frame from depth sensor
-            depth = self.get_depth()
-            #write depth image to file
-            cv.imwrite('/var/www/html/stream/depthImage.jpg',depth)
-
-            #frame delay
-            time.sleep(delay)
-
-        print('INFO: Shutting down Kinect depth image capture.')    
+        #Wait to ports are setup before streaming
+        time.sleep(10)
         freenect.sync_stop()
 
-    @threaded
-    def getKinectImage(self):
-
-        delay = 1/self.fps
-  
         while self.running:
+            
+            if self.depth == True:
 
-            #get a frame from depth sensor
-            image = self.get_video()
-            #write depth image to file
-            cv.imwrite('/var/www/html/stream/image.jpg',image)
+                #get a frame from depth sensor
+                depth = self.get_depth()
+                #write depth image to file
+                cv.imwrite('/var/www/html/stream/depthImage.jpg',depth)
+
+            if self.image == True:
+
+                #get a frame from depth sensor
+                image = self.get_video()
+                #write depth image to file
+                cv.imwrite('/var/www/html/stream/image.jpg',image)
 
             #frame delay
             time.sleep(delay)
-           
-        print('INFO: Shutting down Kinect RGB image capture.')    
+
+        print "INFO: Shutting down Kinect Data Capture."  
         freenect.sync_stop()
