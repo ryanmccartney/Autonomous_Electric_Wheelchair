@@ -1,6 +1,19 @@
+.streams {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	padding: 10px;
+  }
+  .stream {
+	background-color: rgba(255, 255, 255, 1);
+	border: 0px solid rgba(0, 0, 0, 0.8);
+	overflow: hidden;
+	padding: 10px;
+	text-align: center;
+  }
+
 .active {
     background-color: #e2e2e2;
-	color: black;
+	color: rgb(78, 58, 58);
 }
 
 .header {
@@ -24,16 +37,6 @@
 	font-size: 1vw;
 	text-align: center;
 }
-
-.stream{
-	border: 0px solid #eb0029;
-	overflow: hidden;
-	padding-top: 0;
-	margin: auto;
-	-webkit-user-select	: none;
-	-moz-user-select: none;
-}
-
 
 #joystick {
     border: 1px solid #eb0029;

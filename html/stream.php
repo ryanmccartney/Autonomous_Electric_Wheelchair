@@ -30,20 +30,20 @@
 		</div>
 	</header>
 	
-	<div class="grid-container">
-  		<div class="grid-item">
+	<div class="streams">
+  		<div class="stream">
 		  
 		  <h3>Microsoft Kinect RGB Image</h3>
 		  <img src="http://xavier.local:8080/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		  </div>
 
-  		<div class="grid-item">
+  		<div class="stream">
 		  
 		  <h3>Microsoft Kinect Depth Image</h3>			
 		  <img src="http://xavier.local:8081/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		  </div>
 
-  		<div class="grid-item">
+  		<div class="stream">
 		  
 		  <h3> Webcam Floor Image</h3>
 		  <img src="http://xavier.local:8082/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
