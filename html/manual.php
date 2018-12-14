@@ -6,63 +6,90 @@
 		<title>Autonomous Wheelchair</title>
 		<link rel="shortcut icon" href="media/favicon.ico" />	
 		<link rel="stylesheet" href="style/style.css">
-				
+		
 	</head>
 
-<body>
+	<body>	
 	
-	<header>
+ 	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-	<div class="header" id="myHeader">
-		<h2>Manual Control Interface</h2>
 		
-		<ul>
-			<li><a href="index.php">Home</a></li>
-			<li><a href="auto.php">Autonomous</a></li>
-			<li><a class="active" href="manual.php">Manual</a></li>
-			<li><a href="about.php">About</a></li>
-			<li><a href="stats.php">Logging</a></li>
-		</ul>
-	</div>
+		<div class="header" id="myHeader">
+			
+			<h2>Manual Navigation</h2>
+		
+			<ul>
+				<li><a href="index.php">Home</a></li>
+				<li><a href="stream.php">Stream</a></li>
+				<li><a href="auto.php">Auto Navigation</a></li>
+				<li><a class="active" href="manual.php">Manual Navigation</a></li>
+				<li><a href="about.php">About</a></li>
+				<li><a href="stats.php">Logging</a></li>
+			</ul>
+		</div>
 	</header>
 	
 	<h3>Command Buttons</h3>
-		<div class="grid-container">
-  			<div class="grid-item"><button onclick="sendData('0,0,STOP')">Stop Wheelchair</button></div>
-  			<div class="grid-item"><button onclick="sendData('0,0,SEND')">Update Log File</button></div>
-  			<div class="grid-item"><button onclick="sendData('0,0,RESET')">Reset Controller</button></div>
-  			<div class="grid-item"><button onclick="sendData('0,0,BRAKEOFF')">Release Brakes</button></div>
-		</div>
+	
+	<p>
+	<form  method="get" name="stop" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,STOP" >
+    <input type="submit" value="Stop Wheelchair" >
+	</form>
+	</p>
+	
+	<p>
+	<form  method="get" name="update" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,SEND" >
+    <input type="submit" value="Update Variables" >
+	</form>
+	</p>
+	
+	<p>
+	<form  method="get" name="reset" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,RESET" >
+    <input type="submit" value="Reset Controller" >
+	</form>
+	</p>
+	
+	<p>
+	<form  method="get" name="brake" action="scripts/serialSend.php">
+    <input type="hidden" name="serialData" value="0,0,BRAKEOFF" >
+    <input type="submit" value="Release Brakes" >
+	</form>
+	</p>
 		
 	<h3>Control Gamepad</h3>
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 
-	<div class="stream" id="joystick"><img src="http://xavier.local:8080/?action=stream"></div>
+	<div class="stream" id="joystick">
+	
+	<img src="http://xavier.local:8080/?action=stream" alt="media/nostream.jpg">
 
-	<script src="scripts/jquery.min.js"></script>
-	<script src="scripts/virtualjoystick.js"></script>
+		<script src="scripts/jquery.min.js"></script>
+			<script src="scripts/virtualjoystick.js"></script>
 			
-	<script>
-		console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
-		
-		var serialDataPrevious = '0,0,SEND';
-		var receivedData = '0,0,0,STATUS';
-
-		//Define the Joystick and it's behaviour					
+			<script>
+			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
+			
+			var serialDataPrevious = '0,0,SEND';
+			var receivedData = '0,0,0,STATUS';
+									
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('joystick'),
-			      mouseSupport: true,
-		      stationaryBase: true,
-                      baseX: window.innerWidth/2,
-                      baseY: window.innerHeight/2,
-		      limitStickTravel: true,
-		      stickRadius: 100
+				mouseSupport	: true,
+				//stationaryBase: true,
+                //    baseX: 300,
+                //    baseY: 300,
+				limitStickTravel: true,
+				stickRadius	: 100
+				
 			});
 			
 			joystick.addEventListener('touchStart', function(){
-				console.log('INFO: Joystick Engaged')
+				console.log('down')
 			})
 			
 			joystick.addEventListener('onTouchMove', function(){
@@ -71,7 +98,7 @@
 			})
 			
 			joystick.addEventListener('touchEnd', function(){
-				console.log('INFO: Joystick Released')
+				console.log('up')
 			})
 
 			setInterval(function(){
@@ -139,9 +166,12 @@
 						}
 					});
 				}	
-			}, 1/30 * 1000);
+			}, 1/5 * 1000);
 		</script>
-		
+	
+	</div>
+
+	
 	<h3>Debug Data</h3>
 	
 	<p><b>PHP executing as: </b><?php echo exec('whoami');?></p>
@@ -170,37 +200,25 @@
 			
 	<h3>Emergency Stop</h3>
 	
-	
-
-	<script>
-		var command = "scripts/serialSend.php?serialData=";
-
-		function sendData(var payload) {
-
-			command = command + payload;
-
-			$.ajax({
-					type: "GET",
-					url: command,
-					datatype: "text"
-				})
-
-		}
-	</script>
-		
-
 	<script>
 		var off = "media/Emergency Stop Off.png";
 		var	on = "media/Emergency Stop On.png";
 		var serialData = "0,0,STOP"
 		var sendData = "scripts/serialSend.php?serialData="+ serialData;
 
-		function changeImage(){
+		function changeImage() {
+		{
 			alert(window.document.emergency.src);
 
 			if(document.emergency.src==off){
 				document.emergency.src=on;
-				sendData('0,0,STOP')				
+		
+				$.ajax({
+					type: "GET",
+					url: sendData,
+					datatype: "text"
+				})
+
 			}
 
 			else if(document.emergency.src==on){

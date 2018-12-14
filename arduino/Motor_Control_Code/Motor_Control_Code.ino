@@ -31,7 +31,7 @@
 #define BatteryIndication 2 //Voltage Sensor
 
 //Receive Data Variables
-float maxCurrent = 20.00;
+float maxCurrent = 30.00;
 int maxSpeed = 100;
 
 //Receive Data Variables
@@ -528,7 +528,7 @@ void loop() {
       maxMotorCurrent = rightMotorCurrent;
     }
 
-    maxSpeed = (int)(maxSpeed/(maxMotorCurrent/maxCurrent));
+    //maxSpeed = (int)(100/(maxMotorCurrent/maxCurrent));
     
     inputString = setSpeed;
     inputString += ",";

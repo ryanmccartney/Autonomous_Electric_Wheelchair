@@ -5,27 +5,29 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Autonomous Wheelchair</title>
 		<link rel="shortcut icon" href="media/favicon.ico" />	
-		
 		<link rel="stylesheet" href="style/style.css">
 		
 	</head>
 
-<body>
-
-	<header>
+	<body>	
+	
+ 	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-	<div class="header" id="myHeader">
-		<h2>Project Details</h2>
 		
-		<ul>
-			<li><a href="index.php">Home</a></li>
-			<li><a href="auto.php">Autonomous</a></li>
-			<li><a href="manual.php">Manual</a></li>
-			<li><a class="active" href="about.php">About</a></li>
-			<li><a href="stats.php">Logging</a></li>
-		</ul>
-	</div>
+		<div class="header" id="myHeader">
+			
+			<h2>Operational Data Logging </h2>
+		
+			<ul>
+				<li><a href="index.php">Home</a></li>
+				<li><a href="stream.php">Stream</a></li>
+				<li><a href="auto.php">Auto Navigation</a></li>
+				<li><a href="manual.php">Manual Navigation</a></li>
+				<li><a class="active" href="about.php">About</a></li>
+				<li><a href="stats.php">Logging</a></li>
+			</ul>
+		</div>
 	</header>
 	
 	<div class="content">

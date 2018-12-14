@@ -20,6 +20,9 @@
 
 .markdown{
 	text-align: left;
+	font-family: helvetica, sans-serif;
+	font-size: 1vw;
+	text-align: center;
 }
 
 .stream{
@@ -106,7 +109,7 @@ table {
 td, th {
 	border: 1px solid white;
 	text-align: center;
-	padding: 10px;
+	padding: 5px;
 	width: 100%;
 	}
 	
@@ -114,9 +117,9 @@ input[type=submit] {
 	border-radius: 8px;
 	border: 0;
 	color: white;
-	width: 20%;
+	width: 15%;
 	margin: auto;
-	padding: 8px;
+	padding: 5px;
 	font-size: 1.5vw;
 	font-family: helvetica, sans-serif;
 	background: #eb0029;

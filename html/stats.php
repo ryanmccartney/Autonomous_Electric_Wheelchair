@@ -6,25 +6,28 @@
 		<title>Autonomous Wheelchair</title>
 		<link rel="shortcut icon" href="media/favicon.ico" />	
 		<link rel="stylesheet" href="style/style.css">
-				
+		
 	</head>
 
-<body>
+	<body>	
 	
-	<header>
+ 	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-	<div class="header" id="myHeader">
-		<h2>Manual Control Interface</h2>
 		
-		<ul>
-			<li><a href="index.php">Home</a></li>
-			<li><a href="auto.php">Autonomous</a></li>
-			<li><a href="manual.php">Manual</a></li>
-			<li><a href="about.php">About</a></li>
-			<li><a class="active" href="stats.php">Logging</a></li>
-		</ul>
-	</div>
+		<div class="header" id="myHeader">
+			
+			<h2>Operational Data Logging </h2>
+		
+			<ul>
+				<li><a href="index.php">Home</a></li>
+				<li><a href="stream.php">Stream</a></li>
+				<li><a href="auto.php">Auto Navigation</a></li>
+				<li><a href="manual.php">Manual Navigation</a></li>
+				<li><a href="about.php">About</a></li>
+				<li><a class="active" href="stats.php">Logging</a></li>
+			</ul>
+		</div>
 	</header>
 	
 	<h3>Command Buttons</h3>
@@ -57,7 +60,7 @@
 	</form>
 	</p>
 		
-	<h3>Controller Data Log</h3>
+	<h3>Recieved Controller Data Log</h3>
 	
 	<p>Logged Operational Data from the Wheelchair controlloer appears below. Follow 
 	

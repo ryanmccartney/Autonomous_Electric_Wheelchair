@@ -14,72 +14,69 @@
  	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-	<div class="header" id="myHeader">
-		<h2>Control Interface</h2>
 		
-		<ul>
-			<li><a class="active" href="index.php">Home</a></li>
-			<li><a href="auto.php">Autonomous</a></li>
-			<li><a href="manual.php">Manual</a></li>
-			<li><a href="about.php">About</a></li>
-			<li><a href="stats.php">Logging</a></li>
-		</ul>
-	</div>
+		<div class="header" id="myHeader">
+			
+			<h2>Home</h2>
+		
+			<ul>
+				<li><a class="active" href="index.php">Home</a></li>
+				<li><a href="stream.php">Stream</a></li>
+				<li><a href="auto.php">Auto Navigation</a></li>
+				<li><a href="manual.php">Manual Navigation</a></li>
+				<li><a href="about.php">About</a></li>
+				<li><a href="stats.php">Logging</a></li>
+			</ul>
+		</div>
 	</header>
+	
+	<div>
+	
+		<h3>Autonomous Electric Wheelchair Project</h3>
+		<p>This project allows full autonomous control of an electric wheelchair. This web interface allows the user to access debug information, issue commands and take manual control of the wheelchair if necessary.</p>
+		<p>See the various sections of this interface for further controls.</p>
+	
+		<h3>Live Stream of Wheelchair Enviroment</h3>
+		<div class="stream">
+		<img src="http://xavier.local:8080/?action=stream">
+		</div>
 
-		
-	<div class="content">
+		<h3>Manual Control of Wheelchair</h3>
+		<p>Manual control of the wheelchair is accessible from the menu at the top of this page.</p>
 	
-	<h3>Autonomous Electric Wheelchair Project</h3>
-	<p>This project allows full autonomous control of an electric wheelchair. This web interface allows the user to access debug information, issue commands and take manual control of the wheelchair if necessary.</p>
-	<p>See the various sections of this interface for further controls.</p>
-	
-	<div class="stream">
-	<img src="http://xavier.local:8080/?action=stream">
-	</div>
+		<h3>Emergency Stop</h3>
+		<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
 
-	<h3>Manual Control of Wheelchair</h3>
-	
-	
-	
-	
-	<br>
-	
-	
-	<h3>Emergency Stop</h3>
-	
-	<img onclick="stop" src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;">
-	<br>
-	
-	
-	</div>
-	
-	<footer>
-		
-		<br>
-		<p>&copy; Copyright 2018, Queen's University Belfast | Ryan McCartney</p>
-		<a href="https://www.qub.ac.uk">
-		<img src="media/QUB Logo.jpg" style="max-width:8%;height:auto;">
-		</a>
-		
-	</footer>
-	
-	<script>
-		window.onscroll = function() {myFunction()};
+		<script>
+			var off = "media/Emergency Stop Off.png";
+			var	on = "media/Emergency Stop On.png";
+			var serialData = "0,0,STOP"
+			var sendData = "scripts/serialSend.php?serialData="+ serialData;
 
-		var header = document.getElementById("myHeader");
-		var sticky = header.offsetTop;
+			function changeImage(){
+				alert(window.document.emergency.src);
 
-		function myFunction() {
-			if (window.pageYOffset > sticky) {
-				header.classList.add("sticky");
-			} else {
-				header.classList.remove("sticky");
+				if(document.emergency.src==off){
+					document.emergency.src=on;
+					sendData('0,0,STOP')				
+				}
+
+				else if(document.emergency.src==on){
+					document.emergency.src=off;
+				}
 			}
-		}
-	</script>
+		</script>
+		
+	</div>
+	
+		<footer>
+			<br>
+			<p>&copy; Copyright 2018, Queen's University Belfast | Ryan McCartney</p>
+			<a href="https://www.qub.ac.uk">
+			<img src="media/QUB Logo.jpg" style="max-width:8%;height:auto;">
+			</a>
+		</footer>
 	
 	</body>
-
 </html> 
 
