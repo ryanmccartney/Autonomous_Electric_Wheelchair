@@ -35,15 +35,21 @@
 		<h3>Autonomous Electric Wheelchair Project</h3>
 		<p>This project allows full autonomous control of an electric wheelchair. This web interface allows the user to access debug information, issue commands and take manual control of the wheelchair if necessary.</p>
 		<p>See the various sections of this interface for further controls.</p>
-	
+		
+		<hr>
+
 		<h3>Live Stream of Wheelchair Enviroment</h3>
 		<div class="stream">
 		<img src="http://xavier.local:8080/?action=stream">
 		</div>
 
+		<hr>
+
 		<h3>Manual Control of Wheelchair</h3>
 		<p>Manual control of the wheelchair is accessible from the menu at the top of this page.</p>
 	
+		<hr>
+
 		<h3>Emergency Stop</h3>
 		<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
 

@@ -59,24 +59,40 @@
     <input type="submit" value="Release Brakes" >
 	</form>
 	</p>
+
+	<hr>
 		
-	<h3>Recieved Controller Data Log</h3>
+	<h3>Logs of Recieved Data from Controller</h3>
 	
-	<p>Logged Operational Data from the Wheelchair controlloer appears below. Follow 
-	
-	<a href="scripts/receivedData.txt" download>
-	this link
-	</a>
-	
-	to download a copy of this data.</p>
-
 	<p>
-	<div id="logfile">
+	Logged Operational Data from the Wheelchair controller appears below. Follow 
+	<a href="scripts/receivedData.txt" download> this link</a>to download a copy of this data.</p>
+	
+	<p><div id="logfile">
 
-  	<p><iframe src="scripts/receivedData.txt" frameborder="1" height="400" width="90%"></iframe></p>
+  	<p><iframe src="scripts/receivedData.txt" frameborder="1" height="600" width="90%"></iframe></p>
 	
 	</div>
 	</p>
+
+	<hr>
+
+	<h3>Logs of Data Transmitted to Controller</h3>
+	
+	<p>
+	Logged control commands that have been sent to the Wheelchair controlloer appear below. Follow 
+	<a href="scripts/transmittedData.txt" download> this link</a>to download a copy of this data. Note that this data is time
+	stapmed in the same instance of the above logs.</p>
+	
+	<p><div id="logfile">
+
+  	<p><iframe src="scripts/transmittedData.txt" frameborder="1" height="600" width="90%"></iframe></p>
+	
+	</div>
+	</p>
+
+	<hr>
+
 
 	<h3>Debug Data</h3>
 	
@@ -96,47 +112,8 @@
 	
 	<p><b>Status: </b><i id="status"></i></p>
 		
-	<h3>Manual Data Input</h3>
-	
-	<form  method="get" name="manualEntry" action="scripts/serialSend.php">
-    <input type="text" name="serialData" value="0,0,STOP" >
-	<br>
-    <input type="submit" value="Submit" >
-	</form>
-			
-	<h3>Emergency Stop</h3>
-	
-	<script>
-		var off = "media/Emergency Stop Off.png";
-		var	on = "media/Emergency Stop On.png";
-		var serialData = "0,0,STOP"
-		var sendData = "scripts/serialSend.php?serialData="+ serialData;
-
-		function changeImage() {
-		{
-			alert(window.document.emergency.src);
-
-			if(document.emergency.src==off){
-				document.emergency.src=on;
-		
-				$.ajax({
-					type: "GET",
-					url: sendData,
-					datatype: "text"
-				})
-
-			}
-
-			else if(document.emergency.src==on){
-				document.emergency.src=off;
-			}
-		}
-	</script>
-	
-	<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
-		
-	<br>
-	
+	<hr>
+				
 	<footer>
 	
 	<br>

@@ -26,7 +26,14 @@
 	// Then we need to open it
 	$serial->deviceOpen();
 
-	$data = $_GET['serialData']; 
+	$data = $_GET['serialData'];
+
+	//Write Data being Transmitted to a Log File
+	$dateTime = date("Y/m/d H:i:s");
+	$data = $dateTime.",".$data;
+	$transmissionLog = fopen('transmittedData.txt', 'a');
+	fwrite($transmissionLog, $data);
+
 	$serial->sendMessage($data);	
 			
 	//echo"<p><b>Data sent to serial port: </b>";
@@ -41,10 +48,9 @@
 		echo $read;
 
 		//Write Data to Log File
-		$dateTime = date("Y/m/d H:i:s");
 		$data = $dateTime.",".$read;
-		$file = fopen('receivedData.txt', 'a');
-		fwrite($file, $data);
+		$receiveLog = fopen('receivedData.txt', 'a');
+		fwrite($receiveLog, $data);
 		
 		//echo"</p>";
 	}

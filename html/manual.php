@@ -60,6 +60,8 @@
 	</form>
 	</p>
 		
+	<hr>
+
 	<h3>Control Gamepad</h3>
 	
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
@@ -171,7 +173,8 @@
 	
 	</div>
 
-	
+	<hr>
+
 	<h3>Debug Data</h3>
 	
 	<p><b>PHP executing as: </b><?php echo exec('whoami');?></p>
@@ -189,7 +192,9 @@
 	<p><b>Left Motor Current: </b><i id="lCurrent"></i></p>
 	
 	<p><b>Status: </b><i id="status"></i></p>
-		
+
+	<hr>
+
 	<h3>Manual Data Input</h3>
 	
 	<form  method="get" name="manualEntry" action="scripts/serialSend.php">
@@ -197,6 +202,8 @@
 	<br>
     <input type="submit" value="Submit" >
 	</form>
+
+	<hr>
 			
 	<h3>Emergency Stop</h3>
 	
