@@ -67,9 +67,22 @@
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 
 	<div class="stream" id="joystick">
-
-	<img src="http://xavier.local:8080/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 	
+	<script>
+			//Changes the client depending on the IP
+			function getClientHost() {
+				  var host = location.hostname;
+				  var streamURL = "http://"+host+":8082/?action=stream"; 
+				  document.getElementById("videoStream").src=streamURL;
+				  console.log(streamURL)
+			}
+
+		window.onload = getClientHost;
+
+	</script>	
+
+	<img id="videoStream" src="http://xavier.local:8080/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+
 		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
 			
@@ -234,8 +247,89 @@
 		}
 	</script>
 	
-	<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
+	<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="emergency()"/>
 		
+		<script src="scripts/jquery.min.js"></script>
+		<script>
+			var off = "media/Emergency Stop Off.png";
+			var	on = "media/Emergency Stop On.png";
+			var url = "scripts/serialSend.php?serialData=";
+
+			function emergency(){
+				
+				var serialData = "0,0,STOP"
+				var sendData = url + serialData;
+				
+				document.getElementById("emergency").src=on;
+				
+				//AJAX EMERGENCY COMMAND
+				$.ajax({
+						type: "GET",
+						url: sendData,
+						datatype: "text",
+						success: function(result) {
+							
+							//If there was data read...
+							if(result != ""){
+							
+							//Parse Data
+							var dataRead = result.split("\r\n");
+							receivedData = dataRead[0].split(",");
+							
+							//Print Data to console
+							console.log(receivedData);
+							
+							//Print Status Message
+							var status = receivedData[3];
+							outputStatus = document.getElementById('status');
+							outputStatus.innerHTML = status;
+
+							}
+						}
+					});
+
+				//Wait before resetting emergency stop beutton
+				window.setTimeout(resetEmergency,1000);
+
+			}
+
+			function resetEmergency(){
+
+				alert("Emergency Stop Activated. Please OK to reset");			
+				document.getElementById("emergency").src=off;
+				
+				var serialData = "0,0,RESET"
+				var sendData = url + serialData;
+
+				//AJAX EMERGENCY COMMAND
+				$.ajax({
+						type: "GET",
+						url: sendData,
+						datatype: "text",
+						success: function(result) {
+							
+							//If there was data read...
+							if(result != ""){
+							
+							//Parse Data
+							var dataRead = result.split("\r\n");
+							receivedData = dataRead[0].split(",");
+							
+							//Print Data to console
+							console.log(receivedData);
+							
+							//Print Status Message
+							var status = receivedData[3];
+							outputStatus = document.getElementById('status');
+							outputStatus.innerHTML = status;
+
+							}
+						}
+					});
+			}
+
+		</script>
+
 	<br>
 	
 	<footer>

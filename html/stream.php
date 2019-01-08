@@ -30,27 +30,47 @@
 		</div>
 	</header>
 	
+
+	<script>
+			function getClientHost() {
+				  var host = location.hostname;
+				  var streamURL = "http://"+host+":8082/?action=stream"; 
+
+				  document.getElementById("floorStream").src = streamURL;
+				  document.getElementById("floorStreamLink").href= streamURL;
+
+				  streamURL = "http://"+host+":8081/?action=stream"; 
+				  document.getElementById("depthStream").src = streamURL;
+				  document.getElementById("depthStreamLink").href= streamURL;
+
+				  streamURL = "http://"+host+":8080/?action=stream"; 
+				  document.getElementById("overviewStream").src = streamURL;
+				  document.getElementById("overviewStreamLink").href= streamURL;
+			}
+
+		window.onload = getClientHost;
+
+	</script>	
+	
 	<div class="streams">
   		<div class="stream">
 		  
-		  <h3>Microsoft Kinect RGB Image</h3>
-		  <img src="http://xavier.local:8080/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		  <h3><a id="overviewStreamLink" href="http://xavier.local:8080/?action=stream">Microsoft Kinect RGB Image</a></h3>
+		  <img id="overviewStream" src="http://xavier.local:8080/?action=stream" width="70%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		  </div>
 
   		<div class="stream">
 		  
-		  <h3>Microsoft Kinect Depth Image</h3>			
-		  <img src="http://xavier.local:8081/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		  <h3><a id="depthStreamLink" href="http://xavier.local:8081/?action=stream">Microsoft Kinect Depth Image</a></h3>			
+		  <img id="depthStream" src="http://xavier.local:8081/?action=stream" width="70%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		  </div>
 
   		<div class="stream">
 		  
-		  <h3> Webcam Floor Image</h3>
-		  <img src="http://xavier.local:8082/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		  <h3><a id="floorStreamLink" href="http://xavier.local:8082/?action=stream">Webcam Floor Image</a></h3>
+		  <img id="floorStream" src="http://xavier.local:8082/?action=stream" width="70%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		  </div>
 	</div>
-
-	<br>
 
 	<footer>
 		<br>
@@ -59,6 +79,8 @@
 		<img src="media/QUB Logo.jpg" style="max-width:8%;height:auto;">
 		</a>	
 	</footer>
+
+	<br>
 		
 	</body>
 </html> 

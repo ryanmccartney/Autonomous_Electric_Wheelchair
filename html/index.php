@@ -31,6 +31,18 @@
 	</header>
 	
 	<div>
+
+		<script>
+			function getClientHost() {
+				  var host = location.hostname;
+				  var streamURL = "http://"+host+":8082/?action=stream"; 
+				  document.getElementById("videoStream").src = streamURL;
+				  document.getElementById("videoLink").href= streamURL;
+			}
+
+		window.onload = getClientHost;
+
+		</script>	
 	
 		<h3>Autonomous Electric Wheelchair Project</h3>
 		<p>This project allows full autonomous control of an electric wheelchair. This web interface allows the user to access debug information, issue commands and take manual control of the wheelchair if necessary.</p>
@@ -38,36 +50,101 @@
 		
 		<hr>
 
-		<h3>Live <a href="http://xavier.local:8082/?action=stream">Stream</a> of Wheelchair Enviroment</h3>
+	
+
+		<h3><a id="videoLink" href="http://xavier.local:8082/?action=stream">Live Stream</a> of Wheelchair Enviroment</h3>
+		
 		<div class="stream">
-
-
-		<img src="http://xavier.local:8082/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+		
+		<img id="videoStream" src="http://xavier.local:8082/?action=stream" width="25%" alt="Image not found" onclick="getClientHost()" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		</div>
 
 		<hr>
 
 		<h3>Emergency Stop</h3>
-		<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="changeImage();"/>
+		<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="emergency()"/>
+		
+		<p><b id="status"></b></p>
 
+		<script src="scripts/jquery.min.js"></script>
 		<script>
 			var off = "media/Emergency Stop Off.png";
 			var	on = "media/Emergency Stop On.png";
-			var serialData = "0,0,STOP"
-			var sendData = "scripts/serialSend.php?serialData="+ serialData;
+			var url = "scripts/serialSend.php?serialData=";
 
-			function changeImage(){
-				alert(window.document.emergency.src);
+			function emergency(){
+				
+				var serialData = "0,0,STOP"
+				var sendData = url + serialData;
+				
+				document.getElementById("emergency").src=on;
+				
+				//AJAX EMERGENCY COMMAND
+				$.ajax({
+						type: "GET",
+						url: sendData,
+						datatype: "text",
+						success: function(result) {
+							
+							//If there was data read...
+							if(result != ""){
+							
+							//Parse Data
+							var dataRead = result.split("\r\n");
+							receivedData = dataRead[0].split(",");
+							
+							//Print Data to console
+							console.log(receivedData);
+							
+							//Print Status Message
+							var status = receivedData[3];
+							outputStatus = document.getElementById('status');
+							outputStatus.innerHTML = status;
 
-				if(document.emergency.src==off){
-					document.emergency.src=on;
-					sendData('0,0,STOP')				
-				}
+							}
+						}
+					});
 
-				else if(document.emergency.src==on){
-					document.emergency.src=off;
-				}
+				//Wait before resetting emergency stop beutton
+				window.setTimeout(resetEmergency,1000);
+
 			}
+
+			function resetEmergency(){
+
+				alert("Emergency Stop Activated. Please OK to reset");			
+				document.getElementById("emergency").src=off;
+				
+				var serialData = "0,0,RESET"
+				var sendData = url + serialData;
+
+				//AJAX EMERGENCY COMMAND
+				$.ajax({
+						type: "GET",
+						url: sendData,
+						datatype: "text",
+						success: function(result) {
+							
+							//If there was data read...
+							if(result != ""){
+							
+							//Parse Data
+							var dataRead = result.split("\r\n");
+							receivedData = dataRead[0].split(",");
+							
+							//Print Data to console
+							console.log(receivedData);
+							
+							//Print Status Message
+							var status = receivedData[3];
+							outputStatus = document.getElementById('status');
+							outputStatus.innerHTML = status;
+
+							}
+						}
+					});
+			}
+
 		</script>
 		
 	</div>
