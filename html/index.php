@@ -38,16 +38,13 @@
 		
 		<hr>
 
-		<h3>Live Stream of Wheelchair Enviroment</h3>
+		<h3>Live <a href="http://xavier.local:8082/?action=stream">Stream</a> of Wheelchair Enviroment</h3>
 		<div class="stream">
-		<img src="http://xavier.local:8080/?action=stream">
+
+
+		<img src="http://xavier.local:8082/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
 		</div>
 
-		<hr>
-
-		<h3>Manual Control of Wheelchair</h3>
-		<p>Manual control of the wheelchair is accessible from the menu at the top of this page.</p>
-	
 		<hr>
 
 		<h3>Emergency Stop</h3>

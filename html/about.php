@@ -44,7 +44,7 @@
 		$Parsedown = new Parsedown();
 		fwrite($file,($Parsedown->text($html)));
 	?>
-	<iframe src="readme.html" hieght="100%" width="80%" style="border:none; overflow:hidden;"></iframe>
+	<iframe src="readme.html" frameborder="0" height="1200" width="100%"></iframe>
 	</div>
 
 	</div>

@@ -66,7 +66,7 @@
 	
 	<p>
 	Logged Operational Data from the Wheelchair controller appears below. Follow 
-	<a href="scripts/receivedData.txt" download> this link</a>to download a copy of this data.</p>
+	<a href="scripts/receivedData.txt" download> this link</a> to download a copy of this data.</p>
 	
 	<p><div id="logfile">
 
@@ -81,7 +81,7 @@
 	
 	<p>
 	Logged control commands that have been sent to the Wheelchair controlloer appear below. Follow 
-	<a href="scripts/transmittedData.txt" download> this link</a>to download a copy of this data. Note that this data is time
+	<a href="scripts/transmittedData.txt" download> this link</a> to download a copy of this data. Note that this data is time
 	stapmed in the same instance of the above logs.</p>
 	
 	<p><div id="logfile">
@@ -92,7 +92,6 @@
 	</p>
 
 	<hr>
-
 
 	<h3>Debug Data</h3>
 	

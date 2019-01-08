@@ -30,11 +30,11 @@
 
 	//Write Data being Transmitted to a Log File
 	$dateTime = date("Y/m/d H:i:s");
-	$data = $dateTime.",".$data;
+	$dataLog = $dateTime.",".$data."\n";
 	$transmissionLog = fopen('transmittedData.txt', 'a');
-	fwrite($transmissionLog, $data);
+	fwrite($transmissionLog, $dataLog);
 
-	$serial->sendMessage($data);	
+	$serial->sendMessage($data);
 			
 	//echo"<p><b>Data sent to serial port: </b>";
 	//echo $data;

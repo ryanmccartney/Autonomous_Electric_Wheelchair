@@ -26,7 +26,7 @@
 #define LeftMotorCurrent 0  //CS Pin on Board
 
 #define MotorBrakes 40 //Relay to apply mechanical brake
-#define SpareRelay 38 //Relay to apply mechanical brake
+#define WarningLight 38 //Relay to apply mechanical brake
 #define Reset 42 //Pin attached to reset for instrinsic program reset
 #define BatteryIndication 2 //Voltage Sensor
 
@@ -71,7 +71,7 @@ void setup() {
   pinMode(RightMotorEnergise, OUTPUT);
   pinMode(LeftMotorEnergise, OUTPUT);   
   pinMode(MotorBrakes, OUTPUT);
-  pinMode(SpareRelay, OUTPUT);
+  pinMode(WarningLight, OUTPUT);
   pinMode(Reset, OUTPUT);
 
   //Set Initial State
@@ -82,7 +82,7 @@ void setup() {
   digitalWrite(RightMotorSpeed, 0);
   digitalWrite(LeftMotorSpeed, 0);
   digitalWrite(MotorBrakes, 0);
-  digitalWrite(SpareRelay, 1);
+  digitalWrite(WarningLight, 0);
   
   //Setup Input Pins
   pinMode(BatteryIndication, INPUT_PULLUP);
@@ -399,7 +399,9 @@ void stopWheelchair() {
 
    //Apply Brakes
    digitalWrite(MotorBrakes, 0);
-   
+
+   //Turn Off Warning Light
+   digitalWrite(WarningLight, 0);
    return;
 }
 
@@ -487,6 +489,9 @@ void loop() {
                  
               //Disable Brakes
               digitalWrite(MotorBrakes, 1);
+
+              //Activate Warning Light
+              digitalWrite(WarningLight, 1);
 
               analogWrite(RightMotorSpeed, rightMotorSpeed);
               analogWrite(LeftMotorSpeed, leftMotorSpeed);

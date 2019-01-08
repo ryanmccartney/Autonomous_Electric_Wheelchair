@@ -50,6 +50,8 @@
 		  </div>
 	</div>
 
+	<br>
+
 	<footer>
 		<br>
 		<p>&copy; Copyright 2018, Queen's University Belfast | Ryan McCartney</p>

@@ -15,17 +15,19 @@
 	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-	<div class="header" id="myHeader">
-		<h2>Autonomous Control Debug</h2>
+		<div class="header" id="myHeader">
+			
+			<h2>Autonomous System</h2>
 		
-		<ul>
-			<li><a href="index.php">Home</a></li>
-			<li><a class="active" href="auto.php">Autonomous</a></li>
-			<li><a href="manual.php">Manual</a></li>
-			<li><a href="about.php">About</a></li>
-			<li><a href="stats.php">Logging</a></li>
-		</ul>
-	</div>
+			<ul>
+				<li><a href="index.php">Home</a></li>
+				<li><a href="stream.php">Stream</a></li>
+				<li><a class="active" href="auto.php">Auto Navigation</a></li>
+				<li><a href="manual.php">Manual Navigation</a></li>
+				<li><a href="about.php">About</a></li>
+				<li><a href="stats.php">Logging</a></li>
+			</ul>
+		</div>
 	</header>
 	
 	<div class="content">

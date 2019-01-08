@@ -67,9 +67,9 @@
 	<p>Take manual control of the electric wheelchair by using the gamepad below.</p>
 
 	<div class="stream" id="joystick">
-	
-	<img src="http://xavier.local:8080/?action=stream" alt="media/nostream.jpg">
 
+	<img src="http://xavier.local:8080/?action=stream" width="25%" alt="Image not found" onerror="this.onerror=null;this.src='media/nostream.jpg';" />
+	
 		<script src="scripts/jquery.min.js"></script>
 			<script src="scripts/virtualjoystick.js"></script>
 			
