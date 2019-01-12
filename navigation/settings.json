@@ -16,7 +16,7 @@
         "commands":[ "STOP", "RUN", "SEND", "ERROR" ]
     },
     "host":{
-        "command_url":"http://xavier.local/scripts/serialSend.php?serialData=", 
+        "command_url":"http://192.168.1.100/scripts/serialSend.php?serialData=", 
         "kinectImage_url":"http://192.168.1.100:8080/?action=stream",
         "kinectDepth_url":"http://192.168.1.100:8081/?action=stream",
         "webcam_url":"http://192.168.1.100:8082/?action=stream",

@@ -123,8 +123,8 @@
 					+ ' dy:'
 					+ joystick.deltaY()
 				
-				var setSpeed = Math.round( joystick.deltaY() );
-				var setAngle = Math.round( joystick.deltaX() );
+				var setSpeed = Math.round(-joystick.deltaY());
+				var setAngle = Math.round(-joystick.deltaX());
 									
 				var serialData = setSpeed
 					+ ','

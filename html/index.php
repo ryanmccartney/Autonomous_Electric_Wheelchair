@@ -14,7 +14,7 @@
  	<header>
 		<br>
 		<h1>Autonomous Electric Wheelchair</h1>
-		
+				
 		<div class="header" id="myHeader">
 			
 			<h2>Home</h2>
@@ -65,45 +65,20 @@
 		<img src="media/Emergency Stop Off.png" style="max-width:80%;height:auto;align:center;" alt="" id="emergency" onclick="emergency()"/>
 		
 		<p><b id="status"></b></p>
+		<p><b id="batteryPercent"></p>
 
 		<script src="scripts/jquery.min.js"></script>
+		<script src="scripts/sendData.js"></script>
 		<script>
 			var off = "media/Emergency Stop Off.png";
 			var	on = "media/Emergency Stop On.png";
-			var url = "scripts/serialSend.php?serialData=";
 
 			function emergency(){
-				
-				var serialData = "0,0,STOP"
-				var sendData = url + serialData;
-				
+			
 				document.getElementById("emergency").src=on;
 				
 				//AJAX EMERGENCY COMMAND
-				$.ajax({
-						type: "GET",
-						url: sendData,
-						datatype: "text",
-						success: function(result) {
-							
-							//If there was data read...
-							if(result != ""){
-							
-							//Parse Data
-							var dataRead = result.split("\r\n");
-							receivedData = dataRead[0].split(",");
-							
-							//Print Data to console
-							console.log(receivedData);
-							
-							//Print Status Message
-							var status = receivedData[3];
-							outputStatus = document.getElementById('status');
-							outputStatus.innerHTML = status;
-
-							}
-						}
-					});
+				sendData("0,0,STOP");
 
 				//Wait before resetting emergency stop beutton
 				window.setTimeout(resetEmergency,1000);
@@ -115,36 +90,9 @@
 				alert("Emergency Stop Activated. Please OK to reset");			
 				document.getElementById("emergency").src=off;
 				
-				var serialData = "0,0,RESET"
-				var sendData = url + serialData;
-
-				//AJAX EMERGENCY COMMAND
-				$.ajax({
-						type: "GET",
-						url: sendData,
-						datatype: "text",
-						success: function(result) {
-							
-							//If there was data read...
-							if(result != ""){
-							
-							//Parse Data
-							var dataRead = result.split("\r\n");
-							receivedData = dataRead[0].split(",");
-							
-							//Print Data to console
-							console.log(receivedData);
-							
-							//Print Status Message
-							var status = receivedData[3];
-							outputStatus = document.getElementById('status');
-							outputStatus.innerHTML = status;
-
-							}
-						}
-					});
+				//AJAX EMERGENCY RESET COMMAND
+				sendData("0,0,RESET");
 			}
-
 		</script>
 		
 	</div>

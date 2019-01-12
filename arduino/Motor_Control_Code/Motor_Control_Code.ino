@@ -115,12 +115,12 @@ bool mapOutputs() {
     
       if(setSpeed < 0){
         setSpeed = -setSpeed;
-        leftDirection = 1;
-        rightDirection = 1;
-      }
-      else{
         leftDirection = 0;
         rightDirection = 0;
+      }
+      else{
+        leftDirection = 1;
+        rightDirection = 1;
       }
 
       //Limit Speed
@@ -141,11 +141,11 @@ bool mapOutputs() {
         else if(setAngle > 50){
           leftMotorSpeed = map(setAngle,50,100,0,leftMotorSpeed);
           leftMotorSpeed = (int)leftMotorSpeed;
-          if(leftDirection == 0){
-            leftDirection = 1;
-          }
-          else if(leftDirection == 1){
+          if(leftDirection == 1){
             leftDirection = 0;
+          }
+          else if(leftDirection == 0){
+            leftDirection = 1;
           }
         }
         status = true;
@@ -158,11 +158,11 @@ bool mapOutputs() {
         else if(setAngle > 50){
           rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
           rightMotorSpeed = (int)rightMotorSpeed;
-          if(rightDirection == 0){
-            rightDirection = 1;
-          }
-          else if(rightDirection == 1){
+          if(rightDirection == 1){
             rightDirection = 0;
+          }
+          else if(rightDirection == 0){
+            rightDirection = 1;
           }
         }
         status = true;
@@ -206,8 +206,6 @@ bool proccessInput() {
   // Copy it over 
   inputString.toCharArray(charArray, stringLength);
 
-  
-  
   //Parse char array derved from input string from serial line
   for(int i = 0; i < stringLength; i++){
 
@@ -229,8 +227,18 @@ bool proccessInput() {
 
   else if(charArray[i] == newline){
     
-    //Assign Command Variable
-    command = variable;        
+   if((command == "STOP") && (variable == "RESET")){
+      //Assign Command Variable
+      command = variable; 
+      }
+    else if(command != "STOP"){
+      //Assign Command Variable
+      command = variable; 
+    }
+    else{
+      //Assign Command Variable
+      command = "STOP"; 
+    }     
     
     //Function performed correctly if here, set status
     if(variableNumber == 3){
@@ -359,7 +367,7 @@ bool executeCommands() {
     status = true;
   }
   else if(command == "RESET"){
-    statusMessage =  "WARNING = Controller is resseting, expect abnormal behaviour.";
+    statusMessage =  "WARNING = Controller is resseting. Expect abnormal behaviour.";
     sendData();
     delay(250);
     digitalWrite(Reset, 0);

@@ -57,7 +57,7 @@ class Control:
 
         #Create form of the payload
         payload = str(speed)+","+str(angle)+","+command
-        
+       
         #combine with host address
         message = self.host + payload
 
@@ -65,17 +65,21 @@ class Control:
         receivedMessage = requests.get(message)
 
         #Get Date and Time for Log
-        currentDateTime = time.strftime("%d%m%Y-%H%M%S")
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
 
         #Write log entry regarding data transmitted
-        dataEntry = currentDateTime + "," + speed + "," + angle + "," + command + "\n"
+        dataEntry = currentDateTime + ","+ str(speed) + "," + str(angle) + "," + command + "\n"
         self.transmitLog.write(dataEntry)
-     
-        #Write log entry regarding response
-        dataEntry = currentDateTime + "," + receivedMessage + "\n"
-        self.receiveLog.write(dataEntry)
+    
+        data = receivedMessage.content.decode("utf-8").split("\r\n")
 
-        self.decodeResponse(receivedMessage)
+        if (receivedMessage.status_code == 200) and (data[0] != ""):
+            #Write log entry regarding response
+            dataEntry = currentDateTime + "," + data[0] + "\n"
+            self.receiveLog.write(dataEntry)
+            print(dataEntry)
+        
+        self.decodeResponse(data[0])
 
         self.setSpeed = speed
         self.setAngle = angle
@@ -106,53 +110,57 @@ class Control:
         return power
 
     #Speed Ramping Function   
-    def rampSpeed(self,speed,acceleration):
+    def rampSpeed(self,newSpeed,acceleration):
          
         delay = 1/acceleration
-        
-        #Direction Forward
-        if speed > 0:
-            
-            #Accelerate
-            if speed > self.setSpeed:
+        delay = int(delay)
 
-                while speed != self.setSpeed:
-            
-                    speed = self.setSpeed + 1
+        #Direction Forward
+        if newSpeed > 0:
+
+            #Accelerate
+            if newSpeed > self.setSpeed:
+        
+                while newSpeed != self.setSpeed:
+                    
                     time.sleep(delay)
+                    speed = self.setSpeed + 1
                     self.transmitCommand(speed,self.setAngle,self.command)
+                    time.sleep(delay)
+
+                    print("The Speed is now set at ",speed)
 
             #Decelerate
-            elif speed < self.setSpeed:
+            elif newSpeed < self.setSpeed:
 
-                while speed != self.setSpeed:
-            
-                    speed = self.setSpeed - 1
+                while newSpeed != self.setSpeed:
+                    
                     time.sleep(delay)
+                    speed = self.setSpeed - 1
                     self.transmitCommand(speed,self.setAngle,self.command)
 
         #Direcion Reverse
-        if speed < 0:
+        if newSpeed < 0:
             
             #Accelerate
-            if speed < self.setSpeed:
+            if newSpeed < self.setSpeed:
 
-                while speed != self.setSpeed:
+                while newSpeed != self.setSpeed:
             
                     speed = self.setSpeed - 1
                     time.sleep(delay)
                     self.transmitCommand(speed,self.setAngle,self.command)
 
             #Decelerate
-            elif speed > self.setSpeed:
+            elif newSpeed > self.setSpeed:
 
-                while speed != self.setSpeed:
+                while newSpeed != self.setSpeed:
             
                     speed = self.setSpeed + 1
                     time.sleep(delay)
                     self.transmitCommand(speed,self.setAngle,self.command)
 
-        return speed
+        return newSpeed
 
 
     #Function to Calculate Speed Lmit bases on the value of the closest point

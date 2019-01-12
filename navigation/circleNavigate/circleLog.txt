@@ -1,0 +1,4 @@
+11/01/2019 15:38:29: INFO = Program has started running.
+11/01/2019 15:38:29: INFO = Settings file loaded.
+11/01/2019 15:38:29: INFO = Data extracted successfully from settings file.
+11/01/2019 15:38:30: INFO = Control Connection Established with Robotic Device.
