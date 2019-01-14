@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------------------------------------------
 // NAME: Electric Wheelchair Motor Control Alogtrithm
 // AUTH: Ryan McCartney
-// DATE: 24th October 2018
+// DATE: 14th January 2019
 // DESC: Recieves serial communications containing control commands for the electric wheelchair
 // NOTE: All Rights Reserved, 2018, Queen's University Belfast
 //------------------------------------------------------------------------------------------------------------------
@@ -134,18 +134,18 @@ bool mapOutputs() {
       
       if (setAngle < 0) {
         setAngle = -setAngle;
-        if(setAngle < 50){
+        if(setAngle <= 50){
           leftMotorSpeed = map(setAngle,50,0,0,leftMotorSpeed);
           leftMotorSpeed = (int)leftMotorSpeed;
         }
-        else if(setAngle > 50){
+        else if(setAngle >= 50){
           leftMotorSpeed = map(setAngle,50,100,0,leftMotorSpeed);
           leftMotorSpeed = (int)leftMotorSpeed;
-          if(leftDirection == 1){
-            leftDirection = 0;
+          if(rightDirection == 0){
+            rightDirection = 1;
           }
-          else if(leftDirection == 0){
-            leftDirection = 1;
+          else if(rightDirection == 1){
+            rightDirection = 0;
           }
         }
         status = true;
@@ -158,11 +158,11 @@ bool mapOutputs() {
         else if(setAngle > 50){
           rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
           rightMotorSpeed = (int)rightMotorSpeed;
-          if(rightDirection == 1){
-            rightDirection = 0;
+          if(leftDirection == 0){
+            leftDirection = 1;
           }
-          else if(rightDirection == 0){
-            rightDirection = 1;
+          else if(leftDirection == 1){
+            leftDirection = 0;
           }
         }
         status = true;
@@ -326,15 +326,16 @@ bool executeCommands() {
   if(command == "ERROR"){
     stopWheelchair();
     sendData();
-    status = true;
-    
+    status = true; 
   }
-  else if(command == "SEND"){
+  else if(command == "STOP"){
+    statusMessage =  "WARNING = Wheelchair is performing an Emergency Stop.";
+    stopWheelchair();
     sendData();
     status = true;
   }
-  else if(command == "STOP"){
-    stopWheelchair();
+  else if(command == "SEND"){
+    sendData();
     status = true;
   }
   else if(command == "RUN"){
@@ -373,7 +374,6 @@ bool executeCommands() {
     digitalWrite(Reset, 0);
     status = true;
   }
-  
   else{
      status = false;
      statusMessage = "ERROR = No valid command to execute. Declaring Error.";

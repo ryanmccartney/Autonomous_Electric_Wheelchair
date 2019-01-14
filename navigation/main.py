@@ -80,6 +80,10 @@ try:
     #kinectImage.streamVideo()
     #kinectDepth.streamVideo()
 
+    #Record Data
+    kinectImage.recordVideo()
+    kinectDepth.recordVideo()
+
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Camera data acquired succesfully." + "\n"
@@ -106,7 +110,7 @@ try:
     #Carry out control command
     try:
         #Ramp Speed
-        wheelchair.rampSpeed(100,100)
+        wheelchair.rampSpeed(6,1)
     except:
          #write status to log file
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -139,47 +143,48 @@ try:
     logFile.write(logEntry)
     print(logEntry)
 
+    previousClosestPoint = 0
+    pointCloud = 0
+    frames = 25
+
+    while 1:
+
+        #Write Max Speed to Log File
+        if navigate.closestDistance != previousClosestPoint:
+            #write status to log file
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "STATUS = The Maximum Wheelchair Speed has been set as "+str(navigate.closestDistance)+ "\n"
+            logFile.write(logEntry)
+            previousClosestPoint = navigate.closestDistance
+
+            #Change Speed Limit
+            wheelchair.calcMaxSpeed(navigate.closestDistance)
+    
+        depthFrame = kinectDepth.getFrame()
+        cv.imshow('Original Depth Frame',depthFrame)
+
+        if frames ==25:
+            pointCloud = navigate.createPointCloud(depthFrame)
+            #navigate.plotPointCloud(pointCloud)
+            #navigate.writeCSV(pointCloud)
+
+            frames = 0
+
+        #Delay for video frame
+        time.sleep(delay)
+        frames = frames + 1
+
+        # quit program when 'esc' key is pressed
+        k = cv.waitKey(5) & 0xFF
+        if k == 27:
+            break
+
+        cv.destroyAllWindows()
+
 except:
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "ERROR = Unable to begin navigation." + "\n"
     logFile.write(logEntry)
     print(logEntry)
-
-previousClosestPoint = 0
-pointCloud = 0
-frames = 25
-
-while 1:
-
-    #Write Max Speed to Log File
-    if navigate.closestDistance != previousClosestPoint:
-        #write status to log file
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "STATUS = The Maximum Wheelchair Speed has been set as "+str(navigate.closestDistance)+ "\n"
-        logFile.write(logEntry)
-        previousClosestPoint = navigate.closestDistance
-
-        #Change Speed Limit
-        wheelchair.calcMaxSpeed(navigate.closestDistance)
-    
-    depthFrame = kinectDepth.getFrame()
-    cv.imshow('Original Depth Frame',depthFrame)
-
-    if frames ==25:
-        pointCloud = navigate.createPointCloud(depthFrame)
-        #navigate.plotPointCloud(pointCloud)
-        #navigate.writeCSV(pointCloud)
-
-        frames = 0
-
-    #Delay for video frame
-    time.sleep(delay)
-    frames = frames + 1
-
-    # quit program when 'esc' key is pressed
-    k = cv.waitKey(5) & 0xFF
-    if k == 27:
-        break
-
-cv.destroyAllWindows()
+    exit()

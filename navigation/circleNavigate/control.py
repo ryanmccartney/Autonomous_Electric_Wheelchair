@@ -9,6 +9,7 @@ import threading
 import time
 import urllib
 import requests
+import urllib.request
 
 #define threading wrapper
 def threaded(fn):
@@ -29,7 +30,7 @@ class Control:
     #Intrinsic Parameters
     setSpeed = 0
     setAngle = 0
-    command = "SEND"
+    setCommand = "SEND"
 
     maxSpeed = 0
     speedLimit = 100
@@ -56,13 +57,14 @@ class Control:
     def transmitCommand(self, speed, angle, command):
 
         #Create form of the payload
-        payload = str(speed)+","+str(angle)+","+command
+        payload = str(speed)+","+str(angle)+","+ command
        
         #combine with host address
         message = self.host + payload
+        response = urllib.request.urlopen(message)
 
-        #Send Message and Retrieve Response
-        receivedMessage = requests.get(message)
+        receivedMessage = response.read()
+        #print("INFO: Transmission response code is",str(response.getcode()))
 
         #Get Date and Time for Log
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -70,29 +72,35 @@ class Control:
         #Write log entry regarding data transmitted
         dataEntry = currentDateTime + ","+ str(speed) + "," + str(angle) + "," + command + "\n"
         self.transmitLog.write(dataEntry)
-    
-        data = receivedMessage.content.decode("utf-8").split("\r\n")
 
-        if (receivedMessage.status_code == 200) and (data[0] != ""):
+        data = receivedMessage.decode("utf-8").split("\r\n")
+
+        if data[0] != "":
             #Write log entry regarding response
             dataEntry = currentDateTime + "," + data[0] + "\n"
             self.receiveLog.write(dataEntry)
             print(dataEntry)
-        
-        self.decodeResponse(data[0])
+            
+            #Decode Data
+            self.decodeResponse(data[0])
 
-        self.setSpeed = speed
-        self.setAngle = angle
+        if response.getcode() == 200:
+            self.setSpeed = speed
+            self.setAngle = angle
+            self.setCommand = command
+
+        response.close() 
 
     #parse response
     def decodeResponse(self, receivedMessage):
         
-        data = receivedMessage.split(",")
+        if receivedMessage != "":
+            data = receivedMessage.split(",")
 
-        self.batteryVoltage = data[0]
-        self.rightMotorCurrent = data[1]
-        self.leftMotorCurrent = data[2]
-        self.status = data[3]
+            self.batteryVoltage = data[0]
+            self.rightMotorCurrent = data[1]
+            self.leftMotorCurrent = data[2]
+            self.status = data[3]
 
     #Determine Power Consumption
     def powerConsumed(self):
@@ -114,9 +122,10 @@ class Control:
          
         delay = 1/acceleration
         delay = int(delay)
-
+        command = "SEND"
+        
         #Direction Forward
-        if newSpeed > 0:
+        if newSpeed >= 0:
 
             #Accelerate
             if newSpeed > self.setSpeed:
@@ -125,10 +134,8 @@ class Control:
                     
                     time.sleep(delay)
                     speed = self.setSpeed + 1
-                    self.transmitCommand(speed,self.setAngle,self.command)
+                    self.transmitCommand(speed,self.setAngle,command)
                     time.sleep(delay)
-
-                    print("The Speed is now set at ",speed)
 
             #Decelerate
             elif newSpeed < self.setSpeed:
@@ -137,7 +144,7 @@ class Control:
                     
                     time.sleep(delay)
                     speed = self.setSpeed - 1
-                    self.transmitCommand(speed,self.setAngle,self.command)
+                    self.transmitCommand(speed,self.setAngle,command)
 
         #Direcion Reverse
         if newSpeed < 0:
@@ -149,7 +156,7 @@ class Control:
             
                     speed = self.setSpeed - 1
                     time.sleep(delay)
-                    self.transmitCommand(speed,self.setAngle,self.command)
+                    self.transmitCommand(speed,self.setAngle,command)
 
             #Decelerate
             elif newSpeed > self.setSpeed:
@@ -158,10 +165,22 @@ class Control:
             
                     speed = self.setSpeed + 1
                     time.sleep(delay)
-                    self.transmitCommand(speed,self.setAngle,self.command)
+                    self.transmitCommand(speed,self.setAngle,command)
 
         return newSpeed
 
+
+    #Function to Calculate Speed Lmit bases on the value of the closest point
+    def changeAngle(self, angle):
+
+        command = "SEND"
+        self.transmitCommand(self.setSpeed,angle,command)
+        self.setAngle = angle
+    
+    #Emergency Stop the wheelchair
+    def eStop(self):
+
+        self.transmitCommand(0,0,"STOP")
 
     #Function to Calculate Speed Lmit bases on the value of the closest point
     def calcMaxSpeed(self,closestPoint):

@@ -81,7 +81,7 @@
 				sendData("0,0,STOP");
 
 				//Wait before resetting emergency stop beutton
-				window.setTimeout(resetEmergency,1000);
+				window.setTimeout(resetEmergency,5000);
 
 			}
 

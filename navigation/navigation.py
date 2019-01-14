@@ -5,6 +5,7 @@
 
 import threading
 import numpy as np
+import math
 import cv2 as cv
 import imutils
 import csv
@@ -98,7 +99,7 @@ class Navigation:
 
             for w in range (0,width):
 
-                if  image[h,w] >= pointValue:
+                if  image[h,w] <= pointValue:
                     pointValue = image[h,w]
                     pointHeight = h
                     pointWidth = w
@@ -161,7 +162,7 @@ class Navigation:
 
             #Scan Pixel by Pixel for Closest Point
             closestPoint = self.scanImage(resizedFrame)
-            self.closestDistance = closestPoint[0]
+            self.closestDistance = self.distanceCalc(closestPoint[0])
             
             #Set Max Speed with this reading
             #self.maxSpeed = self.calcMaxSpeed(self.closestDistance)
@@ -187,6 +188,7 @@ class Navigation:
                 #Path Rectangle
                 cv.rectangle(frame,(topW,topH),(bottomW,bottomH),(0,255,0),2)
 
+                
                 #Add text with details
                 font = cv.FONT_HERSHEY_SIMPLEX
                 text = 'Closest Point is ' + str(self.closestDistance) +'m away.'
@@ -255,3 +257,14 @@ class Navigation:
                         pointCloudFile.write(dataEntry)
         
         pointCloudFile.close()
+
+    #Returns infomraiton about how far away a point is in and image
+    @staticmethod
+    def distanceCalc(depth):
+        
+        #Tan Approx
+        distance = 0.1236 * np.tan(depth / 2842.5 + 1.1863) 
+        #First Order Approx
+        distance = -0.00307 * depth + 3.33
+
+        return distance

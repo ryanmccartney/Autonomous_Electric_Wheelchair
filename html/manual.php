@@ -72,7 +72,7 @@
 			//Changes the client depending on the IP
 			function getClientHost() {
 				  var host = location.hostname;
-				  var streamURL = "http://"+host+":8082/?action=stream"; 
+				  var streamURL = "http://"+host+":8080/?action=stream"; 
 				  document.getElementById("videoStream").src=streamURL;
 				  console.log(streamURL)
 			}
@@ -124,7 +124,7 @@
 					+ joystick.deltaY()
 				
 				var setSpeed = Math.round(-joystick.deltaY());
-				var setAngle = Math.round(-joystick.deltaX());
+				var setAngle = Math.round(joystick.deltaX());
 									
 				var serialData = setSpeed
 					+ ','

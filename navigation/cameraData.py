@@ -67,8 +67,37 @@ class cameraData:
             cv.imshow('Stream of {}'.format(self.stream_name),frame)         
         
             # quit program when 'esc' key is pressed
-            k = cv.waitKey(5) & 0xFF
-            if k == 27:
+            if cv.waitKey(1) & 0xFF == ord('q'):
                 break
 
+        cv.destroyAllWindows()
+
+    @threaded
+    def recordVideo(self):
+        
+        #Get Date and Time
+        currentDateTime = time.strftime("%d.%m.%Y-%H.%M.%S")
+    
+        # Define the codec and create VideoWriter object
+        fourcc = cv.VideoWriter_fourcc(*'XVID')
+        out = cv.VideoWriter('data/video/{}_{}.avi'.format(self.stream_name,currentDateTime),fourcc, 20.0, (640,480))
+
+        while(self.image.isOpened()):
+            ret, frame = self.image.read()
+    
+            if ret==True:
+                #frame = cv.flip(frame,0)
+
+                #write the flipped frame
+                out.write(frame)
+
+                cv.imshow('Recording of {}'.format(self.stream_name),frame)
+                if cv.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                break
+
+        # Release everything if job is finished
+        self.image.release()
+        out.release()
         cv.destroyAllWindows()

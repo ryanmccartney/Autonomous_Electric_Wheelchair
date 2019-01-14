@@ -1,4 +1,5 @@
-11/01/2019 15:38:29: INFO = Program has started running.
-11/01/2019 15:38:29: INFO = Settings file loaded.
-11/01/2019 15:38:29: INFO = Data extracted successfully from settings file.
-11/01/2019 15:38:30: INFO = Control Connection Established with Robotic Device.
+14/01/2019 17:06:16: INFO = Program has started running.
+14/01/2019 17:06:16: INFO = Settings file loaded.
+14/01/2019 17:06:16: INFO = Data extracted successfully from settings file.
+14/01/2019 17:06:17: INFO = Control Connection Established with Robotic Device.
+14/01/2019 17:09:10: ERROR = Unable to adjust wheelchair speed.

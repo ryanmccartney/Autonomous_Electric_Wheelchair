@@ -69,10 +69,24 @@ try:
     logFile.write(logEntry)
     print(logEntry)
 
-     #Carry out control command
+    #Carry out control command
     try:
-        #Ramp Speed
-        wheelchair.rampSpeed(20,0.5)
+
+        #Full Circle
+        wheelchair.changeAngle(100)
+        #Increase Speed
+        wheelchair.rampSpeed(30,1)
+        #Reduce Speed
+        wheelchair.rampSpeed(0,1)
+        #Anticlockwise
+        wheelchair.changeAngle(-100)
+        #Increase Speed
+        wheelchair.rampSpeed(30,1)
+        #Emergency Stop Wheelchair
+        wheelchair.eStop()
+
+        exit()
+
     except:
          #write status to log file
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -88,4 +102,3 @@ except:
     print(logEntry)
     exit()
 
-   

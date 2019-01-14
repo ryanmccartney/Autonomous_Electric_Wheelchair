@@ -48,6 +48,7 @@ class cameraStream:
     @staticmethod
     def get_depth():
         array,_ = freenect.sync_get_depth()
+        #array = array/8
         array = array.astype(np.uint8)
         return array
 
