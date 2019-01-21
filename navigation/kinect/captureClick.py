@@ -11,13 +11,15 @@ import numba as nb
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
+import math
 
 #returnValue
 def pixelValue(event, x, y, flags, param):
 
     if event == cv.EVENT_LBUTTONDOWN:
         elementValue = depthValues[y,x]
-        print("The value of the selected pixel is ",elementValue)
+        distance = distanceCalc(elementValue)
+        print("The value of the selected pixel is",elementValue,"and the distance is estimated distance is %.2fm."%round(distance,2))
 
 #Processing Loop
 def processVideo(depthPath,videoPath,fps):
@@ -128,18 +130,21 @@ def scanImage(depthData):
 #Returns infomraiton about how far away a point is in and image
 def distanceCalc(depth):
 
-    factor = 8
-    depth = depth*factor
+    a = -0.0000000069
+    b = 0.0000064344
+    c = -0.0019066199
+    d = 0.2331614352
+    e = -9.5744837865
+    #Second Order Custom Estimation
+    distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
 
-    #Tan Approx
-    distance = 0.2474 * np.tan(depth / 2842.5 + 1.1863) 
-    #First Order Approx
-    #distance = 0.00307 * depth + 3.33
+    #First Order Custom Estimation
+    #m = 0.0161
+    #c = -1.4698
+    #distance = (m*depth)+c
 
-    #distance = depth
-    closestPoint = distance
 
-    return closestPoint
+    return distance
 
 #------------------------------------------------------------------------------------------
 #Main Script
@@ -151,9 +156,9 @@ videoPath = "navigation\kinect\KinectRGB_testData2.avi"
 depthStream = "http://192.168.1.100:8081/?action=stream"
 videoStream = "http://192.168.1.100:8080/?action=stream"
 
-fps = 25
+fps = 80
 
-processVideo(depthPath,videoPath,fps)
+processVideo(depthStream,videoStream,fps)
 
 
 

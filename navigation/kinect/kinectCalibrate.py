@@ -11,13 +11,17 @@ import numba as nb
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
+import math
 
 #Some Global Variables
-vehicleLength = 0.8 #meters
+vehicleLength = 0.45 #meters
 vehicleWidth = 0.5 #meters
-vehicleHeight = 1.8 #meters
+vehicleHeight = 1.35 #meters
 
 unitDimensions = 0.1 #meters
+kinectMaxRange = 3.2 #meters 
+
+cameraAngle = 80 #degrees
 
 mapLength = 40 #meters
 mapWidth = 40 #meters
@@ -78,7 +82,7 @@ def loadMap(name):
 def createGrpah(data):
     
     width = len(data)
-    height = 255
+    height = 255+1
     size = (height,width)
 
     red = np.full(size,255,dtype=np.uint8)
@@ -88,9 +92,9 @@ def createGrpah(data):
     #Populate Array with Data
     for w in range (0,width):
         
-        red[int(data[w]),w] = 209    
-        green[int(data[w]),w] = 66
-        blue[int(data[w]),w] = 244
+        red[data[w],w] = 209    
+        green[data[w],w] = 66
+        blue[data[w],w] = 244
     
     image = np.dstack((blue, green, red))
     return image
@@ -116,35 +120,6 @@ def applyFilter(image):
     
     return filteredFrame
 
-#Reconstitute Dpeth Image
-def processDepthImage(depthFrame):
-
-    #Decompose and Rebuild Depth Data from Image
-    upper8, middle8, lower8 = np.dsplit(depthFrame,3)
-
-    #Determine Matrix Size    
-    height = len(depthFrame)
-    width = len(depthFrame[0])
-    size = (height,width)
-
-    #Convert Colour Channels
-    upper8 = upper8.astype(np.uint32)
-    upper8 = np.reshape(upper8,size)
-    middle8 = middle8.astype(np.uint32)
-    middle8 = np.reshape(middle8,size)
-    lower8 = lower8.astype(np.uint32)
-    lower8 = np.reshape(lower8,size)
-    
-    #Reshift for 24bit integar
-    middle8 = np.left_shift(upper8, 8)
-    upper8 = np.left_shift(upper8, 16)
-
-    #Concatenate to single array
-    depthRaw = np.add(lower8,middle8,upper8)
-    depthRaw = depthRaw.astype(np.int32)
-
-    return depthRaw
-
 #Processing Loop
 def processVideo(depthPath,videoPath,fps):
 
@@ -165,47 +140,45 @@ def processVideo(depthPath,videoPath,fps):
 
         ret, depthFrame = depth.read()
         ret, videoFrame = video.read()
+        
+        #Convert Matrix to Grayscale Image
+        depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
 
         #Apply Filtering
         depthFrame = applyFilter(depthFrame)
-
-        #Process Depth Image
-        depthRaw = processDepthImage(depthFrame)
      
-        closestPoint = scanImage(depthRaw)
+        #Determine the Closest Point
+        closestPoint = scanImage(depthFrame)
         distance = distanceCalc(closestPoint[0])
-        print(distance)
 
-        mappedDepth = np.true_divide(depthRaw, 8)
-        mappedDepth = np.rint(mappedDepth)
-        mappedDepth = mappedDepth.astype(np.uint8)
-        mappedDepth = np.dstack((mappedDepth, mappedDepth, mappedDepth))
+        #2D Graph the Area the Results
+        mapData = scanStrip(depthFrame)
+        graph = createGrpah(mapData)
+        cv.imshow('Graph',graph)
 
-        #Graphing the Results
-        #mapData = scanStrip(depthFrame)
-        #graph = createGrpah(mapData)
-        #cv.imshow('Graph',graph)
+        #Convert Depth Image Back to Colour Matrix
+        depthFrame = cv.cvtColor(depthFrame,cv.COLOR_GRAY2RGB)
 
         #Add text with measurements
         font = cv.FONT_HERSHEY_SIMPLEX
         text = 'Closest point is %.2fm away.'%round(distance,2)
-        cv.putText(videoFrame,text,(16,20), font, 0.6,(255,0,0),1,cv.LINE_AA)
+        cv.putText(videoFrame,text,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
         text = '%.2ffps'%round(fpsActual,2)
-        cv.putText(videoFrame,text,(16,44), font, 0.6,(255,0,0),1,cv.LINE_AA)
+        cv.putText(videoFrame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
 
         #Horizontal Line & Vertical Line on Video Image
         cv.line(videoFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
         cv.line(videoFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
 
         #Apply Colour Map
-        mappedDepth = cv.applyColorMap(mappedDepth, cv.COLORMAP_JET)
+        depthFrame = cv.applyColorMap(depthFrame, cv.COLORMAP_JET)
 
         #Horizontal Line & Vertical Line on Depth Image
-        cv.line(mappedDepth,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
-        cv.line(mappedDepth,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
+        cv.line(depthFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
+        cv.line(depthFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
 
         #Show the images
-        cv.imshow('Depth Data from File',mappedDepth)
+        cv.imshow('Depth Data from File',depthFrame)
         cv.imshow('Image Data from File',videoFrame)
 
         end = time.time()
@@ -281,18 +254,27 @@ def scanStrip(depthData):
 #Returns infomraiton about how far away a point is in and image
 def distanceCalc(depth):
 
-    factor = 8
-    #depth = depth*factor
+    cameraAngle = 60
 
-    #Tan Approx
-    distance = 0.1236 * np.tan(depth / 2842.5 + 1.1863) 
-    #First Order Approx
-    #distance = 0.00307 * depth + 3.33
+    a = -0.0000000069
+    b = 0.0000064344
+    c = -0.0019066199
+    d = 0.2331614352
+    e = -9.5744837865
+    #Second Order Custom Estimation
+    distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
 
-    #distance = depth
-    closestPoint = depth #- vehicleLength
+    #First Order Custom Estimation
+    #m = 0.0161
+    #c = -1.4698
+    #distance = (m*depth)+c
 
-    return closestPoint
+    #Simple trig to create ground truth distance 
+    cameraAngle = math.radians(cameraAngle)
+    groundDistance = math.sin(cameraAngle)*distance
+    groundDistance = groundDistance - vehicleLength
+    
+    return groundDistance
 
 #------------------------------------------------------------------------------------------
 #Main Script
@@ -303,24 +285,24 @@ videoPath = "navigation\kinect\KinectRGB_testData2.avi"
 
 depthStream = "http://192.168.1.100:8081/?action=stream"
 videoStream = "http://192.168.1.100:8080/?action=stream"
-fps = 25
+fps = 30
 
 #Create Map
-start = time.time()
-mapShape, mapLocation = createMap("testMap")
-end = time.time()
-print("STATUS: Map creation took %.2f seconds." % round((end-start),2))
+#start = time.time()
+#mapShape, mapLocation = createMap("testMap")
+#end = time.time()
+#print("STATUS: Map creation took %.2f seconds." % round((end-start),2))
 
 #Load Map      
-start = time.time()
-map = loadMap("testMap")
-end = time.time()
-print("STATUS: Loading the map took %.2f seconds." % round((end-start),2))
+#start = time.time()
+#map = loadMap("testMap")
+#end = time.time()
+#print("STATUS: Loading the map took %.2f seconds." % round((end-start),2))
 
-print("INFO: The shape of the map is ",mapShape)
-print("INFO: The location in the map has been set as ",mapLocation)
+#print("INFO: The shape of the map is ",mapShape)
+#print("INFO: The location in the map has been set as ",mapLocation)
 
-processVideo(depthPath,videoPath,fps)
+processVideo(depthStream,videoStream,fps)
 
 
 

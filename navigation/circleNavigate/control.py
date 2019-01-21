@@ -56,12 +56,18 @@ class Control:
     #Send and Receive Messages with implemented logging
     def transmitCommand(self, speed, angle, command):
 
+        #Start Timing
+        start = time.time()
+
         #Create form of the payload
         payload = str(speed)+","+str(angle)+","+ command
-       
+
         #combine with host address
         message = self.host + payload
+
         response = urllib.request.urlopen(message)
+     
+        time.sleep(0.9)
 
         receivedMessage = response.read()
         #print("INFO: Transmission response code is",str(response.getcode()))
@@ -89,7 +95,9 @@ class Control:
             self.setAngle = angle
             self.setCommand = command
 
-        response.close() 
+        end = time.time()
+        print("STATUS: Sending '",payload,"'took %.2f seconds." % round((end-start),2))
+
 
     #parse response
     def decodeResponse(self, receivedMessage):
@@ -122,7 +130,7 @@ class Control:
          
         delay = 1/acceleration
         delay = int(delay)
-        command = "SEND"
+        command = "RUN"
         
         #Direction Forward
         if newSpeed >= 0:

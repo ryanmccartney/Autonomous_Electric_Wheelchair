@@ -10,7 +10,7 @@ import time
 
 #Create a file for logging
 try:
-    #open a txt file to duse for logging 
+    #open a txt file to use for logging 
     logFile = open("navigation\circleNavigate\circleLog.txt","w+")
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
@@ -75,13 +75,13 @@ try:
         #Full Circle
         wheelchair.changeAngle(100)
         #Increase Speed
-        wheelchair.rampSpeed(30,1)
+        wheelchair.rampSpeed(30,2)
         #Reduce Speed
-        wheelchair.rampSpeed(0,1)
+        wheelchair.rampSpeed(0,2)
         #Anticlockwise
         wheelchair.changeAngle(-100)
         #Increase Speed
-        wheelchair.rampSpeed(30,1)
+        wheelchair.rampSpeed(30,2)
         #Emergency Stop Wheelchair
         wheelchair.eStop()
 

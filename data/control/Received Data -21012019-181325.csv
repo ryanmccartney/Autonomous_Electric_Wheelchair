@@ -1,0 +1,4 @@
+Date & Time,Battery Voltage(V),Right Current (A),Left Current (A),Status Message
+21/01/2019 18:13:27,-1.20,0.76,24.48,STATUS = System restarting.
+21/01/2019 18:13:28,-1.20,1.00,24.42,STATUS = System restarting.
+21/01/2019 18:14:37,-1.20,1.00,25.07,ERROR = Left motor has developed a fault.
