@@ -187,7 +187,6 @@ class Navigation:
                 cv.line(frame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,0,255),2)
                 #Path Rectangle
                 cv.rectangle(frame,(topW,topH),(bottomW,bottomH),(0,255,0),2)
-
                 
                 #Add text with details
                 font = cv.FONT_HERSHEY_SIMPLEX

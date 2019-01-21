@@ -35,6 +35,7 @@ class cameraStream:
 
         #Run command to mount directory in RAM
         os.system ("sudo mount -t tmpfs tmpfs /var/www/html/stream")
+
         self.getKinectData()
 
     #function to get RGB image from kinect
@@ -48,9 +49,41 @@ class cameraStream:
     @staticmethod
     def get_depth():
         array,_ = freenect.sync_get_depth()
-        #array = array/8
-        array = array.astype(np.uint8)
-        return array
+
+        upperArray = array
+        lowerArray = array
+
+        upperArray >>=8
+        lowerArray >>=8
+
+        upperArray = upperArray.astype(np.uint8)
+        lowerArray = lowerArray.astype(np.uint8)
+        padding = np.zeros(array.shape, dtype=np.uint8)
+        
+        frame = np.dstack((padding, upperArray, lowerArray))
+
+        #array = np.clip(array,0,2**10 - 1)
+        #array >>= 2
+        
+        #Improved Method (Accuarcy Loss)
+        #mapped = np.true_divide(array, 9)
+        #mapped = np.rint(mapped)
+        #mapped = mapped.astype(np.uint8)
+        #frame = np.dstack((mapped, mapped, mapped))
+
+        #Final Method (Full Accuracy)        
+        #l8 = array
+        #l8 = l8.astype(np.uint8)
+        #m8 = np.right_shift(array, 8)
+        #m8 = m8.astype(np.uint8)
+        #u8 = np.zeros(array.shape, dtype=np.uint8)
+        #frame = np.dstack((u8, m8, l8))
+        
+        #Original Method (Truncation Problem)
+        #array = np.clip(array,0,255)
+        #frame = array.astype(np.uint8)
+    
+        return frame
 
     #Method for streaming webcam at a port
     @threaded

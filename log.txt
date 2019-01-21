@@ -1,8 +1,8 @@
-14/01/2019 18:06:40: INFO = Program has started running.
-14/01/2019 18:06:40: INFO = Settings file loaded.
-14/01/2019 18:06:40: INFO = Data extracted successfully from settings file.
-14/01/2019 18:06:41: INFO = Camera data acquired succesfully.
-14/01/2019 18:06:41: ERROR = Unable to establish connection with Robotic Deivce.
-14/01/2019 18:06:41: INFO = Navigation started sucessfully.
-14/01/2019 18:06:41: STATUS = The Maximum Wheelchair Speed has been set as 255
-14/01/2019 18:06:41: ERROR = Unable to begin navigation.
+17/01/2019 17:43:59: INFO = Program has started running.
+17/01/2019 17:43:59: INFO = Settings file loaded.
+17/01/2019 17:43:59: INFO = Data extracted successfully from settings file.
+17/01/2019 17:44:00: INFO = Camera data acquired succesfully.
+17/01/2019 17:44:01: ERROR = Unable to establish connection with Robotic Deivce.
+17/01/2019 17:44:01: INFO = Navigation started sucessfully.
+17/01/2019 17:44:01: STATUS = The Maximum Wheelchair Speed has been set as 255
+17/01/2019 17:44:01: ERROR = Unable to begin navigation.
