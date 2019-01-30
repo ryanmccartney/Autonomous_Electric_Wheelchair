@@ -77,6 +77,21 @@ def loadMap(name):
 
     #return mapLocation
 
+#Convert depth image to a floor plan view
+def createFloorPlan(dpethImage):
+
+    unitSize = 0.1
+
+    width = len()
+    height = 255+1
+    size = (height,width)
+
+    distanceCalc()
+
+    red = np.full(size,255,dtype=np.uint8)
+    green = np.full(size,255,dtype=np.uint8)
+    blue = np.full(size,255,dtype=np.uint8)
+
 
 #Optimised method for creating a graph
 def createGrpah(data):
@@ -280,8 +295,8 @@ def distanceCalc(depth):
 #Main Script
 #------------------------------------------------------------------------------------------
 
-depthPath = "navigation\kinect\KinectDepth_testData2.avi"
-videoPath = "navigation\kinect\KinectRGB_testData2.avi"
+depthPath = "testing\kinectCalibration\testData\KinectDepth_testData2.avi"
+videoPath = "testing\kinectCalibration\testData\KinectRGB_testData2.avi"
 
 depthStream = "http://192.168.1.100:8081/?action=stream"
 videoStream = "http://192.168.1.100:8080/?action=stream"
@@ -302,7 +317,7 @@ fps = 30
 #print("INFO: The shape of the map is ",mapShape)
 #print("INFO: The location in the map has been set as ",mapLocation)
 
-processVideo(depthStream,videoStream,fps)
+processVideo(depthPath,videoPath,fps)
 
 
 

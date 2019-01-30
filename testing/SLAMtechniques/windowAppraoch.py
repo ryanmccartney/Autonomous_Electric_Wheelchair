@@ -4,7 +4,11 @@ author: Atsushi Sakai (@Atsushi_twi)
 """
 
 import math
+import time
 import numpy as np
+import numba as nb
+from numba import jitclass
+from numba import float64   
 import matplotlib.pyplot as plt
 
 import sys
@@ -12,6 +16,8 @@ sys.path.append("../../")
 
 show_animation = True
 
+spec = [("max_speed",float64),("min_speed",float64),("max_yawrate",float64),("max_accel",float64),("max_dyawrate",float64),("v_reso",float64),("yawrate_reso",float64),("dt",float64),("predict_time",float64),("to_goal_cost_gain",float64),("speed_cost_gain",float64),("robot_radius",float64)]
+@jitclass(spec)
 class Config():
     # simulation parameters
 
@@ -30,7 +36,7 @@ class Config():
         self.speed_cost_gain = 1.0
         self.robot_radius = 1.0  # [m]
 
-
+@nb.jit(nopython=True)
 def motion(x, u, dt):
     # motion model
 
@@ -41,7 +47,6 @@ def motion(x, u, dt):
     x[4] = u[1]
 
     return x
-
 
 def calc_dynamic_window(x, config):
 
@@ -61,7 +66,7 @@ def calc_dynamic_window(x, config):
 
     return dw
 
-
+@nb.jit(nopython=True)
 def calc_trajectory(xinit, v, y, config):
 
     x = np.array(xinit)
@@ -74,7 +79,6 @@ def calc_trajectory(xinit, v, y, config):
 
     return traj
 
-
 def calc_final_input(x, u, dw, config, goal, ob):
 
     xinit = x[:]
@@ -82,7 +86,7 @@ def calc_final_input(x, u, dw, config, goal, ob):
     min_u = u
     min_u[0] = 0.0
     best_traj = np.array([x])
-
+    
     # evalucate all trajectory with sampled input in dynamic window
     for v in np.arange(dw[0], dw[1], config.v_reso):
         for y in np.arange(dw[2], dw[3], config.yawrate_reso):
@@ -148,9 +152,10 @@ def dwa_control(x, u, config, goal, ob):
     # Dynamic Window control
 
     dw = calc_dynamic_window(x, config)
-
+   
     u, traj = calc_final_input(x, u, dw, config, goal, ob)
-
+    
+    
     return u, traj
 
 
@@ -184,14 +189,17 @@ def main():
     traj = np.array(x)
 
     for i in range(1000):
-        u, ltraj = dwa_control(x, u, config, goal, ob)
 
+        start = time.time()
+        u, ltraj = dwa_control(x, u, config, goal, ob)
         x = motion(x, u, config.dt)
         traj = np.vstack((traj, x))  # store state history
+        end = time.time()
 
-        # print(traj)
-
+        print("STATUS: The current trajectory is set as '",x,"'. Processing  took %.2f seconds." % round((end-start),2))
+ 
         if show_animation:
+            start = time.time()
             plt.cla()
             plt.plot(ltraj[:, 0], ltraj[:, 1], "-g")
             plt.plot(x[0], x[1], "xr")
@@ -201,6 +209,8 @@ def main():
             plt.axis("equal")
             plt.grid(True)
             plt.pause(0.0001)
+            end = time.time()
+            print("STATUS: Plotting the animation took %.2f seconds." % round((end-start),2))
 
         # check goal
         if math.sqrt((x[0] - goal[0])**2 + (x[1] - goal[1])**2) <= config.robot_radius:

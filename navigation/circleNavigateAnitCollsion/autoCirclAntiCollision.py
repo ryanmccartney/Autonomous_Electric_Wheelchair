@@ -11,7 +11,7 @@ import time
 #Create a file for logging
 try:
     #open a txt file to use for logging 
-    logFile = open("data\logs\autoCircle.txt","w+")
+    logFile = open("data\logs\autoCirclAntiCollision.txt","w+")
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
     logFile.write(logEntry)

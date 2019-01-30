@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:mega",
-    "configuration": "cpu=atmega2560",
-    "sketch": "arduino\\Motor_Control_Code\\Motor_Control_Code.ino"
-}
