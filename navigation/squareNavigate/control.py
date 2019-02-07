@@ -245,26 +245,6 @@ class Control:
         time.sleep(delay)
         self.transmitCommand(0,0,"SEND")  
 
-    #Function to change the move the wheelchair a specific distance in meters
-    def changeRadius(self,radius):
-
-        delay = 0.1
-        factor = 1
-        radius = radius/factor
-        radius = int(radius)
-
-        angle = self.setAngle
-
-        while radius > self.setAngle: 
-            angle = angle + 1
-            self.transmitCommand(self.setSpeed,angle,"SEND")
-            time.sleep(delay)
-        
-        while radius < self.setAngle: 
-            angle = angle - 1
-            self.transmitCommand(self.setSpeed,angle,"SEND")
-            time.sleep(delay)
-
     #Function to Calculate Speed Lmit bases on the value of the closest point
     def changeAngle(self, angle):
 

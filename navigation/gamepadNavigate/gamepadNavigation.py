@@ -1,8 +1,8 @@
-#NAME: autoCircle.py
+#NAME: gamepadNavigation.py
 #DATE: 12/11/2018
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC: A python class for moving the wheelchair in a circle whilst avoiding collisoins
-#COPY: Copyright 2018, All Rights Reserved, Ryan McCartney
+#DESC: A python function for navigating the wheelchaitr with an XBBOX 360 game controller
+#COPY: Copyright 2019, All Rights Reserved, Ryan McCartney
 
 from control import Control
 import json
@@ -10,8 +10,8 @@ import time
 
 #Create a file for logging
 try:
-    #open a txt file to use for logging
-    logFile = open("data\logs\circle.txt","w+")
+    #open a txt file to use for logging 
+    logFile = open("data\logs\gamepadNavigation.txt","w+")
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
     logFile.write(logEntry)
@@ -71,18 +71,9 @@ try:
 
     #Carry out control command
     try:
-
-        #Full Circle
-        wheelchair.changeAngle(100)
-        #Speed up
-        wheelchair.rampSpeed(30,10)
-        #Change Radius
-        wheelchair.changeRadius(20)
-        #Reduce Speed
-        wheelchair.rampSpeed(0,10)
-        wheelchair.eStop()
-
-        exit()
+        
+        while 1:
+            wheelchair.gamepadRunning = True
 
     except:
          #write status to log file

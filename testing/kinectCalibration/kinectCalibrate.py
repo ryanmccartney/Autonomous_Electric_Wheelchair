@@ -298,8 +298,8 @@ def distanceCalc(depth):
 depthPath = "testing\kinectCalibration\testData\KinectDepth_testData2.avi"
 videoPath = "testing\kinectCalibration\testData\KinectRGB_testData2.avi"
 
-depthStream = "http://192.168.1.100:8081/?action=stream"
-videoStream = "http://192.168.1.100:8080/?action=stream"
+depthStream = "http://192.168.1.101:8081/?action=stream"
+videoStream = "http://192.168.1.101:8080/?action=stream"
 fps = 30
 
 #Create Map
@@ -317,7 +317,7 @@ fps = 30
 #print("INFO: The shape of the map is ",mapShape)
 #print("INFO: The location in the map has been set as ",mapLocation)
 
-processVideo(depthPath,videoPath,fps)
+processVideo(depthStream,videoStream,fps)
 
 
 

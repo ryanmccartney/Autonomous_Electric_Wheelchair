@@ -2,7 +2,7 @@
 // NAME: Electric Wheelchair Motor Control Alogtrithm
 // AUTH: Ryan McCartney
 // DATE: 14th January 2019
-// DESC: Recieves serial communications containing control commands for the electric wheelchair
+// DESC: Recieves serial communications containing control commands for an electric wheelchair
 // NOTE: All Rights Reserved, 2018, Queen's University Belfast
 //------------------------------------------------------------------------------------------------------------------
 
@@ -33,6 +33,9 @@
 //Receive Data Variables
 float maxCurrent = 30.00;
 int maxSpeed = 100;
+
+//Accuracy adustment for current readings
+int currentOffset = 0;
 
 //Receive Data Variables
 String inputString = "";
@@ -96,8 +99,12 @@ void setup() {
   //Reserve Memory Sapce for Incomming Bytes
   inputString.reserve(200);
   statusMessage = "STATUS = System restarting.";
+
+  //Calibrate the current value on startup
+  currentOffset = (analogRead(RightMotorCurrent)+analogRead(LeftMotorCurrent))/2;
+  
   sendData();
-  delay(250);  
+  delay(250);
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -108,10 +115,10 @@ bool mapOutputs() {
   bool status = false;
 
   //Check the range of speed data
-  if((setSpeed <= 100 && setSpeed >= -100) || setSpeed == 0){
+  if((setSpeed <= 100 && setSpeed >= -100)){
 
      //Check the range of angle data
-    if((setAngle <= 100 && setAngle >= -100) || setAngle == 0){
+    if((setAngle <= 100 && setAngle >= -100)){
     
       if(setSpeed < 0){
         setSpeed = -setSpeed;
@@ -122,12 +129,7 @@ bool mapOutputs() {
         leftDirection = 1;
         rightDirection = 1;
       }
-
-      //Limit Speed
-      if(setSpeed > maxSpeed){
-          setSpeed = maxSpeed;
-        }
-    
+ 
       //Map Inputs to motor PWM
       leftMotorSpeed = map(setSpeed, 0, 100, 0, 255);
       rightMotorSpeed = map(setSpeed, 0, 100, 0, 255);
@@ -135,12 +137,12 @@ bool mapOutputs() {
       if (setAngle < 0) {
         setAngle = -setAngle;
         if(setAngle <= 50){
-          leftMotorSpeed = map(setAngle,50,0,0,leftMotorSpeed);
-          leftMotorSpeed = (int)leftMotorSpeed;
+          rightMotorSpeed = map(setAngle,50,0,0,rightMotorSpeed);
+          rightMotorSpeed = (int)leftMotorSpeed;
         }
-        else if(setAngle >= 50){
-          leftMotorSpeed = map(setAngle,50,100,0,leftMotorSpeed);
-          leftMotorSpeed = (int)leftMotorSpeed;
+        else if(setAngle > 50){
+          rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
+          rightMotorSpeed = (int)rightMotorSpeed;
           if(rightDirection == 0){
             rightDirection = 1;
           }
@@ -151,13 +153,13 @@ bool mapOutputs() {
         status = true;
       }
       else if (setAngle > 0){
-        if(setAngle < 50){
-          rightMotorSpeed = map(setAngle,50,0,0,rightMotorSpeed);
-          rightMotorSpeed = (int)rightMotorSpeed;
+        if(setAngle <= 50){
+          leftMotorSpeed = map(setAngle,50,0,0,leftMotorSpeed);
+          leftMotorSpeed = (int)leftMotorSpeed;
         }
         else if(setAngle > 50){
-          rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
-          rightMotorSpeed = (int)rightMotorSpeed;
+          leftMotorSpeed = map(setAngle,50,100,0,leftMotorSpeed);
+          leftMotorSpeed = (int)leftMotorSpeed;
           if(leftDirection == 0){
             leftDirection = 1;
           }
@@ -414,20 +416,19 @@ void stopWheelchair() {
 }
 
 //------------------------------------------------------------------------------------------------------------------
-//Reads input variables
+//Reads senor inputs and computes metrics
 //------------------------------------------------------------------------------------------------------------------
 void readInputs() {
 
-   //Contants for variable conversion
+   //Contants for senor readings conversion
    float voltageFactor = 0.02932551; //Voltage in Volts
    float voltageOffset = 1.65;
    float currentFactor = 0.244379; //Current in Amps
-   float currentOffset = 1.2;
-
+ 
    //Read sensor data to update variables 
    batteryVoltage = (analogRead(BatteryIndication)*voltageFactor)-voltageOffset;
-   rightMotorCurrent = (analogRead(RightMotorCurrent)*currentFactor)-currentOffset;
-   leftMotorCurrent = (analogRead(LeftMotorCurrent)*currentFactor)-currentOffset;
+   rightMotorCurrent = (analogRead(RightMotorCurrent)-currentOffset)*currentFactor;
+   leftMotorCurrent = (analogRead(LeftMotorCurrent)-currentOffset)*currentFactor;
    
    rightMotorFault = digitalRead(RightMotorFault);
    leftMotorFault = digitalRead(LeftMotorFault);
@@ -442,7 +443,7 @@ void sendData() {
 
    readInputs();
    
-   if(rightMotorFault == 0){
+   /*if(rightMotorFault == 0){
       statusMessage = "ERROR = Right motor has developed a fault.";
       stopWheelchair();
       
@@ -451,6 +452,7 @@ void sendData() {
       statusMessage = "ERROR = Left motor has developed a fault.";
       stopWheelchair();
    }
+   */
    
    //Send Serial Information
    Serial.print(leftMotorCurrent,2);

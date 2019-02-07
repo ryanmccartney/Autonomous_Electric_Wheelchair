@@ -36,7 +36,7 @@ For autonomous navigation the above dependencies and the follow are requird;
 1. Clone, Build and Install the OpenKinect library. [Here](https://naman5.wordpress.com/2014/06/24/experimenting-with-kinect-using-opencv-python-and-open-kinect-libfreenect/) is a great tutorial for doing just that.
 1.  Copy html folder to webserver folder. Appropriate permissions are required to run PHP and Python Scripts for the interface
 
-## Acknowledgents
+## Acknowledgements
 * Queen's University Belfast
 * PyImageSearch
 

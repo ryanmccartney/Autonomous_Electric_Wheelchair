@@ -72,14 +72,16 @@ try:
     #Carry out control command
     try:
 
-        #Full Circle
-        wheelchair.changeAngle(100)
-        #Speed up
-        wheelchair.rampSpeed(30,10)
-        #Change Radius
-        wheelchair.changeRadius(20)
-        #Reduce Speed
-        wheelchair.rampSpeed(0,10)
+        #Move the wheelchair in a square
+        wheelchair.turn(90)
+        wheelchair.move(2)
+        wheelchair.turn(90)
+        wheelchair.move(2)
+        wheelchair.turn(90)
+        wheelchair.move(2)
+        wheelchair.turn(90)
+        wheelchair.move(2)
+
         wheelchair.eStop()
 
         exit()
