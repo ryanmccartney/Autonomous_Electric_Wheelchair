@@ -1,7 +1,8 @@
 #NAME:  imageProcessing.py
+#DATE:  08/02/2019
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC:  A python class for aquiring and processing image data from network streams
-#COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
+#COPY:  Copyright 2019, All Rights Reserved, Ryan McCartney
 
 import threading
 import numpy as np
@@ -11,6 +12,7 @@ import imutils
 import numba as nb
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from streamCapture import StreamCapture
 import time
 import math
 
@@ -24,6 +26,7 @@ def threaded(fn):
 
 class imageProcessing:
 
+    debug = False
     processing = False
     
     def __init__(self,configuration):
@@ -33,26 +36,30 @@ class imageProcessing:
             configuration = configuration
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
             logEntry = currentDateTime + ": " + "INFO = The configuration file has been accessed." + "\n"
+            print(logEntry)
         except:
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = The configuration file cannot be accessed." + "\n"
+            logEntry = currentDateTime + ": " + "ERROR = The configuration file cannot be accessed." + "\n"
             print(logEntry)
 
         #Load Configuration Variables
         try:
             self.kinectDepth_url = configuration['streams']['kinectDepth']['url']
             self.kinectDepth_name = configuration['streams']['kinectDepth']['name']
-            self.kinectDepth_url = configuration['streams']['kinectRGB']['url']
-            self.kinectDepth_name = configuration['streams']['kinectRGB']['name']
-            self.kinectDepth_url = configuration['streams']['webcam']['url']
-            self.kinectDepth_name = configuration['streams']['webcam']['name']
+            self.kinectImage_url = configuration['streams']['kinectRGB']['url']
+            self.kinectImage_name = configuration['streams']['kinectRGB']['name']
+            self.webcam_url = configuration['streams']['webcam']['url']
+            self.webcam_url = configuration['streams']['webcam']['name']
+
             self.fps = configuration['general']['fps']
+            self.kinectAngle = configuration['general']['kinectAngle']
+            self.scaleFactor = configuration['general']['scaleFactor']
 
             self.mapUnits = configuration['map']['unitSize']
             self.mapLength = configuration['map']['length']
             self.mapWidth = configuration['map']['width']
             self.mapHeight = configuration['map']['height']
-
+            
             self.vehicleLength = configuration['vehicle']['length']
             self.vehicleWidth = configuration['vehicle']['width']
             self.vehicleHeight = configuration['vehicle']['height']
@@ -61,19 +68,20 @@ class imageProcessing:
             logFilePath = configuration['general']['logFileDirectory']
             logFileName = configuration['general']['logFileName']
             logFileFullPath = logFilePath + logFileName
+
             
         except:
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = The configuration file cannot be decoded." + "\n"
+            logEntry = currentDateTime + ": " + "ERROR = The configuration file cannot be decoded." + "\n"
             print(logEntry)
      
         #Open the log file
         try:
             #open a txt file to use for logging 
-            self.logFile = open(logFileFullPath,"w+")
+            self.logFile = open(logFileFullPath,"a+")
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
             logEntry = currentDateTime + ": " + "INFO = Log file accessed by Image Proccessor." + "\n"
-            logFile.write(logEntry)
+            self.logFile.write(logEntry)
             print(logEntry)
         except:
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -127,7 +135,7 @@ class imageProcessing:
         return mapShape, mapLocation
 
     #Load the Map from file
-    def loadMap(self, name):
+    def loadMap(self, name, mapShape):
 
         #Write Log Entry
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -157,8 +165,6 @@ class imageProcessing:
         width = len()
         height = 255+1
         size = (height,width)
-
-        distanceCalc()
 
         red = np.full(size,255,dtype=np.uint8)
         green = np.full(size,255,dtype=np.uint8)
@@ -214,94 +220,122 @@ class imageProcessing:
 
         delay = 1/self.fps
         fpsActual = self.fps
-
-        #Depth and Video Data
-        depth = cv.VideoCapture(depthPath)
-        video = cv.VideoCapture(videoPath)
- 
+        
         #Crosshair Size
         crosshairHeight = 10
         crosshairWidth = 10
 
-        #Write Log Entry
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Starting processing on data streams." + "\n"
-        self.logFile.write(logEntry)
-        print(logEntry)
+        try:
+            depth = StreamCapture(self.kinectDepth_url,self.kinectDepth_name)
+            video = StreamCapture(self.kinectImage_url,self.kinectImage_name)
+            depth.displayStream = True
+            video.displayStream = True
 
-        while(depth.isOpened()) and (video.isOpened()):
+            #Get an initial Frame
+            depthFrame = depth.getFrame()
+            videoFrame = video.getFrame()
 
-            start = time.time()
+            #Get Depth Frame Dimensions
+            height = depthFrame.shape[0]
+            width = depthFrame.shape[1]
 
-            ret, depthFrame = depth.read()
-            ret, videoFrame = video.read()
+            #Reduce Depth Image Resolution
+            mappedHeight = int(height*self.scaleFactor)
+            mappedWidth = int(width*self.scaleFactor)
+
+            #Write Log Entry
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "INFO = Starting processing on data streams." + "\n"
+            self.logFile.write(logEntry)
+            print(logEntry)
+
+            while (video.stream == True) and (depth.stream == True):
+
+                start = time.time()
+
+                #Get Latest Frames
+                depthFrame = depth.frame
+                videoFrame = video.frame
+
+                #Convert Matrix to Grayscale Image
+                depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
+
+                #Apply Filtering
+                depthFrame = self.applyFilter(0,depthFrame)
+
+                #Reduce Resolution of Kinetic Depth to a Managable Size
+                #depthFrame = cv.resize(depthFrame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)   
+
+                #Determine the Closest Point
+                closestPoint = self.scanImage(depthFrame)
+                self.closestObject = self.distanceCalc(closestPoint[0])
+
+                #2D Graph the Area the Results
+                mapData = self.scanStrip(depthFrame)
+                graph = self.createGrpah(mapData)
+                cv.imshow('Graph',graph)
+
+                #Convert Depth Image Back to Colour Matrix
+                depthFrame = cv.cvtColor(depthFrame,cv.COLOR_GRAY2RGB)
+
+                #Add text with measurements
+                font = cv.FONT_HERSHEY_SIMPLEX
+                text = 'Closest point is %.2fm away.'%round(self.closestObject,2)
+                cv.putText(videoFrame,text,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
+                text = '%.2ffps'%round(fpsActual,2)
+                cv.putText(videoFrame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
+
+                #Horizontal Line & Vertical Line on Video Image
+                cv.line(videoFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
+                cv.line(videoFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
+
+                #Apply Colour Map
+                depthFrame = cv.applyColorMap(depthFrame, cv.COLORMAP_JET)
+
+                #Horizontal Line & Vertical Line on Depth Image
+                cv.line(depthFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
+                cv.line(depthFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
         
-            #Convert Matrix to Grayscale Image
-            depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
+                #Show the images
+                cv.imshow(self.kinectDepth_name,depthFrame)
+                cv.imshow(self.kinectImage_name,videoFrame)
 
-            #Apply Filtering
-            depthFrame = self.applyFilter(0,depthFrame)
-     
-            #Determine the Closest Point
-            closestPoint = self.scanImage(depthFrame)
-            distance = self.distanceCalc(closestPoint[0])
+                end = time.time()
 
-            #2D Graph the Area the Results
-            mapData = self.scanStrip(depthFrame)
-            graph = self.createGrpah(mapData)
-            cv.imshow('Graph',graph)
+                if self.debug == True:
+                    print("INFO: Processing duration for frame is %.2f seconds and the closest point is %.2f meters away." % (round((end-start),2), round(self.closestObject,2)))
+                
+                adjustedDelay = delay-(end-start)
 
-            #Convert Depth Image Back to Colour Matrix
-            depthFrame = cv.cvtColor(depthFrame,cv.COLOR_GRAY2RGB)
+                if adjustedDelay < 0:
+                    adjustedDelay = 0
+                    fpsActual = 1/(end-start)
+                else:
+                    fpsActual = self.fps
 
-            #Add text with measurements
-            font = cv.FONT_HERSHEY_SIMPLEX
-            text = 'Closest point is %.2fm away.'%round(distance,2)
-            cv.putText(videoFrame,text,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
-            text = '%.2ffps'%round(fpsActual,2)
-            cv.putText(videoFrame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
+                time.sleep(adjustedDelay)
+                self.processing = True
 
-            #Horizontal Line & Vertical Line on Video Image
-            cv.line(videoFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
-            cv.line(videoFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
+                if cv.waitKey(1) & 0xFF == ord('q'):
+                    break
 
-            #Apply Colour Map
-            depthFrame = cv.applyColorMap(depthFrame, cv.COLORMAP_JET)
+            self.processing = False
+            depth.stream = False
+            video.stream = False
+            cv.destroyAllWindows()
 
-            #Horizontal Line & Vertical Line on Depth Image
-            cv.line(depthFrame,((closestPoint[1]-crosshairWidth),closestPoint[2]),((closestPoint[1]+crosshairWidth),closestPoint[2]),(0,255,0),2)
-            cv.line(depthFrame,(closestPoint[1],(closestPoint[2]-crosshairHeight)),(closestPoint[1],(closestPoint[2]+crosshairHeight)),(0,255,0),2)
-        
-            #Show the images
-            cv.imshow(self.kinectDepth_name,depthFrame)
-            cv.imshow(self.kinectImage_name,videoFrame)
-
-            end = time.time()
-            print("INFO: Processing duration for frame is %.2f seconds and the closest point is %.2f meters away." % (round((end-start),2), round(distance,2)))
-            adjustedDelay = delay-(end-start)
-
-            if adjustedDelay < 0:
-                adjustedDelay = 0
-                fpsActual = 1/(end-start)
-            else:
-                fpsActual = fps
-
-            time.sleep(adjustedDelay)
-            self.processing = True
-
-            if cv.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.processing = False
-        depth.release()
-        video.release()
-        cv.destroyAllWindows()
+        except:
+            #Write Log Entry
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "ERROR = Could not access video streams." + "\n"
+            self.logFile.write(logEntry)
+            print(logEntry)
 
     #Optimised method for finding the closest point in an image
-    @nb.jit(nopython=True)
     @staticmethod
+    @nb.jit(nopython=True)
     def scanImage(depthData):
-
+        
         height = len(depthData)
         width = len(depthData[0])
 
@@ -328,8 +362,8 @@ class imageProcessing:
         return results
 
     #Optimised method for finding the closest point in each strip
-    @nb.jit(nopython=True)
     @staticmethod
+    @nb.jit(nopython=True)
     def scanStrip(depthData):
 
         height = len(depthData)
@@ -354,8 +388,6 @@ class imageProcessing:
     #Returns infomraiton about how far away a point is in and image
     def distanceCalc(self,depth):
 
-        cameraAngle = 60
-
         a = -0.0000000069
         b = 0.0000064344
         c = -0.0019066199
@@ -371,8 +403,8 @@ class imageProcessing:
         #distance = (m*depth)+c
 
         #Simple trig to create ground truth distance 
-        cameraAngle = math.radians(cameraAngle)
-        groundDistance = math.sin(cameraAngle)*distance
-        groundDistance = groundDistance - vehicleLength
+        kinectAngleRads = math.radians(self.kinectAngle)
+        groundDistance = math.sin(kinectAngleRads)*distance
+        groundDistance = groundDistance - self.vehicleLength
     
         return groundDistance
