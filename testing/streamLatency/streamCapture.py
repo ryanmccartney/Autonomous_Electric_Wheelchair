@@ -1,5 +1,5 @@
 #NAME:  streamCapture.py
-#DATE:  10/02/2019
+#DATE:  08/02/2019
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC:  A python class for aquiring image data from network streams
 #COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
