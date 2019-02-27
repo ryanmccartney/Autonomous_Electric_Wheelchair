@@ -24,7 +24,7 @@ except:
 try: 
     #load settings file
     settingsFile = open('navigation\settings.json').read()
-    settings = json.loads(settingsFile)
+    configuration = json.loads(settingsFile)
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Settings file loaded." + "\n"
@@ -38,31 +38,10 @@ except:
     print(logEntry)
     exit()
 
-#Extract Data from settings file
-try: 
-    control_url = settings['host']['command_url']
-    kinectImage_url = settings['host']['kinectImage_url']
-    kinectDepth_url = settings['host']['kinectDepth_url']
-    webcam_url = settings['host']['webcam_url']
-    test_url = settings['host']['test_url']
-    
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Data extracted successfully from settings file." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
-except:
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Unable to extract data from settings file. Is data in the correct format?" + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
-    exit()
-
 #Intialise Control Session for Wheelchair
 try:
     #Initialise Class for control
-    wheelchair = Control(control_url)
+    wheelchair = Control(configuration)
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Control Connection Established with Robotic Device." + "\n"

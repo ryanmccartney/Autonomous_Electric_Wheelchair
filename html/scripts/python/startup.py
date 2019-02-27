@@ -6,6 +6,7 @@
 
 import threading
 import serial
+import gamepad
 from cameraStream import cameraStream
 import time
 import io
@@ -57,6 +58,8 @@ try:
         print(logEntry)
 
     try:
+        #Check for Gamepads
+        gamepad.runGamepad()
         #Open Serial Port
         wheelchair = serial.Serial('/dev/ttyACM0')
 
@@ -72,5 +75,5 @@ try:
         print(logEntry)
 
 except KeyboardInterrupt:
-            stream.running = False
-            print('INFO: Stopping Program')
+    stream.running = False
+    print('INFO: Stopping Program')
