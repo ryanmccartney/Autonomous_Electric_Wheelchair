@@ -1,7 +1,7 @@
 #NAME:  personTracking.py
 #DATE:  08/02/2019
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC:  A python class for aquiring image data from network streams
+#DESC:  A python class for tracking people data streamed from a kinect camera
 #COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
 
 import threading
@@ -24,15 +24,8 @@ def threaded(fn):
 
 class PersonTracking:
 
-    displayStream = False
-    stream = True
-    showClock = False
-    showFPS = False
-    info = False
     frameWidth = 640
-    fps = 15
-    nms = True
-        
+          
     def __init__(self,configuration):
         
         #Load Configuration Variables
@@ -45,9 +38,6 @@ class PersonTracking:
             self.webcam_url = configuration['streams']['webcam']['name']
 
             self.fps = configuration['general']['fps']
-            self.kinectAngle = configuration['general']['kinectAngle']
-            self.scaleFactor = configuration['general']['scaleFactor']
-
             self.maxSpeed = configuration['control']['maxSpeed']
             self.minAngle = configuration['control']['minAngle']
             self.maxAngle = configuration['control']['maxAngle']
@@ -81,12 +71,14 @@ class PersonTracking:
         #Allow opencv to capture the RGB Stream
         self.image = cv.VideoCapture(self.kinectImage_url)
 
+        #Initialising some options with Default values
         self.retrieveFrames = False
         self.tracking = False
         self.nms = True
-
-        #Varible Initialisation for Thread Handling
-        self.fpsActual = self.fps
+        self.displayStream = False
+        self.showClock = False
+        self.showFPS = False
+        self.info = False
         
         #Initialize the HOG descriptor/person detector
         self.hog = cv.HOGDescriptor()
@@ -97,11 +89,16 @@ class PersonTracking:
 
         command = ("SEND")
         self.retrieveFrames = True
+        self.fpsProcessing = 0
         self.getFrames()
 
         self.tracking = True
+
         while self.tracking:
             
+            #Start Timing
+            start = time.time()
+
             #Detect People
             frame, boundingBoxes, personCentres = self.detectPeople(self.imageFrame)
 
@@ -122,11 +119,34 @@ class PersonTracking:
             angle = self.calcAngle(goalPositon,personPosition,height,width)
 
             self.wheelchair.transmitCommand(speed,angle,command)
+    
+            if self.showClock == True:
+                processedFrame = self.addClock(frame)
+
+            if self.showFPS == True:
+                processedFrame = self.addFPS(frame,self.fpsProcessing)
+
+            if self.displayStream == True:
+                #Show the frame
+                cv.imshow('Stream of {}'.format(self.kinectImage_url),frame)         
+        
+            # quit program when 'esc' key is pressed
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+        
+        self.retrieveFrames = False
+        self.tracking = False
+        cv.destroyAllWindows()
 
     @threaded
     def getFrames(self):
 
+        delay = 1/self.fps
+        self.fpsActual = self.fps
+
         while self.retrieveFrames:
+
+            start = time.time()
 
             ret, depthFrame  = self.depth.read()
             ret, imageFrame  = self.depth.read()
@@ -140,6 +160,17 @@ class PersonTracking:
             if ret == True:
                 self.depthFrame = depthFrame
                 self.imageFrame = imageFrame
+
+            end = time.time()
+            adjustedDelay = delay-(end-start)
+
+            if adjustedDelay < 0:
+                adjustedDelay = 0
+                self.fpsActual = 1/(end-start)
+            else:
+                self.fpsActual = self.fps
+            
+            time.sleep(adjustedDelay)
             
     @staticmethod
     def addClock(frame):
@@ -184,7 +215,6 @@ class PersonTracking:
                 #Show additional info
                 print("INFO: {}: {} bounding boxes".format(self.kinectImage_name,boxes))
         
-
         for (xA, yA, xB, yB) in boundingBoxes:
             
             x = int(((xB -xA)/2) + xA)
@@ -327,104 +357,4 @@ class PersonTracking:
 
         return personPosition
 
-
-    @threaded
-    def streamVideo(self):
-        
-        delay = 1/self.fps
-
-        self.record = False
-        self.stream = True
-        
-        while self.stream == True:
-
-            start = time.time()
-
-            time.sleep(delay)
-            
-            streamFrame, frameID = self.getFrame(self.frameWidth)
-            processedFrame, self.processedFrameID = self.detectPeople(streamFrame,frameID)
-        
-            if self.processedFrameID >= frameID:
-                
-                if self.showClock == True:
-                    processedFrame = self.addClock(processedFrame)
-
-                if self.showFPS == True:
-                    processedFrame = self.addFPS(processedFrame,self.fpsActual)
-
-                if self.displayStream == True:
-                    #Show the frame
-                    cv.imshow('Stream of {}'.format(self.stream_name),processedFrame)         
-            
-            # quit program when 'esc' key is pressed
-            if cv.waitKey(1) & 0xFF == ord('q'):
-                break
-            
-            end = time.time()
-            adjustedDelay = delay-(end-start)
-
-            if adjustedDelay < 0:
-                adjustedDelay = 0
-                self.fpsActual = 1/(end-start)
-            else:
-                self.fpsActual = self.fps
-
-            time.sleep(adjustedDelay)
-
-        self.stream = False
-        cv.destroyAllWindows()
-
-    @threaded
-    def recordVideo(self):
-        
-        delay = 1/self.fps
-
-        #Get Date and Time
-        currentDateTime = time.strftime("%d.%m.%Y-%H.%M.%S")
-        self.stream = False
-        self.record = True
-
-        # Define the codec and create VideoWriter object
-        fourcc = cv.VideoWriter_fourcc(*'XVID')
-        out = cv.VideoWriter('testing/streamLatency/{}_{}.avi'.format(self.stream_name,currentDateTime),fourcc, 20.0, (640,480))
-
-        while(self.image.isOpened()) and (self.record == True):
-            
-            start = time.time()
-            recordFrame = self.getFrame(self.frameWidth)
-            recordFrame = self.detectPeople(recordFrame)
-    
-            #write the  frame
-            out.write(recordFrame)
-            time.sleep(delay)
-
-            if self.showClock == True:
-                recordFrame = self.addClock(recordFrame)
-            
-            if self.showFPS == True:
-                recordFrame = self.addFPS(recordFrame,self.fpsActual)
-
-            if self.displayStream == True:
-                cv.imshow('Recording of {}'.format(self.stream_name),recordFrame)
-
-            if cv.waitKey(1) & 0xFF == ord('q'):
-                break
-           
-            end = time.time()
-            adjustedDelay = delay-(end-start)
-
-            if adjustedDelay < 0:
-                adjustedDelay = 0
-                self.fpsActual = 1/(end-start)
-            else:
-                self.fpsActual = self.fps
-
-
-            time.sleep(adjustedDelay)
-
-        # Release everything if job is finished
-        self.record = False
-        self.image.release()
-        out.release()
-        cv.destroyAllWindows()
+   

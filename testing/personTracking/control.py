@@ -70,7 +70,6 @@ class Control:
             print(logEntry)
 
         self.gamepadRunning = False
-        self.gamepad()
     
         #Create a file for both transmission and receive logs depending on time
         currentDateTime = time.strftime("%d%m%Y-%H%M%S")

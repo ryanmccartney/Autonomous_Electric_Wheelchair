@@ -8,8 +8,6 @@ from personDetect import PersonDetect
 import cv2 as cv
 import time
 
-fps = 10
-
 try:
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
