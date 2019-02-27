@@ -8,80 +8,60 @@ from control import Control
 import json
 import time
 
-#Create a file for logging
 try:
+    #Open Configuration File
+    configurationFile = open('navigation/settings.json').read()
+    configuration = json.loads(configurationFile)
+
+    #Get the details of the log file from the configuration
+    logFilePath = configuration['general']['logFileDirectory']
+    logFileName = configuration['general']['logFileName']
+    logFileFullPath = logFilePath + logFileName
+
     #open a txt file to use for logging
-    logFile = open("data\logs\circle.txt","w+")
+    logFile = open(logFileFullPath,"w+")
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
     logFile.write(logEntry)
     print(logEntry)
-except:
-    print("ERROR: Unable to open log file.")
-    exit()
 
-#Import Settings File
-try: 
-    #load settings file
-    settingsFile = open('navigation\settings.json').read()
-    settings = json.loads(settingsFile)
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Settings file loaded." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
 except:
-    #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Unable to open the settings file." + "\n"
-    logFile.write(logEntry)
+    logEntry = currentDateTime + ": " + "ERROR = Log file could not be created." + "\n"
     print(logEntry)
-    exit()
-
-#Extract Data from settings file
-try: 
-    control_url = settings['host']['command_url']
-    kinectImage_url = settings['host']['kinectImage_url']
-    kinectDepth_url = settings['host']['kinectDepth_url']
-    webcam_url = settings['host']['webcam_url']
-    test_url = settings['host']['test_url']
-    
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Data extracted successfully from settings file." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
-except:
-    #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Unable to extract data from settings file. Is data in the correct format?" + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
-    exit()
 
 #Intialise Control Session for Wheelchair
 try:
-    #Initialise Class for control
-    wheelchair = Control(control_url)
+    wheelchair = Control(configuration)
+
     #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
     logEntry = currentDateTime + ": " + "INFO = Control Connection Established with Robotic Device." + "\n"
     logFile.write(logEntry)
     print(logEntry)
 
+    #Uncomment to Debug
+    #antiCollision.debug = True
+    #wheelchair.debug = True
+    
     #Carry out control command
     try:
-
+        
         #Full Circle
-        wheelchair.changeAngle(100)
+        wheelchair.changeAngle(80)
         #Speed up
-        wheelchair.rampSpeed(30,10)
+        wheelchair.rampSpeed(50,100)
         #Change Radius
-        wheelchair.changeRadius(20)
-        #Reduce Speed
-        wheelchair.rampSpeed(0,10)
-        wheelchair.eStop()
+        #wheelchair.changeRadius(30)
+        #wheelchair.changeRadius(50)
+        
+        #Wait 60 Seconds
+        time.sleep(60)
 
+        #Reduce Speed
+        wheelchair.rampSpeed(0,100)
+        
+        wheelchair.eStop()
         exit()
 
     except:
@@ -92,10 +72,12 @@ try:
         print(logEntry)
 
 except:
-    #write failed initialise control class log
+    #write status to log file
     currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Unable connect to the wheelchair for control. Is it turned on or are you connected to the same network?" + "\n"
+    logEntry = currentDateTime + ": " + "ERROR = Could not create a control instance for the wheelchair." + "\n"
     logFile.write(logEntry)
     print(logEntry)
     exit()
 
+   
+   

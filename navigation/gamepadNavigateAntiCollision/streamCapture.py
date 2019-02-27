@@ -1,5 +1,5 @@
 #NAME:  streamCapture.py
-#DATE:  10/02/2019
+#DATE:  08/02/2019
 #AUTH:  Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC:  A python class for aquiring image data from network streams
 #COPY:  Copyright 2018, All Rights Reserved, Ryan McCartney
@@ -21,12 +21,12 @@ def threaded(fn):
 
 class StreamCapture:
 
-    displayStream = True
+    displayStream = False
     stream = True
     showClock = False
     showFPS = False
     frameWidth = 640
-    fps = 30
+    fps = 120
     framesProcessed = 0
     
     def __init__(self,stream_url,stream_name):
@@ -37,38 +37,43 @@ class StreamCapture:
 
         #Allow opencv to capture the stream
         self.image = cv.VideoCapture(self.stream_url)
+        self.frame = self.getFrame(self.frameWidth)
         self.streamVideo()
 
         self.fpsActual = self.fps
-
+        
     def getFrame(self,frameWidth):
 
-        ret, frame = self.image.read()
+        ret, frame  = self.image.read()
+
+        #Flip the frame
+        #nextFrame = cv.flip(nextFrame,0)
+
         self.frame = imutils.resize(frame, width=frameWidth)
-    
+
         if ret == True:
             self.framesProcessed = self.framesProcessed + 1
             return self.frame
 
     @staticmethod
-    def addClock(frame):
+    def addClock(image):
 
         #Add clock to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
         currentDateTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")
-        cv.putText(frame,currentDateTime,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
+        cv.putText(image,currentDateTime,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
 
-        return frame
+        return image
     
     @staticmethod
-    def addFPS(frame,fps):
+    def addFPS(image,fps):
 
         #Add clock to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
         text = '%.2ffps'%round(fps,2)
-        cv.putText(frame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
+        cv.putText(image,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
 
-        return frame
+        return image
     
     @threaded
     def streamVideo(self):
@@ -81,20 +86,20 @@ class StreamCapture:
         while self.stream == True:
 
             start = time.time()
+            time.sleep(delay)
                 
             #Get frame from stream
-            frame = self.getFrame(self.frameWidth)
-            time.sleep(delay)
-
+            streamFrame = self.getFrame(self.frameWidth)
+        
             if self.showClock == True:
-                frame = self.addClock(frame)
+                streamFrame = self.addClock(streamFrame)
 
             if self.showFPS == True:
-                frame = self.addFPS(frame,self.fpsActual)
+                streamFrame = self.addFPS(streamFrame,self.fpsActual)
 
             if self.displayStream == True:
                 #Show the frame
-                cv.imshow('Stream of {}'.format(self.stream_name),frame)                 
+                cv.imshow('Stream of {}'.format(self.stream_name),streamFrame)                 
             
             # quit program when 'esc' key is pressed
             if cv.waitKey(1) & 0xFF == ord('q'):
@@ -112,7 +117,7 @@ class StreamCapture:
             time.sleep(adjustedDelay)
 
         self.stream = False
-        cv.destroyAllWindows()
+        cv.destroyWindow('Stream of {}'.format(self.stream_name))
 
     @threaded
     def recordVideo(self):
@@ -131,23 +136,21 @@ class StreamCapture:
         while(self.image.isOpened()) and (self.record == True):
             
             start = time.time()
-            frame = self.getFrame(self.frameWidth)
-    
-            #Flip the frame
-            #frame = cv.flip(frame,0)
-
-            #write the  frame
-            out.write(frame)
             time.sleep(delay)
 
+            recordFrame = self.getFrame(self.frameWidth)
+    
+            #write the  frame
+            out.write(recordFrame)
+            
             if self.showClock == True:
-                frame = self.addClock(frame)
+                recordFrame = self.addClock(recordFrame)
             
             if self.showFPS == True:
-                frame = self.addFPS(frame,self.fpsActual)
+                recordFrame = self.addFPS(recordFrame,self.fpsActual)
 
             if self.displayStream == True:
-                cv.imshow('Recording of {}'.format(self.stream_name),frame)
+                cv.imshow('Recording of {}'.format(self.stream_name),recordFrame)
 
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -161,11 +164,10 @@ class StreamCapture:
             else:
                 self.fpsActual = self.fps
 
-
             time.sleep(adjustedDelay)
 
         # Release everything if job is finished
+        out.release()
         self.record = False
         self.image.release()
-        out.release()
-        cv.destroyAllWindows()
+        cv.destroyWindow('Recording of {}'.format(self.stream_name))

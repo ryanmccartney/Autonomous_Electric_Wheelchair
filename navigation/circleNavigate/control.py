@@ -1,8 +1,8 @@
 #NAME: move.py
-#DATE: 12/11/2018
+#DATE: 08/02/2019
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC: A python class for moving the wheelchair in an intuative manner
-#COPY: Copyright 2018, All Rights Reserved, Ryan McCartney
+#COPY: Copyright 2019, All Rights Reserved, Ryan McCartney
 
 import numpy as np
 import threading
@@ -32,14 +32,43 @@ class Control:
     setSpeed = 0
     setAngle = 0
     setCommand = "SEND"
-    bootTime = 10
+    bootTime = 8
 
-    maxSpeed = 40
-    speedLimit = 100
+    debug = False
 
-    def __init__(self,host):
+    def __init__(self,configuration):
 
-        self.host = host
+        #Load Configuration Variables
+        try:
+            self.host = configuration['control']['url']
+            self.maxSpeed = configuration['control']['maxSpeed']
+            
+            #Get the details of the log file from the configuration
+            logFilePath = configuration['general']['logFileDirectory']
+            logFileName = configuration['general']['logFileName']
+            logFileFullPath = logFilePath + logFileName
+            
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "INFO = The configuration file has been accessed." + "\n"
+     
+        except:
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "INFO = The configuration file cannot be decoded." + "\n"
+            print(logEntry)
+
+        #Open the log file
+        try:
+            #open a txt file to use for logging 
+            self.logFile = open(logFileFullPath,"a+")
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "INFO = Log file accessed by Control Interface." + "\n"
+            self.logFile.write(logEntry)
+            print(logEntry)
+        except:
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "ERROR: Unable to access log file when initialising control interface." + "\n"
+            print(logEntry)
+
         self.gamepadRunning = False
         self.gamepad()
     
@@ -56,70 +85,94 @@ class Control:
 
         #Send Message and Retrieve Response
         self.reset()
+        
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "INFO = Control interface initialised succesfully." + "\n"
+        self.logFile.write(logEntry)
+        print(logEntry)   
 
     #Send and Receive Messages with implemented logging
     @threaded
     def gamepad(self):
-
-        pygame.init()
-        pygame.joystick.init()
-
+    
         topSpeed = 30
 
-        gamepads = pygame.joystick.get_count()
-        #print("INFO: There are",gamepads,"gamepads connected.")
+        try:
+            pygame.init()
+            pygame.joystick.init()
 
-        j = pygame.joystick.Joystick(0)
-        j.init()
+            #Check number of gamepads
+            gamepads = pygame.joystick.get_count()
 
-        axis = j.get_numaxes()
-        #print("INFO: There are",axis,"axis in the gamepad.")
+            #Log Entry
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = str(currentDateTime) + ": " + "INFO = ",str(gamepads)," gamepads avalible." + "\n"
+            self.logFile.write(str(logEntry))
+            print(logEntry) 
 
-        while 1:
+            #Initialise first gamepad
+            j = pygame.joystick.Joystick(0)
+            j.init()
+            
+            #Check axis avalible
+            axis = j.get_numaxes()
+            
+            #Log Entry
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = str(currentDateTime) + ": " + "INFO = Gamepad with ",str(axis)," axis has been initiated." + "\n"
+            self.logFile.write(str(logEntry))
+            print(logEntry) 
 
-            while self.gamepadRunning:
+            while 1:
+
+                while self.gamepadRunning:
                 
-                #Get Current Data
-                pygame.event.get()
+                    #Get Current Data
+                    pygame.event.get()
 
-                xAxisLeft = j.get_axis(0)
-                yAxisLeft = j.get_axis(1)
-                aButton = j.get_button(0)
-                bButton = j.get_button(1)
-                yButton = j.get_button(2)
-                xButton = j.get_button(3)
+                    xAxisLeft = j.get_axis(0)
+                    yAxisLeft = j.get_axis(1)
+                    aButton = j.get_button(0)
+                    bButton = j.get_button(1)
+                    yButton = j.get_button(2)
+                    xButton = j.get_button(3)
 
-                #print("Raw data =",xAxisLeft,",",yAxisLeft)
+                    #print("Raw data =",xAxisLeft,",",yAxisLeft)
 
-                #Mapped Data for API 
-                speed = int(-yAxisLeft*topSpeed)
-                angle = int(-xAxisLeft*100)
+                    #Mapped Data for API 
+                    speed = int(-yAxisLeft*topSpeed)
+                    angle = int(-xAxisLeft*100)
 
-                #On button presses start and stop wheelchair
-                if aButton == True:
-                    self.reset()
-                if bButton == True:
-                    self.eStop()
-                if xButton == True:
-                    topSpeed = topSpeed + 1
-                    if topSpeed > 100:
-                        topSpeed = 100
-                    print("INFO: Top Speed is now",topSpeed)
-                if yButton == True:
-                    topSpeed = topSpeed - 1
-                    if topSpeed < 0:
-                        topSpeed = 0
-                    print("INFO: Top Speed is now",topSpeed)
+                    #On button presses start and stop wheelchair
+                    if aButton == True:
+                        self.reset()
+                    if bButton == True:
+                        self.eStop()
+                    if xButton == True:
+                        topSpeed = topSpeed + 1
+                        if topSpeed > 100:
+                            topSpeed = 100
+                        print("INFO: Top Speed is now",topSpeed)
+                    if yButton == True:
+                        topSpeed = topSpeed - 1
+                        if topSpeed < 0:
+                            topSpeed = 0
+                        print("INFO: Top Speed is now",topSpeed)
                 
-                
+                    #If new command has been identified then send new data to API
+                    if (self.setSpeed != speed) or (self.setAngle != angle):
+                        self.transmitCommand(speed,angle,"RUN")
+                        #print("Mapped speed is",speed,"and the angle is",angle)
+        except:
+            #Log Entry
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "STATUS = No Gamepads are avalible. Have you connected any?" + "\n"
+            self.logFile.write(logEntry)
+            print(logEntry) 
 
-                #If new command has been identified then send new data to API
-                if (self.setSpeed != speed) or (self.setAngle != angle):
-                    self.transmitCommand(speed,angle,"RUN")
-                    #print("Mapped speed is",speed,"and the angle is",angle)
-                    
+                  
     #Converts speed in m/s to arbitay speed for commans
-    def convertSeeed(speed):
+    def convertSeeed(self,speed):
 
         #Linear Relationship is used for the conversion
         m = 0.5
@@ -130,6 +183,7 @@ class Control:
         return speedArbitary
 
     #returns the distance travelled based on the speed 
+    @staticmethod
     def distanceTravelled(speed, time):
 
         distance = speed*time 
@@ -168,7 +222,7 @@ class Control:
          
         delay = 1/acceleration
         delay = int(delay)
-        command = "SEND"
+        command = "RUN"
         
         #Direction Forward
         if newSpeed >= 0:
@@ -178,7 +232,6 @@ class Control:
         
                 while newSpeed != self.setSpeed:
                     
-                    time.sleep(delay)
                     speed = self.setSpeed + 1
                     self.transmitCommand(speed,self.setAngle,command)
                     time.sleep(delay)
@@ -188,9 +241,9 @@ class Control:
 
                 while newSpeed != self.setSpeed:
                     
-                    time.sleep(delay)
                     speed = self.setSpeed - 1
                     self.transmitCommand(speed,self.setAngle,command)
+                    time.sleep(delay)
 
         #Direcion Reverse
         if newSpeed < 0:
@@ -222,13 +275,13 @@ class Control:
     
         if angle < 0:
             delay = (-angle)/factor
-            self.transmitCommand(50,100,"SEND")
+            self.transmitCommand(30,100,"SEND")
             time.sleep(delay)
             self.transmitCommand(0,0,"SEND")
 
         elif angle > 0:
             delay = angle/factor
-            self.transmitCommand(-50,100,"SEND")
+            self.transmitCommand(-30,100,"SEND")
             time.sleep(delay)
             self.transmitCommand(0,0,"SEND")
 
@@ -290,22 +343,44 @@ class Control:
     def reset(self):
 
         self.transmitCommand(0,0,"RESET")
-        print("INFO: Wheelchair is being reset.")
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "INFO = Wheelchair is being reset." + "\n"
+        self.logFile.write(logEntry)
+        print(logEntry)
     
         for x in range(self.bootTime,0,-1):
-            print("INFO:",x,"seconds remaining until the wheelchair completes boot up.")
+            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            logEntry = currentDateTime + ": " + "INFO: "+ str(x) +" seconds remaining until wheelchair completes boot up." + "\n"
+            self.logFile.write(str(logEntry))
+            print(logEntry)
             time.sleep(1)
 
     #Function to Calculate Speed Lmit bases on the value of the closest point
-    def calcMaxSpeed(self,closestPoint):
+    def calcMaxSpeed(self,closestObject):
         
-        self.maxSpeed = int((closestPoint/255)*100)
+        x = closestObject
+        a = 6.0977
+        b = -51.596
+        c = 137.41
+        d = -10
 
-        #Prevent Speed higher than the limit set
-        if self.maxSpeed > self.speedLimit:
+        #Third Order Deceleration Custom Profile
+        maxSpeedNew = (a*math.pow(x,3))+(b*math.pow(x,2))+(c*x)+d
+        maxSpeedNew = round(maxSpeedNew,2)
 
-            self.maxSpeed = self.speedLimit
-
+        if maxSpeedNew > 100:
+            maxSpeedNew = 100
+        elif maxSpeedNew < 0:
+            maxSpeedNew = 0
+        
+        self.maxSpeed = int(maxSpeedNew)
+        
+        #Prevent Speeds higher than the limit set
+        if self.setSpeed > 0:
+            speedMagnitude = int(self.setSpeed)
+            if speedMagnitude > self.maxSpeed:
+                self.transmitCommand(self.maxSpeed,self.setAngle,"SEND")
+       
     #Collision Avoidance Algorithm
     @threaded
     def collisionAvoidance(self):
@@ -327,7 +402,7 @@ class Control:
                 acceleration = self.maxSpeed - self.setSpeed 
 
                 #Adjust Speed                
-                self.rampSpeed(self.maxSpeed,decceleration)
+                self.rampSpeed(self.maxSpeed,acceleration)
 
     #Send and Receive Messages with implemented logging
     def transmitCommand(self, speed, angle, command):
@@ -335,9 +410,14 @@ class Control:
         #Start Timing
         start = time.time()
 
-        #Check parameters are ints
+        #Make sure values passed are integars
         speed = int(speed)
         angle = int(angle)
+
+        #Check speed does not exceed limit
+        if speed > 0:
+            if speed > self.maxSpeed:
+                speed = self.maxSpeed
 
         #Create form of the payload
         payload = str(speed)+","+str(angle)+","+ command
@@ -347,8 +427,8 @@ class Control:
 
         response = requests.post(message)
         
-        #print(response.url)
-        #print("INFO: Transmission response code is",str(response.status_code))
+        if self.debug == True:
+            print("INFO: Transmission response code is",str(response.status_code))
 
         #Get Date and Time for Log
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
@@ -372,6 +452,7 @@ class Control:
             self.setSpeed = speed
             self.setAngle = angle
             self.setCommand = command
-
-        end = time.time()
-        #print("STATUS: Sending '",payload,"' took %.2f seconds." % round((end-start),2))
+      
+        if self.debug == True:
+            end = time.time()
+            print("STATUS: Sending '",payload,"' took %.2f seconds." % round((end-start),2))

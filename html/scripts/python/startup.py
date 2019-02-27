@@ -24,7 +24,7 @@ except:
 
 try:
     #framerate variable
-    fps = 10
+    fps = 20
     #specifies the starting port for streams
     port = 8080
 

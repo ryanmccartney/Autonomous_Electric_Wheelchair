@@ -1,0 +1,3 @@
+26/02/2019 18:18:49: INFO = Program has started running.
+26/02/2019 18:18:49: INFO = Settings file loaded.
+26/02/2019 18:19:01: ERROR = Unable to extract data from settings file. Is data in the correct format?
