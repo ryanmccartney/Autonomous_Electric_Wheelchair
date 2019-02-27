@@ -138,7 +138,7 @@ bool mapOutputs() {
         setAngle = -setAngle;
         if(setAngle <= 50){
           rightMotorSpeed = map(setAngle,50,0,0,rightMotorSpeed);
-          rightMotorSpeed = (int)leftMotorSpeed;
+          rightMotorSpeed = (int)rightMotorSpeed;
         }
         else if(setAngle > 50){
           rightMotorSpeed = map(setAngle,50,100,0,rightMotorSpeed);
