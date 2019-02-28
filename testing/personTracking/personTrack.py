@@ -1,7 +1,7 @@
 #NAME: personTrack.py
 #DATE: 08/02/2019
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
-#DESC: A python function for navigating the wheelchaitr with an XBOX 360 game controller avoiding obstacles
+#DESC: A python function for navigating the wheelchair with an XBOX 360 game controller avoiding obstacles
 #COPY: Copyright 2019, All Rights Reserved, Ryan McCartney
 
 from personTracking import PersonTracking

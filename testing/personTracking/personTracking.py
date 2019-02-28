@@ -8,8 +8,9 @@ import threading
 import numpy as np
 import cv2 as cv
 import time
-from datetime import datetime
+import math
 import imutils
+from datetime import datetime
 from imutils.object_detection import non_max_suppression
 from control import Control
 from imutils import paths
@@ -116,15 +117,15 @@ class PersonTracking:
             height = frame.shape[0]
 
             speed = self.calcSpeed(personPosition)
-            angle = self.calcAngle(goalPositon,personPosition,height,width)
+            angle = self.calcAngle(goalPosition,personPosition,height,width)
 
             self.wheelchair.transmitCommand(speed,angle,command)
     
             if self.showClock == True:
-                processedFrame = self.addClock(frame)
+                frame = self.addClock(frame)
 
             if self.showFPS == True:
-                processedFrame = self.addFPS(frame,self.fpsProcessing)
+                frame = self.addFPS(frame,self.fpsProcessing)
 
             if self.displayStream == True:
                 #Show the frame
@@ -155,7 +156,8 @@ class PersonTracking:
             #depthFrame = cv.flip(depthFrame,0)
             #imageFrame = cv.flip(imageFrame,0)
 
-            frame = imutils.resize(frame, width=self.frameWidth)
+            imageFrame = imutils.resize(imageFrame, width=self.frameWidth)
+            depthFrame = imutils.resize(depthFrame, width=self.frameWidth)
 
             if ret == True:
                 self.depthFrame = depthFrame
@@ -198,8 +200,8 @@ class PersonTracking:
         (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(16, 16), scale=0.6)
         boxes = len(boundingBoxes)
 
-        if self.nms == True:
-            image, boundingBoxes, personCentres = self.applyNMS(image,boundingBoxes)
+        if self.nms == True: 
+            image, boundingBoxes = self.applyNMS(image,boundingBoxes)
             boxesNMA = len(boundingBoxes)
 
         else:
@@ -220,9 +222,9 @@ class PersonTracking:
             x = int(((xB -xA)/2) + xA)
             y = int(((yB -yA)/2) + yA)
             
-            personCentres = ((x,y))
+            personCentres = (x,y)
 
-        return image, personCentres
+        return image, boundingBoxes, personCentres
     
     @staticmethod
     def applyNMS(image,boundingBoxes):
