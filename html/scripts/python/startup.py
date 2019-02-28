@@ -56,21 +56,34 @@ try:
         logEntry = currentDateTime + ": " + "INFO = Failed to start camera streams."+"\n"
         logFile.write(logEntry)
         print(logEntry)
-
+    
     try:
-        #Check for Gamepads
-        gamepad.runGamepad()
         #Open Serial Port
-        wheelchair = serial.Serial('/dev/ttyACM0')
-
+        #wheelchair = serial.Serial('/dev/ttyACM0')
+        
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Opened connection with wheelchair cotroller at "+wheelchair.name+"\n"
+        #logEntry = currentDateTime + ": " + "INFO = Opened connection with wheelchair cotroller at "+wheelchair.name+"\n"
         logFile.write(logEntry)
         print(logEntry)
 
     except:
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
         logEntry = currentDateTime + ": " + "ERROR = Failed to open connection with wheelcahir controller. Check serial port."+"\n"
+        logFile.write(logEntry)
+        print(logEntry)
+
+    try:
+        #Check for Gamepads
+        gamepad.runGamepad()
+        
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "INFO = Checked gamepad status.\n"
+        logFile.write(logEntry)
+        print(logEntry)
+    
+    except:
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "ERROR = Failed to access gamepad control function."+"\n"
         logFile.write(logEntry)
         print(logEntry)
 

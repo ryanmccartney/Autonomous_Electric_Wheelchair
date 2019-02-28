@@ -25,10 +25,16 @@ def runGamepad():
     try:
 
         #Open Serial Port
-        wheelchair = serial.Serial('/dev/ttyACM0')
-
+        wheelchair = serial.Serial(
+            port='/dev/ttyACM0',
+            baudrate=115200,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS
+        )
+    
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Opened connection with wheelchair cotroller at "+wheelchair.name+"\n"
+        logEntry = currentDateTime + ": " + "INFO = Gamepad has opened a connection with wheelchair cotroller at "+wheelchair.name+"\n"
         print(logEntry)
 
         pygame.init()
@@ -59,11 +65,13 @@ def runGamepad():
             #Initialsie Speed and Angle
             setSpeed = 0
             setAngle = 0
-            payload = setSpeed + "," + setAngle + ",RUN"
+            payload = str(setSpeed) + "," + str(setAngle) + ",RUN" + "\r\n"
             wheelchair.write(payload)
 
             while 1:
                 
+                time.sleep(0.2)
+
                 #Get Current Data
                 pygame.event.get()
 
@@ -82,9 +90,11 @@ def runGamepad():
 
                 #On button presses start and stop wheelchair
                 if aButton == True:
-                    wheelchair.write("0,0,RESET")
+                    wheelchair.write("0,0,RESET\r\n".encode())
+                    print("RESET Command Sent")
                 if bButton == True:
-                    wheelchair.write("0,0,STOP")
+                    wheelchair.write("0,0,STOP\r\n".encode())
+                    print("STOP Command Sent")
                 if xButton == True:
                     topSpeed = topSpeed + 1
                     if topSpeed > 100:
@@ -98,14 +108,17 @@ def runGamepad():
                
                 #If new command has been identified then send new data to API
                 if (setSpeed != speed) or (setAngle != angle):
-            
-                    payload = speed + "," + angle + ",RUN"
-                    wheelchair.write(payload)
+                    
+                    payload = str(speed) + "," + str(angle) + ",RUN" + "\r\n"
+                    wheelchair.write(payload.encode())
 
                     setSpeed = speed
                     setAngle = angle
                     print("Mapped speed is",speed,"and the angle is",angle)
 
+                while wheelchair.in_waiting:
+                    info = wheelchair.readline()
+                    print(info)
     except:
         #Log Entry
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")

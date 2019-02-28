@@ -200,7 +200,11 @@ bool proccessInput() {
   String variable = "";
 
   // Length (with one extra character for the null terminator)
-  int stringLength = inputString.length() + 1; 
+  int stringLength = inputString.length() + 1;
+
+  if(stringLength > 100){
+    stringLength = 100;
+    }
 
   // Prepare the character array (the buffer) 
   char charArray[stringLength];
@@ -303,14 +307,14 @@ bool proccessInput() {
   //Reset Serial
   inputString = "";
   stringComplete = false;
-
+  
   //Increment Commmands Processed
   serialInputs++;
 
   if(status == true){
       statusMessage = "STATUS = Data succesfully received.";
     }
-    else{
+  else{
       statusMessage = "ERROR = Data not received. Check the format of your data.";
     }
     
@@ -527,7 +531,8 @@ void loop() {
           }
       }
       else{
-        stopWheelchair();
+        //stopWheelchair();
+        Serial.flush();
         sendData();
         }
     }
@@ -570,7 +575,7 @@ void loop() {
 //Rertieve Serial Data
 //------------------------------------------------------------------------------------------------------------------
 void serialEvent() {
-  
+
   while (Serial.available()){
 
     //Gets the next byte
