@@ -1,4 +1,4 @@
-name: base
+name: xavier
 channels:
   - anaconda
   - conda-forge
