@@ -271,7 +271,7 @@ class Control:
     #Function to change the turn the wheelchair a specific angle
     def turn(self,angle):
 
-        factor = 40
+        factor = 160
     
         if angle < 0:
             delay = (-angle)/factor
@@ -291,7 +291,7 @@ class Control:
     #Function to change the move the wheelchair a specific distance in meters
     def move(self,distance):
 
-        factor = 1
+        factor = 2.5
         delay = distance/factor
 
         self.transmitCommand(30,0,"SEND")
