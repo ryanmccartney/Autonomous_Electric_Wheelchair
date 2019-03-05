@@ -13,6 +13,8 @@ try:
     logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
     print(logEntry)
 
+    fps = 25
+
     delay = 1/fps
 
     stream_url = "testing/livePersonDetection/testFootage.mp4"

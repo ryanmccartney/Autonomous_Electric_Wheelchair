@@ -37,9 +37,18 @@ try:
     try:
         personTrack.info = True
         personTrack.fps = True
+        personTrack.fps = True
+        personTrack.displayStream = True
+
+        personTrack.trackPeople()
+
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + "INFO = Starting person tracking." + "\n"
+        print(logEntry)
 
         while 1:
-            personTrack.trackPeople()
+            print("TRACKING")
+            time.sleep(10)
 
     except:
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
