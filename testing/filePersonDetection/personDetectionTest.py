@@ -17,8 +17,8 @@ try:
 
     delay = 1/fps
 
-    stream_url = "http://192.168.1.100:8080/?action=stream"
-    stream_name = "Kinect Image URL"
+    stream_url = "testing/livePersonDetection/testFootage.mp4"
+    stream_name = "Taylor Swift - Shake It Off"
     
     stream = PersonDetect(stream_url,stream_name) 
 
@@ -35,7 +35,7 @@ try:
     stream.info = True
 
     #NMS on or off
-    stream.nms = False
+    stream.nms = True
     
     #Record Streams
     #stream.recordVideo()

@@ -11,6 +11,7 @@ import time
 import math
 import imutils
 from datetime import datetime
+from urllib.request import urlopen
 from imutils.object_detection import non_max_suppression
 from control import Control
 from imutils import paths
@@ -26,9 +27,15 @@ def threaded(fn):
 class PersonTracking:
 
     frameWidth = 640
-          
+    green = (0,255,0)
+    red = (0,0,255)
+    blue = (255,0,0)
+    purple = (205,50,219)
+
     def __init__(self,configuration):
         
+        self.status = True
+
         #Load Configuration Variables
         try:
             self.kinectDepth_url = configuration['streams']['kinectDepth']['url']
@@ -52,11 +59,11 @@ class PersonTracking:
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
             logEntry = currentDateTime + ": " + "ERROR = The configuration file cannot be decoded." + "\n"
             print(logEntry)
-        
+            self.status = False
+
         #Try Initialising the control class
         try:
             self.wheelchair = Control(configuration)
-
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
             logEntry = currentDateTime + ": " + "INFO = Control Established." + "\n"
             print(logEntry)
@@ -65,12 +72,7 @@ class PersonTracking:
             currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
             logEntry = currentDateTime + ": " + "ERROR = Cotrol Class could not be initiated." + "\n"
             print(logEntry)
-    
-        #Allow opencv to capture the Depth Stream
-        self.depth = cv.VideoCapture(self.kinectDepth_url)
-
-        #Allow opencv to capture the RGB Stream
-        self.image = cv.VideoCapture(self.kinectImage_url)
+            self.status = False
 
         #Initialising some options with Default values
         self.retrieveFrames = False
@@ -90,6 +92,7 @@ class PersonTracking:
 
         command = "SEND"
         self.retrieveFrames = True
+        delay = 1/self.fps
         self.fpsProcessing = 0
 
         self.tracking = True
@@ -105,15 +108,24 @@ class PersonTracking:
             frame, boundingBoxes, personCentres = self.detectPeople(imageFrame)
             
             #Add the Goal Position
-            frame, goalPosition = self.addGoal(frame)
+            frame, goalPosition = self.addGoal(frame,self.red)
 
             if len(boundingBoxes) > 0:
+
+                currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+                logEntry = currentDateTime + ": " + "INFO = Tacking "+str(len(boundingBoxes))+" people." + "\n"
+                print(logEntry)
                 
+                frame = self.addText(frame,"Tracking Active",self.purple)
+                        
                 #Add Crosshair Markers
-                frame = self.addMarker(frame,personCentres)
+                frame = self.addMarker(frame,personCentres,self.green)
 
                 #In an image with multiple people select a person to follow
                 personPosition = self.selectPerson(boundingBoxes, personCentres)
+
+                #Add Crosshair for Target person
+                frame = self.addMarker(frame,personPosition,self.purple)
 
                 #Determine Image Size
                 width = frame.shape[1] 
@@ -121,12 +133,15 @@ class PersonTracking:
 
                 speed = self.calcSpeed(personPosition,depthFrame)
                 angle = self.calcAngle(goalPosition,personPosition,height,width)
+                print("Selected Angle is")
+                print(angle)
 
                 self.wheelchair.transmitCommand(speed,angle,command)
             
             else:
                 self.wheelchair.transmitCommand(0,0,"RUN")
-    
+                frame = self.addText(frame,"No People to Track",self.green)
+
             if self.showClock == True:
                 frame = self.addClock(frame)
 
@@ -135,30 +150,56 @@ class PersonTracking:
 
             if self.displayStream == True:
                 #Show the frame
-                cv.imshow('Stream of {}'.format(self.kinectImage_url),frame)         
-        
+                cv.imshow('Stream of {}'.format(self.kinectImage_name),frame)         
+            
+            #Calculate FPS
+            end = time.time()
+            adjustedDelay = delay-(end-start)
+
+            if adjustedDelay < 0:
+                adjustedDelay = 0
+                self.fpsProcessing = 1/(end-start)
+            else:
+                self.fpsProcessing = self.fps
+
+    
             # quit program when 'esc' key is pressed
             if cv.waitKey(1) & 0xFF == ord('q'):
+                self.status = False
                 break
+            
+            time.sleep(adjustedDelay)
         
         self.retrieveFrames = False
         self.tracking = False
         cv.destroyAllWindows()
 
+    #Retrieve Frame
+    @staticmethod
+    def getFrame(snapshotURL):
+
+        request = urlopen(snapshotURL)
+        array = np.asarray(bytearray(request.read()), dtype="uint8")
+        frame = cv.imdecode(array,-1)
+
+        return frame
+
     def getFrames(self):
 
-        ret, depthFrame  = self.depth.read()
-        ret, imageFrame  = self.image.read()
+        depthFrame  = self.getFrame(self.kinectDepth_url)
+        imageFrame  = self.getFrame(self.kinectImage_url)
 
         #Flip the frames
         #depthFrame = cv.flip(depthFrame,0)
         #imageFrame = cv.flip(imageFrame,0)
+        
+        #Convert Depth Image to Grayscale
+        #depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
 
         imageFrame = imutils.resize(imageFrame, width=self.frameWidth)
         depthFrame = imutils.resize(depthFrame, width=self.frameWidth)
 
-        if ret == True:
-            return imageFrame, depthFrame
+        return imageFrame, depthFrame
             
     @staticmethod
     def addClock(frame):
@@ -166,7 +207,7 @@ class PersonTracking:
         #Add clock to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
         currentDateTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")
-        cv.putText(frame,currentDateTime,(16,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
+        cv.putText(frame,currentDateTime,(16,20), font, 0.6,(255,0,0),1,cv.LINE_AA)
 
         return frame
     
@@ -176,7 +217,16 @@ class PersonTracking:
         #Add clock to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
         text = '%.2ffps'%round(fps,2)
-        cv.putText(frame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
+        cv.putText(frame,text,(16,44), font, 0.6,(255,0,0),1,cv.LINE_AA)
+
+        return frame
+
+    @staticmethod
+    def addText(frame,text,colour):
+
+        #Add clock to the frame
+        font = cv.FONT_HERSHEY_SIMPLEX
+        cv.putText(frame,text,(16,68), font, 0.6,colour,1,cv.LINE_AA)
 
         return frame
 
@@ -204,11 +254,14 @@ class PersonTracking:
                 print("INFO: {}: {} bounding boxes".format(self.kinectImage_name,boxes))
         
         if  len(boundingBoxes) > 0:
+            i = 0
+            personCentres = []
             for (xA, yA, xB, yB) in boundingBoxes:
             
                 x = int(((xB -xA)/2) + xA)
                 y = int(((yB -yA)/2) + yA)
-                personCentres = (x,y)
+                personCentres.insert(i,(x,y))
+                i = i + 1
         else:
              personCentres = 0
 
@@ -228,25 +281,22 @@ class PersonTracking:
         return image, NMAboundingBoxes
 
     @staticmethod
-    def addMarker(image,points):
+    def addMarker(image,points,colour):
         
         crosshairHeight = 20
         crosshairWidth = 20
 
-        width = image.shape[1] 
-        height = image.shape[0]
-
         for (x, y) in points:
             #Horizontal Line & Vertical Line on Video Image
-            cv.line(image,((width-crosshairWidth),height),((width+crosshairWidth),height),(0,0,255),2)
-            cv.line(image,(width,(height-crosshairHeight)),(width,(height+crosshairHeight)),(0,0,255),2) 
+            cv.line(image,((x-crosshairWidth),y),((x+crosshairWidth),y),colour,2)
+            cv.line(image,(x,(y-crosshairHeight)),(x,(y+crosshairHeight)),colour,2) 
 
         return image
 
     @staticmethod
-    def addGoal(image):
+    def addGoal(image,colour):
         
-        offset = 10
+        offset = 0
         crosshairHeight = 20
         crosshairWidth = 20
 
@@ -259,8 +309,8 @@ class PersonTracking:
         goalPosition = [goalHeight, goalWidth]
 
         #Horizontal Line & Vertical Line on Video Image
-        cv.line(image,((width-crosshairWidth),height),((width+crosshairWidth),height),(0,0,255),2)
-        cv.line(image,(width,(height-crosshairHeight)),(width,(height+crosshairHeight)),(0,0,255),2)
+        cv.line(image,((goalWidth-crosshairWidth),goalHeight),((goalWidth+crosshairWidth),goalHeight),colour,2)
+        cv.line(image,(goalWidth,(goalHeight-crosshairHeight)),(goalWidth,(goalHeight+crosshairHeight)),colour,2)
 
         return image, goalPosition
 
@@ -302,8 +352,8 @@ class PersonTracking:
     #Providing the Location of a person, returns their distance away
     def calcPersonDistance(self,personPosition,depthFrame):
 
-        x = personPosition[0]
-        y = personPosition[1]
+        x = personPosition[1]
+        y = personPosition[0]
 
         depthValue = depthFrame[x,y]
         distance = self.distanceCalc(depthValue)
@@ -319,7 +369,7 @@ class PersonTracking:
         c = -0.0019066199
         d = 0.2331614352
         e = -9.5744837865
-    
+
         #Second Order Custom Estimation
         distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
     

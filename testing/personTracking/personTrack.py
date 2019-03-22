@@ -10,7 +10,7 @@ import json
 
 try:
     #Open Configuration File
-    configurationFile = open('navigation/settings.json').read()
+    configurationFile = open('testing/personTracking/settings.json').read()
     configuration = json.loads(configurationFile)
 
     #Get the details of the log file from the configuration
@@ -35,9 +35,9 @@ try:
     personTrack = PersonTracking(configuration)
 
     try:
-        personTrack.info = True
-        personTrack.fps = True
-        personTrack.fps = True
+        personTrack.info = False
+        personTrack.showFPS = True
+        personTrack.showClock = True
         personTrack.displayStream = True
 
         personTrack.trackPeople()
@@ -46,9 +46,11 @@ try:
         logEntry = currentDateTime + ": " + "INFO = Starting person tracking." + "\n"
         print(logEntry)
 
+        #Poll Tracking Status
         while 1:
-            print("TRACKING")
-            time.sleep(10)
+            if(personTrack.status == False):
+                exit()
+            time.sleep(5)
 
     except:
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
