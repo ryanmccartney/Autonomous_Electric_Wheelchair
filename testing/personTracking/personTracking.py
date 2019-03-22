@@ -76,7 +76,7 @@ class PersonTracking:
         self.retrieveFrames = False
         self.tracking = False
         self.nms = True
-        self.displayStream = False
+        self.displayStream = True
         self.showClock = False
         self.showFPS = False
         self.info = False
@@ -88,10 +88,9 @@ class PersonTracking:
     @threaded
     def trackPeople(self):
 
-        command = ("SEND")
+        command = "SEND"
         self.retrieveFrames = True
         self.fpsProcessing = 0
-        self.getFrames()
 
         self.tracking = True
 
@@ -100,26 +99,33 @@ class PersonTracking:
             #Start Timing
             start = time.time()
 
+            imageFrame, depthFrame = self.getFrames()
+
             #Detect People
-            frame, boundingBoxes, personCentres = self.detectPeople(self.imageFrame)
-
-            #Add Crosshair Markers
-            frame = self.addMarker(frame,personCentres)
-
+            frame, boundingBoxes, personCentres = self.detectPeople(imageFrame)
+            
             #Add the Goal Position
             frame, goalPosition = self.addGoal(frame)
 
-            #In an image with multiple people select a person to follow
-            personPosition = self.selectPerson(boundingBoxes, personCentres)
+            if len(boundingBoxes) > 0:
+                
+                #Add Crosshair Markers
+                frame = self.addMarker(frame,personCentres)
 
-            #Determine Image Size
-            width = frame.shape[1] 
-            height = frame.shape[0]
+                #In an image with multiple people select a person to follow
+                personPosition = self.selectPerson(boundingBoxes, personCentres)
 
-            speed = self.calcSpeed(personPosition)
-            angle = self.calcAngle(goalPosition,personPosition,height,width)
+                #Determine Image Size
+                width = frame.shape[1] 
+                height = frame.shape[0]
 
-            self.wheelchair.transmitCommand(speed,angle,command)
+                speed = self.calcSpeed(personPosition,depthFrame)
+                angle = self.calcAngle(goalPosition,personPosition,height,width)
+
+                self.wheelchair.transmitCommand(speed,angle,command)
+            
+            else:
+                self.wheelchair.transmitCommand(0,0,"RUN")
     
             if self.showClock == True:
                 frame = self.addClock(frame)
@@ -139,40 +145,20 @@ class PersonTracking:
         self.tracking = False
         cv.destroyAllWindows()
 
-    @threaded
     def getFrames(self):
 
-        delay = 1/self.fps
-        self.fpsActual = self.fps
+        ret, depthFrame  = self.depth.read()
+        ret, imageFrame  = self.image.read()
 
-        while self.retrieveFrames:
+        #Flip the frames
+        #depthFrame = cv.flip(depthFrame,0)
+        #imageFrame = cv.flip(imageFrame,0)
 
-            start = time.time()
+        imageFrame = imutils.resize(imageFrame, width=self.frameWidth)
+        depthFrame = imutils.resize(depthFrame, width=self.frameWidth)
 
-            ret, depthFrame  = self.depth.read()
-            ret, imageFrame  = self.depth.read()
-
-            #Flip the frames
-            #depthFrame = cv.flip(depthFrame,0)
-            #imageFrame = cv.flip(imageFrame,0)
-
-            imageFrame = imutils.resize(imageFrame, width=self.frameWidth)
-            depthFrame = imutils.resize(depthFrame, width=self.frameWidth)
-
-            if ret == True:
-                self.depthFrame = depthFrame
-                self.imageFrame = imageFrame
-
-            end = time.time()
-            adjustedDelay = delay-(end-start)
-
-            if adjustedDelay < 0:
-                adjustedDelay = 0
-                self.fpsActual = 1/(end-start)
-            else:
-                self.fpsActual = self.fps
-            
-            time.sleep(adjustedDelay)
+        if ret == True:
+            return imageFrame, depthFrame
             
     @staticmethod
     def addClock(frame):
@@ -197,7 +183,7 @@ class PersonTracking:
     def detectPeople(self,image):
         
         #Detect people in the passed image
-        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(16, 16), scale=0.6)
+        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=0.6)
         boxes = len(boundingBoxes)
 
         if self.nms == True: 
@@ -217,12 +203,14 @@ class PersonTracking:
                 #Show additional info
                 print("INFO: {}: {} bounding boxes".format(self.kinectImage_name,boxes))
         
-        for (xA, yA, xB, yB) in boundingBoxes:
+        if  len(boundingBoxes) > 0:
+            for (xA, yA, xB, yB) in boundingBoxes:
             
-            x = int(((xB -xA)/2) + xA)
-            y = int(((yB -yA)/2) + yA)
-            
-            personCentres = (x,y)
+                x = int(((xB -xA)/2) + xA)
+                y = int(((yB -yA)/2) + yA)
+                personCentres = (x,y)
+        else:
+             personCentres = 0
 
         return image, boundingBoxes, personCentres
     
@@ -297,9 +285,9 @@ class PersonTracking:
         return angle
      
     #Determine Speed
-    def calcSpeed(self,personPosition):
+    def calcSpeed(self,personPosition,depthFrame):
 
-        personDistance = self.calcPersonDistance(personPosition)
+        personDistance = self.calcPersonDistance(personPosition,depthFrame)
 
         if personDistance < 0.2:
             speed = 0
@@ -312,12 +300,12 @@ class PersonTracking:
         return speed
      
     #Providing the Location of a person, returns their distance away
-    def calcPersonDistance(self,personPosition):
+    def calcPersonDistance(self,personPosition,depthFrame):
 
         x = personPosition[0]
         y = personPosition[1]
 
-        depthValue = self.depthFrame[x,y]
+        depthValue = depthFrame[x,y]
         distance = self.distanceCalc(depthValue)
 
         return distance

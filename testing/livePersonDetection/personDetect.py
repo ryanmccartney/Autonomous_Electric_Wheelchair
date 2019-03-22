@@ -88,7 +88,7 @@ class PersonDetect:
     def detectPeople(self,image,frameID):
         
         #Detect people in the passed image
-        (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(16, 16), scale=0.6)
+        (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=0.5)
         
         if self.nms == True:
             image, pick = self.applyNMS(image,rects)
