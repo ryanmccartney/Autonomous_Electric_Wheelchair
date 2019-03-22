@@ -4,7 +4,7 @@
         "logFileName":"log.txt",
         "fps":25,
         "kinectMaxRange":3.2,
-        "kinectAngle":60,
+        "kinectAngle":90,
         "scaleFactor":0.5
     },
     "map":{

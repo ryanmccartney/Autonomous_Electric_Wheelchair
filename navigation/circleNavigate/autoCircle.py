@@ -46,20 +46,27 @@ try:
     
     #Carry out control command
     try:
-        
-        #Full Circle
-        wheelchair.changeAngle(80)
-        #Speed up
-        wheelchair.rampSpeed(50,100)
-        #Change Radius
-        #wheelchair.changeRadius(30)
-        #wheelchair.changeRadius(50)
-        
-        #Wait 60 Seconds
-        time.sleep(60)
 
-        #Reduce Speed
-        wheelchair.rampSpeed(0,100)
+         #Full Circle
+        wheelchair.changeAngle(50)
+        
+        while 1:
+
+            #Speed up
+            wheelchair.rampSpeed(80,200)
+
+            #Wait 60 Seconds
+            time.sleep(2)
+            
+            #Slow Down
+            wheelchair.rampSpeed(10,200)
+
+            #Wait 60 Seconds
+            time.sleep(2)
+            
+            #Change Radius
+            #wheelchair.changeRadius(30)
+            #wheelchair.changeRadius(50)
         
         wheelchair.eStop()
         exit()
