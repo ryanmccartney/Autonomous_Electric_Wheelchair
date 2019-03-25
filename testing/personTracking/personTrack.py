@@ -35,7 +35,7 @@ try:
     personTrack = PersonTracking(configuration)
 
     try:
-        personTrack.info = False
+        personTrack.info = True
         personTrack.showFPS = True
         personTrack.showClock = True
         personTrack.displayStream = True

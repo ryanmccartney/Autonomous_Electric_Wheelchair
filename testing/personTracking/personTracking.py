@@ -75,6 +75,7 @@ class PersonTracking:
             self.status = False
 
         #Initialising some options with Default values
+        self.collisionDetection = False
         self.retrieveFrames = False
         self.tracking = False
         self.nms = True
@@ -133,11 +134,17 @@ class PersonTracking:
 
                 speed = self.calcSpeed(personPosition,depthFrame)
                 angle = self.calcAngle(goalPosition,personPosition,height,width)
-                print("Selected Angle is")
-                print(angle)
-
+                             
+                #Collision Prevention
+                if self.collisionDetection == True:
+                    frame = self.collisionPrevention(frame,depthFrame)
+                
+                #Move the wheelchair
                 self.wheelchair.transmitCommand(speed,angle,command)
-            
+                
+                if self.info == True:
+                    print("INFO: The Speed is set to "+str(speed)+" and the Angle is set as "+str(angle))
+
             else:
                 self.wheelchair.transmitCommand(0,0,"RUN")
                 frame = self.addText(frame,"No People to Track",self.green)
@@ -174,6 +181,20 @@ class PersonTracking:
         self.tracking = False
         cv.destroyAllWindows()
 
+    #Collision Prevention
+    def collisionPrevention(self, imageFrame, depthFrame):
+        
+        closestPoint = self.scanImage(depthFrame)
+        closestObject = self.distanceCalc(closestPoint[0])
+        self.wheelchair.calcMaxSpeed(closestObject)
+
+        point = (closestPoint[1],closestPoint[2])
+
+        imageFrame = self.addMarker(imageFrame,point,self.blue)
+
+        return imageFrame
+
+    
     #Retrieve Frame
     @staticmethod
     def getFrame(snapshotURL):
@@ -297,8 +318,8 @@ class PersonTracking:
     def addGoal(image,colour):
         
         offset = 0
-        crosshairHeight = 20
-        crosshairWidth = 20
+        crosshairHeight = 50
+        crosshairWidth = 50
 
         width = image.shape[1] 
         height = image.shape[0]
@@ -397,4 +418,32 @@ class PersonTracking:
 
         return personPosition
 
-   
+    #Optimised method for finding the closest point in an image
+    @staticmethod
+    @nb.jit(nopython=True)
+    def scanImage(depthData):
+        
+        height = len(depthData)
+        width = len(depthData[0])
+
+        #Initialise with worst case
+        pointValue = 2048
+        pointHeight = 0
+        pointWidth = 0
+
+        #Threshold for dealing with annomolies (reflective surfaces)
+        threshold = 0
+
+        #Populate Array with Data
+        for h in range (0,height):
+
+            for w in range (0,width):
+
+                if  (depthData[h,w] <= pointValue) and (depthData[h,w] >= threshold):
+                    pointValue = depthData[h,w]
+                    pointHeight = h
+                    pointWidth = w
+                
+        results = [pointValue, pointWidth, pointHeight]
+        
+        return results
