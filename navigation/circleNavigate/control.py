@@ -38,6 +38,8 @@ class Control:
 
     def __init__(self,configuration):
 
+        self.connected = False
+
         #Load Configuration Variables
         try:
             self.host = configuration['control']['url']
@@ -45,51 +47,87 @@ class Control:
             
             #Get the details of the log file from the configuration
             logFilePath = configuration['general']['logFileDirectory']
-            logFileName = configuration['general']['logFileName']
-            logFileFullPath = logFilePath + logFileName
-            
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = The configuration file has been accessed." + "\n"
-     
-        except:
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = The configuration file cannot be decoded." + "\n"
-            print(logEntry)
+            logFileName = "circle.txt"
+            self.logFileFullPath = logFilePath + logFileName
+            self.logging = True
 
-        #Open the log file
-        try:
-            #open a txt file to use for logging 
-            self.logFile = open(logFileFullPath,"a+")
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = Log file accessed by Control Interface." + "\n"
-            self.logFile.write(logEntry)
-            print(logEntry)
-        except:
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "ERROR: Unable to access log file when initialising control interface." + "\n"
-            print(logEntry)
+            #Open log file
+            try:
+                self.log("INFO = Control class has accessed log file.")
+            except:
+                self.logging = False
+                self.log("ERROR: Unable to access log file when initialising control interface.")
 
+        except:
+            self.log("ERROR = The configuration file cannot be decoded.")
+    
         self.gamepadRunning = False
         self.gamepad()
-    
-        #Create a file for both transmission and receive logs depending on time
-        currentDateTime = time.strftime("%d%m%Y-%H%M%S")
-        filename = "data\control\Transmitted Data -" + currentDateTime + ".csv"
-        self.transmitLog = open(filename,"w+")
-        self.transmitLog.write("Date and Time,Speed,Angle,Command Message\n")
+        
+        #Open Transmission and Receive Log Files
+        try:
+            #Create a file for both transmission and receive logs depending on time
+            currentDateTime = time.strftime("%d-%m-%Y")
+            
+            #Initialise Transmit Log
+            self.transmitLogFilePath = "data\control\Transmitted Data -" + currentDateTime + ".csv"
+            transmitLog = open(self.transmitLogFilePath,"w")
+            transmitLog.write("Date and Time,Speed,Angle,Command Message\n")
+            transmitLog.close()
       
-        #Initialise Receive Log
-        filename = "data\control\Received Data -" + currentDateTime + ".csv"
-        self.receiveLog = open(filename,"w+")
-        self.receiveLog.write("Date & Time,Battery Voltage(V),Right Current (A),Left Current (A),Status Message\n")
+            #Initialise Receive Log
+            self.receiveLogFilePath = "data\control\Received Data - " + currentDateTime + ".csv"
+            receiveLog = open(self.receiveLogFilePath,"w")
+            receiveLog.write("Date & Time,Battery Voltage(V),Right Current (A),Left Current (A),Status Message\n")
+            receiveLog.close()
+            
+            #Log Entry
+            self.log("INFO = Opened Log files for transmission and receive data.")
+
+        except:
+            self.log("ERROR = Could not open transmit and receive logs.")
 
         #Send Message and Retrieve Response
-        self.reset()
+        self.reset()      
+        self.log("INFO = Control interface initialised succesfully.")
+  
+    #Logging Function
+    def log(self, entry):
         
         currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Control interface initialised succesfully." + "\n"
-        self.logFile.write(logEntry)
-        print(logEntry)   
+        logEntry = currentDateTime + ": " + entry
+
+        if self.logging == True:
+            #open a txt file to use for logging
+            logFile = open(self.logFileFullPath,"a+")
+            logFile.write(logEntry+"\n")
+            logFile.close()
+
+        print(logEntry)
+    
+    #Receive Log Function
+    def receiveLog(self, entry):
+        
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + "," + entry
+
+        if self.logging == True:
+            #open a txt file to use for logging
+            logFile = open(self.receiveLogFilePath,"a+")
+            logFile.write(logEntry+"\n")
+            logFile.close()
+
+    #Transmit Log Function
+    def transmitLog(self, entry):
+        
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + entry
+
+        if self.logging == True:
+            #open a txt file to use for logging
+            logFile = open(self.transmitLogFilePath,"a+")
+            logFile.write(logEntry+"\n")
+            logFile.close()
 
     #Send and Receive Messages with implemented logging
     @threaded
@@ -105,89 +143,78 @@ class Control:
             gamepads = pygame.joystick.get_count()
 
             #Log Entry
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = str(currentDateTime) + ": " + "INFO = ",str(gamepads)," gamepads avalible." + "\n"
-            self.logFile.write(str(logEntry))
-            print(logEntry) 
+            self.log("INFO = "+str(gamepads)+" gamepads avalible.")
 
-            #Initialise first gamepad
-            j = pygame.joystick.Joystick(0)
-            j.init()
+            if gamepads > 0:
             
-            #Check axis avalible
-            axis = j.get_numaxes()
+                #Initialise first gamepad
+                j = pygame.joystick.Joystick(0)
+                j.init()
             
-            #Log Entry
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = str(currentDateTime) + ": " + "INFO = Gamepad with ",str(axis)," axis has been initiated." + "\n"
-            self.logFile.write(str(logEntry))
-            print(logEntry) 
+                #Check axis avalible
+                axis = j.get_numaxes()
+            
+                #Log Entry
+                self.log("INFO = Gamepad with "+str(axis)+" axis has been initiated.")
 
-            while 1:
+                while 1:
 
-                while self.gamepadRunning:
+                    while self.gamepadRunning:
                 
-                    #Get Current Data
-                    pygame.event.get()
+                        #Get Current Data
+                        pygame.event.get()
 
-                    xAxisLeft = j.get_axis(0)
-                    yAxisLeft = j.get_axis(1)
-                    aButton = j.get_button(0)
-                    bButton = j.get_button(1)
-                    yButton = j.get_button(2)
-                    xButton = j.get_button(3)
+                        xAxisLeft = j.get_axis(0)
+                        yAxisLeft = j.get_axis(1)
+                        aButton = j.get_button(0)
+                        bButton = j.get_button(1)
+                        yButton = j.get_button(2)
+                        xButton = j.get_button(3)
 
-                    #print("Raw data =",xAxisLeft,",",yAxisLeft)
+                        #print("Raw data =",xAxisLeft,",",yAxisLeft)
 
-                    #Mapped Data for API 
-                    speed = int(-yAxisLeft*topSpeed)
-                    angle = int(-xAxisLeft*100)
+                        #Mapped Data for API 
+                        speed = int(-yAxisLeft*topSpeed)
+                        angle = int(-xAxisLeft*100)
 
-                    #On button presses start and stop wheelchair
-                    if aButton == True:
-                        self.reset()
-                    if bButton == True:
-                        self.eStop()
-                    if xButton == True:
-                        topSpeed = topSpeed + 1
-                        if topSpeed > 100:
-                            topSpeed = 100
-                        print("INFO: Top Speed is now",topSpeed)
-                    if yButton == True:
-                        topSpeed = topSpeed - 1
-                        if topSpeed < 0:
-                            topSpeed = 0
-                        print("INFO: Top Speed is now",topSpeed)
+                        #On button presses start and stop wheelchair
+                        if aButton == True:
+                            self.reset()
+                        if bButton == True:
+                            self.eStop()
+                        if xButton == True:
+                            topSpeed = topSpeed + 1
+                            if topSpeed > 100:
+                                topSpeed = 100
+                            self.log("INFO = Top Speed is now "+str(topSpeed))
+                        if yButton == True:
+                            topSpeed = topSpeed - 1
+                            if topSpeed < 0:
+                                topSpeed = 0
+                            self.log("INFO = Top Speed is now "+str(topSpeed))
                 
-                    #If new command has been identified then send new data to API
-                    if (self.setSpeed != speed) or (self.setAngle != angle):
-                        self.transmitCommand(speed,angle,"RUN")
-                        #print("Mapped speed is",speed,"and the angle is",angle)
+                        #If new command has been identified then send new data to API
+                        if (self.setSpeed != speed) or (self.setAngle != angle):
+                            self.transmitCommand(speed,angle,"RUN")
+                            #print("Mapped speed is",speed,"and the angle is",angle)
         except:
             #Log Entry
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "STATUS = No Gamepads are avalible. Have you connected any?" + "\n"
-            self.logFile.write(logEntry)
-            print(logEntry) 
-
-                  
+            self.log("STATUS = No Gamepads are avalible. Have you connected any?")
+                         
     #Converts speed in m/s to arbitay speed for commans
     def convertSeeed(self,speed):
-
         #Linear Relationship is used for the conversion
         m = 0.5
         c = -5
 
         speedArbitary = int(m*speed + c)
-
         return speedArbitary
 
     #returns the distance travelled based on the speed 
     @staticmethod
     def distanceTravelled(speed, time):
 
-        distance = speed*time 
-        
+        distance = speed*time  
         return distance
 
     #parse response
@@ -219,18 +246,21 @@ class Control:
 
     #Speed Ramping Function   
     def rampSpeed(self,newSpeed,acceleration):
-         
+
+        #Update Variables Before Starting
+        self.getUpdate()
+
         delay = 1/acceleration
         delay = int(delay)
         command = "RUN"
-        
+
         #Direction Forward
         if newSpeed >= 0:
 
             #Accelerate
             if newSpeed > self.setSpeed:
         
-                while newSpeed != self.setSpeed:
+                while (newSpeed != self.setSpeed) and (self.connected == True):
                     
                     speed = self.setSpeed + 1
                     self.transmitCommand(speed,self.setAngle,command)
@@ -239,7 +269,7 @@ class Control:
             #Decelerate
             elif newSpeed < self.setSpeed:
 
-                while newSpeed != self.setSpeed:
+                while (newSpeed != self.setSpeed) and (self.connected == True):
                     
                     speed = self.setSpeed - 1
                     self.transmitCommand(speed,self.setAngle,command)
@@ -251,7 +281,7 @@ class Control:
             #Accelerate
             if newSpeed < self.setSpeed:
 
-                while newSpeed != self.setSpeed:
+                while (newSpeed != self.setSpeed) and (self.connected == True):
             
                     speed = self.setSpeed - 1
                     time.sleep(delay)
@@ -260,14 +290,19 @@ class Control:
             #Decelerate
             elif newSpeed > self.setSpeed:
 
-                while newSpeed != self.setSpeed:
+                while (newSpeed != self.setSpeed) and (self.connected == True):
             
                     speed = self.setSpeed + 1
                     time.sleep(delay)
                     self.transmitCommand(speed,self.setAngle,command)
 
-        return newSpeed
+        if self.connected == True:
+            self.log("INFO = Speed has been ramped to "+str(newSpeed)+" with an acceleration of "+str(acceleration))
+        else:
+            self.log("ERROR = Wheelchair speed cannot be ramped.")
 
+        return newSpeed
+    
     #Function to change the turn the wheelchair a specific angle
     def turn(self,angle):
 
@@ -287,16 +322,26 @@ class Control:
 
         else:
             self.transmitCommand(0,0,"SEND")
+        
+        if self.connected == True:
+            self.log("INFO = Wheelchair has turned "+str(angle)+" degrees.")
+        else:
+            self.log("ERROR = Wheelchair has not turned as requested.")
 
     #Function to change the move the wheelchair a specific distance in meters
     def move(self,distance):
 
         factor = 1
-        delay = distance/factor
+        delay = int(distance/factor)
 
         self.transmitCommand(30,0,"SEND")
         time.sleep(delay)
         self.transmitCommand(0,0,"SEND")  
+
+        if self.connected == True:
+            self.log("INFO = Wheelchair has moved "+str(distance)+"m.")
+        else:
+            self.log("ERROR = Wheelchair cannot be moved.")
 
     #Function to change the move the wheelchair a specific distance in meters
     def changeRadius(self,radius):
@@ -317,64 +362,84 @@ class Control:
             angle = angle - 1
             self.transmitCommand(self.setSpeed,angle,"SEND")
             time.sleep(delay)
+        
+        if self.connected == True:
+            self.log("INFO = Wheelchair turning radius is now "+str(radius)+"m.")
+        else:
+            self.log("ERROR = Wheelchair turning radius cannot be changed.")
 
     #Function to Calculate Speed Lmit bases on the value of the closest point
     def changeAngle(self, angle):
 
         command = "SEND"
         self.transmitCommand(self.setSpeed,angle,command)
-        self.setAngle = angle
-        
+
+        if self.connected == True:
+            self.setAngle = angle
+            self.log("INFO = Wheelchair turning angle is now "+str(angle))
+        else:
+            self.log("ERROR = Wheelchair angle cannot be changed")
+
     def changeSpeed(self, speed):
 
         speed = int(speed)
         command = "SEND"
 
         self.transmitCommand(speed,self.setAngle,command)
-        self.setSpeed = speed
+        
+        if self.connected == True:
+            self.setSpeed = speed
+            self.log("INFO = Wheelchair speed is now set as "+str(speed))
+        else:
+            self.log("ERROR = Wheelchair speed cannot be changed")
 
     #Emergency Stop the wheelchair
     def eStop(self):
 
         self.transmitCommand(0,0,"STOP")
-        print("INFO: Wheelchair has Emergency Stopped.")
+
+        if self.connected == True:
+            self.log("INFO: Wheelchair has Emergency Stopped.")
+        else:
+            self.log("ERROR = Warning, the Wheelchair cannot be stopped!")
     
     #Reset the wheelchair
     def reset(self):
 
         self.transmitCommand(0,0,"RESET")
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Wheelchair is being reset." + "\n"
-        self.logFile.write(logEntry)
-        print(logEntry)
-    
-        for x in range(self.bootTime,0,-1):
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO: "+ str(x) +" seconds remaining until wheelchair completes boot up." + "\n"
-            self.logFile.write(str(logEntry))
-            print(logEntry)
-            time.sleep(1)
 
+        if self.connected == True:
+            self.log("INFO = Wheelchair is being reset.")
+       
+            for x in range(self.bootTime,0,-1):
+                self.log("INFO = "+str(x)+" seconds remaining until wheelchair completes boot up.")
+                time.sleep(1)
+        else:
+            self.log("ERROR = Wheelchair cannot be reset.")
+
+    #Funtion to Update Variables
+    def getUpdate(self):
+
+        self.transmitCommand(self.setSpeed,self.setAngle,"SEND")
+
+        if self.connected == False:
+            self.log("INFO = Communication link down.")
+    
     #Function to Calculate Speed Lmit bases on the value of the closest point
     def calcMaxSpeed(self,closestObject):
         
         x = closestObject
-        a = 6.0977
-        b = -51.596
-        c = 137.41
-        d = -10
+        a = -5.6593
+        b = 29.089
+        c = -5.1123
+        d = 3.3333
 
         #Third Order Deceleration Custom Profile
         maxSpeedNew = (a*math.pow(x,3))+(b*math.pow(x,2))+(c*x)+d
         maxSpeedNew = round(maxSpeedNew,2)
 
-        if maxSpeedNew > 100:
-            maxSpeedNew = 100
-        elif maxSpeedNew < 0:
-            maxSpeedNew = 0
-        
         self.maxSpeed = int(maxSpeedNew)
-        
+
         #Prevent Speeds higher than the limit set
         if self.setSpeed > 0:
             speedMagnitude = int(self.setSpeed)
@@ -425,34 +490,34 @@ class Control:
         #combine with host address
         message = self.host + payload
 
-        response = requests.post(message)
-        
-        if self.debug == True:
-            print("INFO: Transmission response code is",str(response.status_code))
+        try:
+            response = requests.post(message,timeout=0.5)
+            data = response.content.decode("utf-8").split("\r\n")
 
-        #Get Date and Time for Log
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+            if self.debug == True:
+                self.log("INFO = Transmission response code is "+str(response.status_code))
 
-        #Write log entry regarding data transmitted
-        dataEntry = currentDateTime + ","+ str(speed) + "," + str(angle) + "," + command + "\n"
-        self.transmitLog.write(dataEntry)
+            #Write log entry regarding data transmitted
+            self.transmitLog(str(speed) + "," + str(angle) + "," + command)
 
-        data = response.content.decode("utf-8").split("\r\n")
-
-        if data[0] != "":
-            #Write log entry regarding response
-            dataEntry = currentDateTime + "," + data[0] + "\n"
-            self.receiveLog.write(dataEntry)
-            print(dataEntry)
+            if data[0] != "":
+                #Write log entry regarding response
+                self.receiveLog(data[0])
+                self.log("STATUS = Received data is as follows; " + data[0])
             
-            #Decode Data
-            self.decodeResponse(data[0])
+                #Decode Data
+                self.decodeResponse(data[0])
 
-        if response.status_code == 200:
-            self.setSpeed = speed
-            self.setAngle = angle
-            self.setCommand = command
+            if response.status_code == 200:
+                self.connected = True
+                self.setSpeed = speed
+                self.setAngle = angle
+                self.setCommand = command
       
-        if self.debug == True:
-            end = time.time()
-            print("STATUS: Sending '",payload,"' took %.2f seconds." % round((end-start),2))
+            if self.debug == True:
+                end = time.time()
+                print("STATUS: Sending '",payload,"' took %.2f seconds." % round((end-start),2))
+
+        except:
+            self.log("ERROR = Could not access wheelchair API")
+            self.connected = False

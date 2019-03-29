@@ -88,7 +88,7 @@ class PersonDetect:
     def detectPeople(self,image,frameID):
         
         #Detect people in the passed image
-        (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=0.5)
+        (rects, weights) = self.hog.detectMultiScale(image, winStride=(8, 8), padding=(8, 8), scale=1.2)
         
         if self.nms == True:
             image, pick = self.applyNMS(image,rects)
@@ -115,7 +115,7 @@ class PersonDetect:
         
         #Applying NMS
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
-        pick = non_max_suppression(rects, probs=None, overlapThresh=0.90)
+        pick = non_max_suppression(rects, probs=None, overlapThresh=0.50)
         
         #Draw bounding boxes with NMS
         for (xA, yA, xB, yB) in pick:

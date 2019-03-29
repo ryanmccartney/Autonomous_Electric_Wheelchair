@@ -1,7 +1,7 @@
 {  
     "general":{
-        "logFileDirectory":"data\\logs\\", 
-        "logFileName":"log.txt",
+        "logFileDirectory":"data/logs/", 
+        "logFileName":"personTrack.txt",
         "fps":25,
         "kinectMaxRange":3.2,
         "kinectAngle":90,
@@ -19,24 +19,24 @@
         "height":1.35
     },
     "control":{
-        "url":"http://192.168.1.100/scripts/serialSend.php?serialData=",
+        "url":"http://192.168.1.102/scripts/serialSend.php?serialData=",
         "maxSpeed":40,
         "minSpeed":-40,
-        "maxAngle":100,
-        "minAngle":-100,
+        "maxAngle":50,
+        "minAngle":-50,
         "commands":[ "STOP", "RUN", "SEND", "RESET"]
     },
     "streams":{
         "kinectDepth":{
-            "url":"http://192.168.1.100:8081/?action=snapshot",
+            "url":"http://192.168.1.102:8081/?action=snapshot",
             "name":"Microsoft Kienct V1 Depth Stream"
         },
         "kinectRGB":{
-            "url":"http://192.168.1.100:8080/?action=snapshot",
+            "url":"http://192.168.1.102:8080/?action=snapshot",
             "name":"Microsoft Kienct V1 RGB Stream"
         },
         "webcam":{
-            "url":"http://192.168.1.100:8082/?action=snapshot",
+            "url":"http://192.168.1.102:8082/?action=snapshot",
             "name":"Floor Webcam Stream"
         },
         "test":{

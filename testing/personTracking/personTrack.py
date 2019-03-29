@@ -8,6 +8,18 @@ from personTracking import PersonTracking
 import time
 import json
 
+#Logging Function (Pretty Console Output)
+def log(logFilePath,entry):    
+
+    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+    logEntry = currentDateTime + ": " + entry
+
+    #open a txt file to use for logging
+    logFile = open(logFilePath,"a+")
+    logFile.write(logEntry+"\n")
+    logFile.close()
+    print(logEntry)
+
 try:
     #Open Configuration File
     configurationFile = open('testing/personTracking/settings.json').read()
@@ -18,17 +30,17 @@ try:
     logFileName = configuration['general']['logFileName']
     logFileFullPath = logFilePath + logFileName
 
-    #open a txt file to use for logging
-    logFile = open(logFileFullPath,"w+")
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
+    #open a txt file to use for logging and clear it
+    logFile = open(logFileFullPath,"w")
+    logFile.close()
+
+    log(logFileFullPath,"INFO = Program has started running.")
+    log(logFileFullPath,"INFO = Main Thread has accessed log file.")
 
 except:
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Log file could not be created." + "\n"
-    print(logEntry)
+    log(logFileFullPath,"ERROR = Log file could not be created.")
+    log(logFileFullPath,"STATUS = Terminating Program.")
+    exit()
 
 #Initialise Image Processing Algorithm
 try:
@@ -41,10 +53,7 @@ try:
         personTrack.displayStream = True
 
         personTrack.trackPeople()
-
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "INFO = Starting person tracking." + "\n"
-        print(logEntry)
+        log(logFileFullPath,"INFO = Starting person tracking.")
 
         #Poll Tracking Status
         while 1:
@@ -53,13 +62,11 @@ try:
             time.sleep(5)
 
     except:
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "ERROR = Could not initiate Person Tracking." + "\n"
-        print(logEntry)
+        log(logFileFullPath,"ERROR = Could not initiate Person Tracking.")
+        log(logFileFullPath,"STATUS = Terminating Program.")
         exit()
 
 except:
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Could not initiate Person Detection Class." + "\n"
-    print(logEntry)
+    log(logFileFullPath,"ERROR = Could not initiate Person Detection Class.")
+    log(logFileFullPath,"STATUS = Terminating Program.")
     exit()

@@ -5,8 +5,21 @@
 #COPY: Copyright 2018, All Rights Reserved, Ryan McCartney
 
 from control import Control
+import tkinter as tk
 import json
 import time
+
+#Logging Function (Pretty Console Output)
+def log(logFilePath,entry):    
+
+    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+    logEntry = currentDateTime + ": " + entry
+
+    #open a txt file to use for logging
+    logFile = open(logFilePath,"a+")
+    logFile.write(logEntry+"\n")
+    logFile.close()
+    print(logEntry)
 
 try:
     #Open Configuration File
@@ -15,52 +28,43 @@ try:
 
     #Get the details of the log file from the configuration
     logFilePath = configuration['general']['logFileDirectory']
-    logFileName = configuration['general']['logFileName']
+    logFileName = "circle.txt"
     logFileFullPath = logFilePath + logFileName
 
+    #open a txt file to use for logging and clear it
+    logFile = open(logFileFullPath,"w")
+    logFile.close()
+
     #open a txt file to use for logging
-    logFile = open(logFileFullPath,"w+")
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Program has started running." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
+    log(logFileFullPath,"INFO = Program has started running.")
 
 except:
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Log file could not be created." + "\n"
-    print(logEntry)
+    log(logFileFullPath,"ERROR = Log file could not be created.")
 
 #Intialise Control Session for Wheelchair
 try:
     wheelchair = Control(configuration)
 
     #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "INFO = Control Connection Established with Robotic Device." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
+    log(logFileFullPath,"INFO = Control Connection Established with Robotic Device.")
 
-    #Uncomment to Debug
-    #antiCollision.debug = True
-    #wheelchair.debug = True
+    #Debugging
+    wheelchair.debug = False
     
     #Carry out control command
     try:
 
          #Full Circle
-        wheelchair.changeAngle(50)
+        wheelchair.changeAngle(100)
         
-        while 1:
+        while wheelchair.connected == True:
 
             #Speed up
-            wheelchair.rampSpeed(80,200)
-
+            wheelchair.rampSpeed(40,200)
             #Wait 60 Seconds
             time.sleep(2)
-            
             #Slow Down
             wheelchair.rampSpeed(10,200)
-
             #Wait 60 Seconds
             time.sleep(2)
             
@@ -73,17 +77,12 @@ try:
 
     except:
          #write status to log file
-        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-        logEntry = currentDateTime + ": " + "ERROR = Unable to adjust wheelchair speed." + "\n"
-        logFile.write(logEntry)
-        print(logEntry)
+         log(logFileFullPath,"ERROR = Unable to adjust wheelchair speed")
+         wheelchair.eStop()
 
 except:
     #write status to log file
-    currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-    logEntry = currentDateTime + ": " + "ERROR = Could not create a control instance for the wheelchair." + "\n"
-    logFile.write(logEntry)
-    print(logEntry)
+    log(logFileFullPath,"ERROR = Could not create a control instance for the wheelchair.")
     exit()
 
    

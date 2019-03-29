@@ -10,6 +10,7 @@ import cv2 as cv
 import time
 import math
 import imutils
+import numba as nb
 from datetime import datetime
 from urllib.request import urlopen
 from imutils.object_detection import non_max_suppression
@@ -53,25 +54,26 @@ class PersonTracking:
             #Get the details of the log file from the configuration
             logFilePath = configuration['general']['logFileDirectory']
             logFileName = configuration['general']['logFileName']
-            logFileFullPath = logFilePath + logFileName
+            self.logFileFullPath = logFilePath + logFileName
+            self.logging = True
+            
+            #Open log file
+            try:
+                self.log("INFO = Person Tracking Class has accessed log file.")
+            except:
+                self.logging = False
       
         except:
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "ERROR = The configuration file cannot be decoded." + "\n"
-            print(logEntry)
+            self.log("ERROR = The configuration file cannot be decoded.")
             self.status = False
 
         #Try Initialising the control class
-        try:
+        try:            
             self.wheelchair = Control(configuration)
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "INFO = Control Established." + "\n"
-            print(logEntry)
+            self.log("INFO = Control Established.")
         
         except:
-            currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-            logEntry = currentDateTime + ": " + "ERROR = Cotrol Class could not be initiated." + "\n"
-            print(logEntry)
+            self.log("ERROR = Control Class could not be initiated.")
             self.status = False
 
         #Initialising some options with Default values
@@ -87,7 +89,26 @@ class PersonTracking:
         #Initialize the HOG descriptor/person detector
         self.hog = cv.HOGDescriptor()
         self.hog.setSVMDetector(cv.HOGDescriptor_getDefaultPeopleDetector())
+
+        
+        #Allow opencv to capture the stream
+        self.image = cv.VideoCapture(self.kinectImage_url)
+        self.depth = cv.VideoCapture(self.kinectDepth_url)
+        self.streamVideo()
     
+    def log(self, entry):
+        
+        currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
+        logEntry = currentDateTime + ": " + entry
+
+        if self.logging == True:
+            #open a txt file to use for logging
+            logFile = open(self.logFileFullPath,"a+")
+            logFile.write(logEntry+"\n")
+            logFile.close()
+
+        print(logEntry)
+
     @threaded
     def trackPeople(self):
 
@@ -106,27 +127,29 @@ class PersonTracking:
             imageFrame, depthFrame = self.getFrames()
 
             #Detect People
-            frame, boundingBoxes, personCentres = self.detectPeople(imageFrame)
+            boundingBoxes, personCentres = self.detectPeople(imageFrame)
+
+            #Add Bounding Boxes
+            frame = self.addBoundingBoxes(imageFrame,boundingBoxes,self.green)
             
             #Add the Goal Position
-            frame, goalPosition = self.addGoal(frame,self.red)
+            frame, goalPosition = self.addGoal(frame,self.purple)
 
             if len(boundingBoxes) > 0:
 
-                currentDateTime = time.strftime("%d/%m/%Y %H:%M:%S")
-                logEntry = currentDateTime + ": " + "INFO = Tacking "+str(len(boundingBoxes))+" people." + "\n"
-                print(logEntry)
+                self.log("INFO = Tacking "+str(len(boundingBoxes))+" people.")
                 
-                frame = self.addText(frame,"Tracking Active",self.purple)
+                frame = self.addText(frame,"Tracking Active",self.red)
                         
                 #Add Crosshair Markers
                 frame = self.addMarker(frame,personCentres,self.green)
 
                 #In an image with multiple people select a person to follow
-                personPosition = self.selectPerson(boundingBoxes, personCentres)
+                personPosition, boundingBox = self.selectPerson(boundingBoxes, personCentres)
 
-                #Add Crosshair for Target person
-                frame = self.addMarker(frame,personPosition,self.purple)
+                #Add Crosshair and Bounding Box for Target person
+                frame = self.addMarker(frame,[personPosition],self.red)
+                frame = self.addBoundingBoxes(frame,[boundingBox],self.red)
 
                 #Determine Image Size
                 width = frame.shape[1] 
@@ -143,7 +166,7 @@ class PersonTracking:
                 self.wheelchair.transmitCommand(speed,angle,command)
                 
                 if self.info == True:
-                    print("INFO: The Speed is set to "+str(speed)+" and the Angle is set as "+str(angle))
+                    self.log("INFO = The Speed is set to "+str(speed)+" and the Angle is set as "+str(angle))
 
             else:
                 self.wheelchair.transmitCommand(0,0,"RUN")
@@ -169,7 +192,6 @@ class PersonTracking:
             else:
                 self.fpsProcessing = self.fps
 
-    
             # quit program when 'esc' key is pressed
             if cv.waitKey(1) & 0xFF == ord('q'):
                 self.status = False
@@ -193,15 +215,19 @@ class PersonTracking:
         imageFrame = self.addMarker(imageFrame,point,self.blue)
 
         return imageFrame
-
     
     #Retrieve Frame
-    @staticmethod
-    def getFrame(snapshotURL):
-
-        request = urlopen(snapshotURL)
-        array = np.asarray(bytearray(request.read()), dtype="uint8")
-        frame = cv.imdecode(array,-1)
+    def getFrame(self,snapshotURL):
+        
+        try:
+            request = urlopen(snapshotURL, timeout=0.5)
+            array = np.asarray(bytearray(request.read()), dtype="uint8")
+            frame = cv.imdecode(array,-1)
+        except:
+            self.log("ERROR = Cannot Access Vision API.")
+            frame = cv.imread('testing/personTracking/nostream.jpg',cv.IMREAD_COLOR)
+            frame = cv.flip(frame,1)
+            
 
         return frame
 
@@ -211,8 +237,8 @@ class PersonTracking:
         imageFrame  = self.getFrame(self.kinectImage_url)
 
         #Flip the frames
-        #depthFrame = cv.flip(depthFrame,0)
-        #imageFrame = cv.flip(imageFrame,0)
+        depthFrame = cv.flip(depthFrame,1)
+        imageFrame = cv.flip(imageFrame,1)
         
         #Convert Depth Image to Grayscale
         #depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
@@ -254,18 +280,13 @@ class PersonTracking:
     def detectPeople(self,image):
         
         #Detect people in the passed image
-        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=0.6)
+        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(8, 8), padding=(8, 8), scale=1.2)
         boxes = len(boundingBoxes)
 
         if self.nms == True: 
-            image, boundingBoxes = self.applyNMS(image,boundingBoxes)
+            boundingBoxes = self.applyNMS(boundingBoxes)
             boxesNMA = len(boundingBoxes)
-
-        else:
-            #Draw boxes without NMS
-            for (x, y, w, h) in boundingBoxes:
-                cv.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        
+  
         if self.info == True:
             if self.nms == True:
                 #Show additional info
@@ -286,20 +307,16 @@ class PersonTracking:
         else:
              personCentres = 0
 
-        return image, boundingBoxes, personCentres
+        return boundingBoxes, personCentres
     
     @staticmethod
-    def applyNMS(image,boundingBoxes):
+    def applyNMS(boundingBoxes):
         
         #Applying NMS
         boundingBoxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boundingBoxes])
-        NMAboundingBoxes = non_max_suppression(boundingBoxes, probs=None, overlapThresh=0.90)
+        NMAboundingBoxes = non_max_suppression(boundingBoxes, probs=None, overlapThresh=0.80)
         
-        #Draw bounding boxes with NMS
-        for (xA, yA, xB, yB) in NMAboundingBoxes:
-            cv.rectangle(image, (xA, yA), (xB, yB), (0, 255, 0), 2)
-
-        return image, NMAboundingBoxes
+        return NMAboundingBoxes
 
     @staticmethod
     def addMarker(image,points,colour):
@@ -312,6 +329,15 @@ class PersonTracking:
             cv.line(image,((x-crosshairWidth),y),((x+crosshairWidth),y),colour,2)
             cv.line(image,(x,(y-crosshairHeight)),(x,(y+crosshairHeight)),colour,2) 
 
+        return image
+
+    @staticmethod
+    def addBoundingBoxes(image,boxes,colour):
+        
+        #Draw boxes without NMS
+        for (x, y, w, h) in boxes:
+            cv.rectangle(image, (x, y), (x + w, y + h),colour, 2)
+  
         return image
 
     @staticmethod
@@ -341,13 +367,13 @@ class PersonTracking:
         xG = goalPositon[0]
         xP = personPosition[0]
 
-        mappingRange = int(width/2) 
+        mappingRange = width/2
 
         if xP > xG:
-            angle = self.minAngle * (mappingRange/(mappingRange-xP))
+            angle = self.maxAngle * ((xP-mappingRange)/mappingRange)
 
         elif xP < xG:
-            angle = self.maxAngle * (mappingRange/(xP))
+            angle = self.minAngle * ((mappingRange-xP)/mappingRange)
 
         else:
             angle = 0
@@ -360,10 +386,12 @@ class PersonTracking:
 
         personDistance = self.calcPersonDistance(personPosition,depthFrame)
 
+        self.log("INFO: Taret is "+str(round(personDistance,4))+"m away.")
+
         if personDistance < 0.2:
             speed = 0
         elif personDistance >=0.2:
-            speed = int(31*personDistance + 20)
+            speed = 10+int(5*personDistance)
         
         if speed > self.maxSpeed:
             speed = self.maxSpeed
@@ -402,6 +430,7 @@ class PersonTracking:
 
         box = 0
         largestArea = 0
+        person = 0
         
         #Draw bounding boxes with NMS
         for (xA, yA, xB, yB) in boundingBoxes:
@@ -415,8 +444,9 @@ class PersonTracking:
             box = box + 1
 
         personPosition = personCentres[person]
+        boundingBox = boundingBoxes[person]
 
-        return personPosition
+        return personPosition, boundingBox
 
     #Optimised method for finding the closest point in an image
     @staticmethod
