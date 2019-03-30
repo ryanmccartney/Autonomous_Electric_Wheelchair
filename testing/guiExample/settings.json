@@ -1,8 +1,8 @@
 {  
     "general":{
         "logFile":"data/logs/guiExample.txt",
-        "transmitLog":"data/logs/Transmitted Data - GUI Example.csv", 
-        "receiveLog":"data/logs/Received Data - GUI Example.csv", 
+        "transmitLog":"data/control/Transmitted Data - GUI Example.csv", 
+        "receiveLog":"data/control/Received Data - GUI Example.csv", 
         "fps":25,
         "kinectMaxRange":3.2,
         "kinectAngle":90,
