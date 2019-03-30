@@ -21,6 +21,10 @@ def log(logFilePath,entry):
     logFile.close()
     print(logEntry)
 
+#Create GUI
+root = tk.Tk()
+root.title("Circle Control")
+
 try:
     #Open Configuration File
     configurationFile = open('navigation/settings.json').read()
@@ -54,7 +58,18 @@ try:
     #Carry out control command
     try:
 
-         #Full Circle
+        frame = tk.Frame(root)
+        frame.pack()
+
+        buttonStop = tk.Button(frame,text="Stop",fg="red",command=wheelchair.eStop)
+        buttonStop.pack(side=tk.LEFT)
+
+        buttonReset = tk.Button(frame,text="Reset",fg="green",command=wheelchair.reset)
+        buttonReset.pack(side=tk.LEFT)
+
+        
+
+        #Full Circle
         wheelchair.changeAngle(100)
         
         while wheelchair.connected == True:
@@ -85,5 +100,5 @@ except:
     log(logFileFullPath,"ERROR = Could not create a control instance for the wheelchair.")
     exit()
 
-   
+root.mainloop()
    
