@@ -1,0 +1,7 @@
+31/03/2019 20:06:29: INFO = Line following test sequence starting.
+31/03/2019 20:06:29: INFO = Control class has accessed log file.
+31/03/2019 20:06:31: INFO = 0 gamepads avalible.
+31/03/2019 20:06:31: INFO = Opened Log files for transmission and receive data.
+31/03/2019 20:06:33: ERROR = Could not access wheelchair API
+31/03/2019 20:06:33: ERROR = Wheelchair cannot be reset.
+31/03/2019 20:06:33: INFO = Control interface initialised succesfully.
