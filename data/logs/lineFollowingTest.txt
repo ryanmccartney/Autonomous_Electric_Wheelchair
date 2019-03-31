@@ -1,0 +1,3 @@
+31/03/2019 15:45:04: INFO = Line following test sequence starting.
+31/03/2019 15:45:04: INFO = Speed adjusted to 20. Angle adjusted to 31.
+31/03/2019 15:45:04: INFO = Image Processed

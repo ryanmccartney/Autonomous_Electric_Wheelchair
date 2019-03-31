@@ -1,141 +1,25 @@
-29/03/2019 19:19:23: INFO = Gamepad navigation program has started running.
-29/03/2019 19:19:23: INFO = Control class has accessed log file.
-29/03/2019 19:19:24: INFO = 1 gamepads avalible.
-29/03/2019 19:19:24: INFO = Gamepad with 5 axis has been initiated.
-29/03/2019 19:19:24: INFO = Opened Log files for transmission and receive data.
-29/03/2019 19:19:25: STATUS = Received data is as follows; -2.69,-2.93,23.98,WARNING = Controller is resseting. Expect abnormal behaviour.
-29/03/2019 19:19:25: INFO = Wheelchair is being reset.
-29/03/2019 19:19:25: INFO = 8 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:26: INFO = 7 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:27: INFO = 6 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:28: INFO = 5 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:29: INFO = 4 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:30: INFO = 3 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:31: INFO = 2 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:32: INFO = 1 seconds remaining until wheelchair completes boot up.
-29/03/2019 19:19:33: INFO = Control interface initialised succesfully.
-29/03/2019 19:19:33: INFO = Control Connection Established with Robotic Device.
-29/03/2019 19:19:34: STATUS = Received data is as follows; 0.00,0.00,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:35: STATUS = Received data is as follows; 0.00,2.69,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:36: STATUS = Received data is as follows; 0.00,0.00,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:38: STATUS = Received data is as follows; 0.00,0.24,25.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:39: STATUS = Received data is as follows; 0.00,2.93,25.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:41: STATUS = Received data is as follows; 0.00,2.93,25.45,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:42: STATUS = Received data is as follows; 0.00,0.24,25.51,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:44: STATUS = Received data is as follows; 0.00,0.24,25.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:45: STATUS = Received data is as follows; 0.00,0.00,25.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:47: STATUS = Received data is as follows; 0.00,2.93,25.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:48: STATUS = Received data is as follows; 0.00,0.00,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:50: STATUS = Received data is as follows; 0.00,0.24,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:51: STATUS = Received data is as follows; 0.00,0.24,25.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:52: STATUS = Received data is as follows; 0.00,0.24,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:54: STATUS = Received data is as follows; 0.00,0.49,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:55: STATUS = Received data is as follows; 0.00,0.00,25.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:57: STATUS = Received data is as follows; 0.00,0.00,25.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:19:58: STATUS = Received data is as follows; 0.00,0.24,25.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:00: STATUS = Received data is as follows; 0.00,2.69,25.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:01: STATUS = Received data is as follows; 0.00,2.69,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:02: STATUS = Received data is as follows; 0.00,0.00,25.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:04: STATUS = Received data is as follows; 0.00,1.71,25.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:05: STATUS = Received data is as follows; 0.00,0.00,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:07: STATUS = Received data is as follows; 0.00,0.00,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:08: STATUS = Received data is as follows; 0.00,2.93,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:10: STATUS = Received data is as follows; 0.00,2.93,25.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:11: STATUS = Received data is as follows; 0.00,0.49,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:12: STATUS = Received data is as follows; 0.00,0.00,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:14: STATUS = Received data is as follows; 0.00,0.00,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:15: STATUS = Received data is as follows; 0.00,2.69,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:17: STATUS = Received data is as follows; 0.00,2.69,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:18: STATUS = Received data is as follows; 0.00,0.24,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:20: STATUS = Received data is as follows; 0.00,0.00,25.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:21: STATUS = Received data is as follows; 0.00,0.24,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:23: STATUS = Received data is as follows; 0.00,0.24,25.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:24: STATUS = Received data is as follows; 0.00,0.24,25.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:26: STATUS = Received data is as follows; 0.00,0.00,25.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:27: STATUS = Received data is as follows; 0.00,0.24,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:29: STATUS = Received data is as follows; 0.00,2.69,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:30: STATUS = Received data is as follows; 0.00,0.00,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:31: STATUS = Received data is as follows; 0.00,2.44,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:33: STATUS = Received data is as follows; 0.00,2.93,25.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:34: STATUS = Received data is as follows; 0.00,0.24,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:36: STATUS = Received data is as follows; 0.00,0.24,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:37: STATUS = Received data is as follows; 0.00,0.24,25.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:39: STATUS = Received data is as follows; 0.00,2.69,25.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:41: STATUS = Received data is as follows; 0.73,1.96,24.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:43: STATUS = Received data is as follows; 1.22,2.20,24.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:44: STATUS = Received data is as follows; 1.22,1.71,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:46: STATUS = Received data is as follows; 0.98,1.96,24.48,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:47: STATUS = Received data is as follows; 1.22,1.96,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:48: STATUS = Received data is as follows; 0.98,1.96,24.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:50: STATUS = Received data is as follows; 1.22,1.96,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:51: STATUS = Received data is as follows; 1.71,2.44,24.45,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:53: STATUS = Received data is as follows; 0.98,1.96,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:54: STATUS = Received data is as follows; 1.22,1.96,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:55: STATUS = Received data is as follows; 1.22,2.20,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:57: STATUS = Received data is as follows; 1.47,1.96,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:58: STATUS = Received data is as follows; 1.22,1.96,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:20:59: STATUS = Received data is as follows; 0.98,1.96,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:01: STATUS = Received data is as follows; 1.22,2.20,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:02: STATUS = Received data is as follows; 0.98,2.20,24.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:03: STATUS = Received data is as follows; 1.22,1.96,24.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:05: STATUS = Received data is as follows; 0.49,0.98,24.24,STATUS = Data Mapped 
-29/03/2019 19:21:05: STATUS = Received data is as follows; Succesfully
-29/03/2019 19:21:06: STATUS = Received data is as follows; 8.31,2.20,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:07: STATUS = Received data is as follows; 14.42,0.00,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:09: STATUS = Received data is as follows; 10.75,2.20,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:10: STATUS = Received data is as follows; 0.49,2.20,24.16,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:11: STATUS = Received data is as follows; 0.73,2.20,24.22,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:13: STATUS = Received data is as follows; 0.98,1.96,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:14: STATUS = Received data is as follows; 1.22,2.20,24.51,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:15: STATUS = Received data is as follows; 1.22,1.71,24.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:17: STATUS = Received data is as follows; 1.22,1.47,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:18: STATUS = Received data is as follows; 1.22,1.71,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:19: STATUS = Received data is as follows; 0.24,13.93,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:21: STATUS = Received data is as follows; 13.93,6.11,24.16,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:22: STATUS = Received data is as follows; 1.22,2.69,24.54,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:23: STATUS = Received data is as follows; 0.00,7.82,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:25: STATUS = Received data is as follows; 0.98,1.96,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:26: STATUS = Received data is as follows; 0.98,1.47,24.01,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:27: STATUS = Received data is as follows; 1.22,1.71,24.22,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:29: STATUS = Received data is as follows; 0.98,13.93,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:30: STATUS = Received data is as follows; 0.98,1.96,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:31: STATUS = Received data is as follows; 0.98,1.96,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:33: STATUS = Received data is as follows; 5.38,2.69,24.39,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:34: STATUS = Received data is as follows; 0.00,11.97,24.22,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:35: STATUS = Received data is as follows; 0.00,8.31,24.13,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:37: STATUS = Received data is as follows; 3.42,7.33,24.42,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:38: STATUS = Received data is as follows; 0.98,1.96,24
-29/03/2019 19:21:38: STATUS = Received data is as follows; .30,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:39: STATUS = Received data is as follows; 0.98,1.71,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:40: STATUS = Received data is as follows; 0.00,80.16,24.10, to map sent data to output. Check range of sent data.
-29/03/2019 19:21:41: STATUS = Received data is as follows; 0.98,1.47,24.13,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:42: STATUS = Received data is as follows; 0.24,15.15,24.19,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:43: STATUS = Received data is as follows; 1.71,9.29,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:45: STATUS = Received data is as follows; 1.22,1.71,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:46: STATUS = Received data is as follows; 1.22,17.84,24.19,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:47: STATUS = Received data is as follows; 0.98,2.20,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:49: STATUS = Received data is as follows; 8.80,4.64,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:50: STATUS = Received data is as follows; 0.00,14.91,24.13,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:51: STATUS = Received data is as follows; 1.47,1.71,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:53: STATUS = Received data is as follows; 0.98,1.96,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:54: STATUS = Received data is as follows; 0.73,2.20,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:55: STATUS = Received data is as follows; 0.73,1.96,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:57: STATUS = Received data is as follows; 1.47,7.33,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:58: STATUS = Received data is as follows; 0.00,9.53,24.22,STATUS = Data Mapped Succesfully
-29/03/2019 19:21:59: STATUS = Received data is as follows; 0.98,1.96,24.16,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:01: STATUS = Received data is as follows; 1.22,1.96,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:02: STATUS = Received data is as follows; 1.22,1.47,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:03: STATUS = Received data is as follows; 1.22,1.71,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:05: STATUS = Received data is as follows; 0.00,2.69,25.15,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:06: STATUS = Received data is as follows; 1.71,3.18,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:07: STATUS = Received data is as follows; 1.22,1.96,24.24,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:09: STATUS = Received data is as follows; 0.98,14.66,24.16,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:10: STATUS = Received data is as follows; 0.98,1.96,24.27,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:10: STATUS = Received data is as follows; 0.49,0.98,23.86, to map sent data to output. Check range of sent data.
-29/03/2019 19:22:11: STATUS = Received data is as follows; 0.98,0.98,24.13,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:12: STATUS = Received data is as follows; 0.98,2.20,24.33,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:13: STATUS = Received data is as follows; 1.22,3.18,23.98, to map sent data to output. Check range of sent data.
-29/03/2019 19:22:14: STATUS = Received data is as follows; 1.22,2.20,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:15: STATUS = Received data is as follows; 1.22,1.96,24.30,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:17: STATUS = Received data is as follows; 0.98,2.20,24.36,STATUS = Data Mapped Succesfully
-29/03/2019 19:22:18: STATUS = Received data is as follows; 1.22,1.96,24.36,STATUS = Data Mapped Succesfully
+30/03/2019 16:41:40: INFO = Gamepad navigation program has started running.
+30/03/2019 16:41:40: INFO = Control class has accessed log file.
+30/03/2019 16:41:41: INFO = 1 gamepads avalible.
+30/03/2019 16:41:41: INFO = Gamepad with 5 axis has been initiated.
+30/03/2019 16:41:41: INFO = Opened Log files for transmission and receive data.
+30/03/2019 16:41:42: STATUS = Received data is as follows; -0.98,1.47,25.18,WARNING = Controller is resseting. Expect abnormal behaviour.
+30/03/2019 16:41:42: INFO = Wheelchair is being reset.
+30/03/2019 16:41:42: INFO = 8 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:43: INFO = 7 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:44: INFO = 6 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:45: INFO = 5 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:46: INFO = 4 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:47: INFO = 3 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:48: INFO = 2 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:49: INFO = 1 seconds remaining until wheelchair completes boot up.
+30/03/2019 16:41:50: INFO = Control interface initialised succesfully.
+30/03/2019 16:41:50: INFO = Control Connection Established with Robotic Device.
+30/03/2019 16:41:51: ERROR = Could not access wheelchair API
+30/03/2019 16:41:51: INFO = Communication link down.
+30/03/2019 16:41:53: STATUS = Received data is as follows; -1.22,1.22,25.33,WARNING = Wheelchair is performing an Emergency Stop.
+30/03/2019 16:41:53: INFO: Wheelchair has Emergency Stopped.
+30/03/2019 16:41:53: ERROR = Unable to send commands to the wheelchair.
+30/03/2019 16:41:54: STATUS = Received data is as follows; -1.22,1.22,25.12,WARNING = Wheelchair is performing an Emergency Stop.
+30/03/2019 16:41:54: INFO: Wheelchair has Emergency Stopped.
+30/03/2019 16:41:54: ERROR = Unable connect to the wheelchair for control. Is it turned on or are you connected to the same network?

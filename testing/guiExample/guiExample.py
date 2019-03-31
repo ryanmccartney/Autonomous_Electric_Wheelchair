@@ -1,3 +1,4 @@
+
 #NAME: guiExample.py
 #DATE: 08/02/2019
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
@@ -24,18 +25,23 @@ def log(logFilePath,entry):
 def sendData(variable):
     wheelchair.transmitCommand(speed.get(),angle.get(),"RUN")
 
+def stop(variable):
+    wheelchair.eStop()
+    exit()
+
 def refreshData():
     
     wheelchair.getUpdate()
     speed.set(wheelchair.setSpeed)
     angle.set(wheelchair.setAngle)
+    wheelchair.gamepadRunning = True
 
     batteryPercent["text"] = "Battery Voltage = "+str(wheelchair.batteryPercent())+"%"
     batteryVoltage["text"] = "Battery Voltage = "+str(wheelchair.batteryVoltage)+"V"
     powerUsage["text"] = "Current Power Usage = "+str(wheelchair.batteryVoltage)+"w"
     statusMessage["text"] = str(wheelchair.status)
 
-    root.after(2000,refreshData) 
+    root.after(100,refreshData) 
 
 try:
     #Open Configuration File
@@ -77,6 +83,9 @@ try:
 
         buttonReset = tk.Button(frame,text="Reset",fg="green",height=4, width=20,command=wheelchair.reset)
         buttonReset.pack(side=tk.LEFT)
+
+        buttonExit = tk.Button(frame,text="Exit",fg="black",height=4, width=20,command=stop)
+        buttonExit.pack(side=tk.LEFT)
 
         speed = tk.Scale(root, from_=100, to=-100,tickinterval=5,length=200,command=sendData)
         speed.pack()

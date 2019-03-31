@@ -1,0 +1,4 @@
+Date & Time,Battery Voltage(V),Right Current (A),Left Current (A),Status Message
+30/03/2019 16:41:42,-0.98,1.47,25.18,WARNING = Controller is resseting. Expect abnormal behaviour.
+30/03/2019 16:41:53,-1.22,1.22,25.33,WARNING = Wheelchair is performing an Emergency Stop.
+30/03/2019 16:41:54,-1.22,1.22,25.12,WARNING = Wheelchair is performing an Emergency Stop.

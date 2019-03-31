@@ -1,1 +1,10 @@
 Date & Time,Battery Voltage(V),Right Current (A),Left Current (A),Status Message
+30/03/2019 15:57:16,-0.73,1.22,25.53,WARNING = Controller is resseting. Expect abnormal behaviour.
+30/03/2019 15:57:25,-0.73,1.47,25.56,STATUS = Data Mapped Succesfully
+30/03/2019 15:57:31,-0.73,1.96,25.80,STATUS = Data Mapped Succesfully
+30/03/2019 15:57:36,-0.73,0.98,25.36,STATUS = Data Mapped Succesfully
+30/03/2019 15:57:46,-0.73,1.47,25.27,STATUS = Data Mapped Succesfully
+30/03/2019 15:57:52,-0.73,1.47,25.45,STATUS = Data Mapped Succesfully
+30/03/2019 15:57:58,-0.73,1.47,25.68,STATUS = Data Mapped Succesfully
+30/03/2019 15:58:03,-0.73,1.47,25.39,STATUS = Data Mapped Succesfully
+30/03/2019 15:58:09,-0.73,1.22,25.51,STATUS = Data Mapped Succesfully
