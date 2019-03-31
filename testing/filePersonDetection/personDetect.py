@@ -78,7 +78,7 @@ class PersonDetect:
     @staticmethod
     def addFPS(frame,fps):
 
-        #Add clock to the frame
+        #Add fps to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
         text = '%.2ffps'%round(fps,2)
         cv.putText(frame,text,(16,44), font, 0.6,(0,0,255),1,cv.LINE_AA)
