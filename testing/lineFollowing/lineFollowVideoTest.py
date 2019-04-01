@@ -92,6 +92,9 @@ def addGoal(image):
 
 def follow(image,contourCenter,goalArea):
 
+    global speed
+    global angle
+
     maxSpeed = 40
     minSpeed = 0
     maxAngle = 50
@@ -125,6 +128,7 @@ def follow(image,contourCenter,goalArea):
         angle = int(maxAngle*angleFactor)
     else:
         speed = 0
+        angle = 0
 
     #Determine Speed based on Y position of Goal
     if (contourY > goalTopY) and (contourY < goalBottomY):
@@ -136,6 +140,7 @@ def follow(image,contourCenter,goalArea):
         speed = 20
     else:
         speed = 0
+        angle = 0
 
     log(logFilePath,"INFO = Speed adjusted to "+str(speed)+". Angle adjusted to "+str(angle)+".")
     #wheelchair.transmitCommand(speed,angle,command)
@@ -149,13 +154,17 @@ logFile.close()
 
 log(logFilePath,"INFO = Line following test sequence starting.")
 
-width = 500
-height = 400
+width = 640
+height = 480
 fps = 30
 delay = 1/fps
 fpsActual = fps
 frameReturned = True
 videoFile = "testing/lineFollowing/lineVideo.mp4"
+
+# Define the codec and create VideoWriter object
+fourcc = cv.VideoWriter_fourcc(*'XVID')
+outputFile = cv.VideoWriter('testing/lineFollowing/outputLine.avi',fourcc, fps, (width,height))
 
 #Allow OpenCV to Access Video
 video = cv.VideoCapture(videoFile)
@@ -177,9 +186,13 @@ while(video.isOpened() and frameReturned):
 
         #Show the frame with FPS overlay
         font = cv.FONT_HERSHEY_SIMPLEX
+        text = "Speed adjusted to "+str(speed)+" and angle to "+str(angle)
+        cv.putText(frame,text,(10,20), font, 0.6,(0,0,255),1,cv.LINE_AA)
         text = '%.2ffps'%round(fpsActual,2)
-        cv.putText(frame,text,(16,16), font, 0.6,(0,0,255),1,cv.LINE_AA)
-        cv.imshow('Processed Image',frame) 
+        cv.putText(frame,text,(10,50), font, 0.6,(0,0,255),1,cv.LINE_AA)
+        cv.imshow('Processed Image',frame)
+        #Write frame to output video
+        outputFile.write(frame)
 
     end = time.time()
     adjustedDelay = delay-(end-start)
@@ -198,4 +211,5 @@ while(video.isOpened() and frameReturned):
 log(logFilePath,"INFO = Video Processed")
 cv.waitKey()
 video.release()
+outputFile.release()
 cv.destroyAllWindows()
