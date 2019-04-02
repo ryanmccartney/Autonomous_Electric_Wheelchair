@@ -1,35 +1,8 @@
-30/03/2019 15:57:14: INFO = Main Thread has accessed log file.
-30/03/2019 15:57:14: INFO = Control class has accessed log file.
-30/03/2019 15:57:15: INFO = 1 gamepads avalible.
-30/03/2019 15:57:15: INFO = Opened Log files for transmission and receive data.
-30/03/2019 15:57:15: INFO = Gamepad with 5 axis has been initiated.
-30/03/2019 15:57:16: STATUS = Received data is as follows; -0.73,1.22,25.53,WARNING = Controller is resseting. Expect abnormal behaviour.
-30/03/2019 15:57:16: INFO = Wheelchair is being reset.
-30/03/2019 15:57:16: INFO = 8 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:17: INFO = 7 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:18: INFO = 6 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:19: INFO = 5 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:20: INFO = 4 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:21: INFO = 3 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:22: INFO = 2 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:23: INFO = 1 seconds remaining until wheelchair completes boot up.
-30/03/2019 15:57:24: INFO = Control interface initialised succesfully.
-30/03/2019 15:57:24: INFO = Starting GUI.
-30/03/2019 15:57:25: STATUS = Received data is as follows; -0.73,1.47,25.56,STATUS = Data Mapped Succesfully
-30/03/2019 15:57:31: STATUS = Received data is as follows; -0.73,1.96,25.80,STATUS = Data Mapped Succesfully
-30/03/2019 15:57:36: STATUS = Received data is as follows; -0.73,0.98,25.36,STATUS = Data Mapped Succesfully
-30/03/2019 15:57:42: ERROR = Could not access wheelchair API
-30/03/2019 15:57:42: INFO = Communication link down.
-30/03/2019 15:57:43: ERROR = Could not access wheelchair API
-30/03/2019 15:57:43: INFO = Communication link down.
-30/03/2019 15:57:44: ERROR = Could not access wheelchair API
-30/03/2019 15:57:44: INFO = Communication link down.
-30/03/2019 15:57:44: ERROR = Could not access wheelchair API
-30/03/2019 15:57:44: INFO = Communication link down.
-30/03/2019 15:57:45: ERROR = Could not access wheelchair API
-30/03/2019 15:57:45: INFO = Communication link down.
-30/03/2019 15:57:46: STATUS = Received data is as follows; -0.73,1.47,25.27,STATUS = Data Mapped Succesfully
-30/03/2019 15:57:52: STATUS = Received data is as follows; -0.73,1.47,25.45,STATUS = Data Mapped Succesfully
-30/03/2019 15:57:58: STATUS = Received data is as follows; -0.73,1.47,25.68,STATUS = Data Mapped Succesfully
-30/03/2019 15:58:03: STATUS = Received data is as follows; -0.73,1.47,25.39,STATUS = Data Mapped Succesfully
-30/03/2019 15:58:09: STATUS = Received data is as follows; -0.73,1.22,25.51,STATUS = Data Mapped Succesfully
+02/04/2019 18:05:45: INFO = Main Thread has accessed log file.
+02/04/2019 18:05:45: INFO = Control class has accessed log file.
+02/04/2019 18:05:46: INFO = 0 gamepads avalible.
+02/04/2019 18:05:46: INFO = Opened Log files for transmission and receive data.
+02/04/2019 18:05:48: ERROR = Could not access wheelchair API
+02/04/2019 18:05:48: ERROR = Wheelchair cannot be reset.
+02/04/2019 18:05:48: INFO = Control interface initialised succesfully.
+02/04/2019 18:05:48: INFO = Starting GUI.

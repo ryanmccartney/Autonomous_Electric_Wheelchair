@@ -1,11 +1,11 @@
-
-#NAME: guiExample.py
+#NAME: guilineFollowOperationalTest.py
 #DATE: 08/02/2019
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
 #DESC: A python function for navigating the wheelchair with an XBOX 360 game controller avoiding obstacles
 #COPY: Copyright 2019, All Rights Reserved, Ryan McCartney
 
 from control import Control
+from urllib.request import urlopen
 import cv2 as cv
 import tkinter as tk
 import numpy as np
@@ -92,7 +92,7 @@ def addGoal(image):
 
 def follow(image,contourCenter,goalArea):
 
-    maxSpeed = 40
+    maxSpeed = 30
     minSpeed = 0
     maxAngle = 50
     minAngle = -50
@@ -119,22 +119,22 @@ def follow(image,contourCenter,goalArea):
         cv.line(image,(contourX,(contourY-crosshair)),(contourX,(contourY+crosshair)),(0,255,0),2)
     elif contourX < goalLeftX:
         angleFactor = (goalLeftX-contourX)/(goalLeftX)
-        angle = int(minAngle*angleFactor)
+        angle = int(maxAngle*angleFactor)
     elif contourX > goalRightX: 
         angleFactor = (contourX-goalRightX)/(width-goalRightX)
-        angle = int(maxAngle*angleFactor)
+        angle = int(minAngle*angleFactor)
     else:
         speed = 0
         angle = 0
 
     #Determine Speed based on Y position of Goal
     if (contourY > goalTopY) and (contourY < goalBottomY):
-        speed = 40
+        speed = 10
         cv.line(image,((contourX-crosshair),contourY),((contourX+crosshair),contourY),(0,255,0),2)
     elif contourY < goalBottomY:
-        speed = 20
+        speed = 7
     elif contourY > goalTopY:
-        speed = 20
+        speed = 7
     else:
         speed = 0
         angle = 0
@@ -153,6 +153,7 @@ log(logFilePath,"INFO = Line following test sequence starting.")
 
 width = 500
 height = 400
+crop = 200
 frameReturned = True
 
 #Open Configuration File
@@ -161,7 +162,7 @@ configuration = json.loads(configurationFile)
 
 #Get the details of the log file from the configuration
 logFilePath = configuration['general']['logFile']
-streamURL = configuration['streams']['webcam']
+streamURL = configuration['streams']['webcam']['url']
 fps = configuration['general']['fps']
 
 #Setup FPS variables
@@ -172,16 +173,30 @@ fpsActual = fps
 wheelchair = Control(configuration)
 
 #Allow OpenCV to Access Video
-steam = cv.VideoCapture(streamURL)
+#stream = cv.VideoCapture(streamURL)
 
-while(steam.isOpened() and frameReturned):
+while(frameReturned):
 
     start = time.time()
 
     #Read the next frame
-    frameReturned,frame = steam.read()
+    #frameReturned,frame = stream.read()
 
+    try:
+        request = urlopen(streamURL, timeout=0.5)
+        array = np.asarray(bytearray(request.read()), dtype="uint8")
+        frame = cv.imdecode(array,-1)
+    except:
+        log("ERROR = Cannot Access Vision API.")
+        frameReturned = False
+    
     if frameReturned == True:
+
+        #Crop to ROI
+        frame = cv.resize(frame,(width,height))
+        frame = frame[crop:height,0:width]
+
+        #Resize to Frame Again
         frame = cv.resize(frame,(width,height))
 
         #Process Frame
@@ -212,5 +227,5 @@ while(steam.isOpened() and frameReturned):
 log(logFilePath,"INFO = Stream Processed")
 wheelchair.eStop()
 cv.waitKey()
-steam.release()
+#stream.release()
 cv.destroyAllWindows()

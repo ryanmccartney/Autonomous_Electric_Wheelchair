@@ -220,9 +220,9 @@ class Control:
             data = receivedMessage.split(",")
 
             if len(data) >= 4:
-                self.batteryVoltage = float(data[0])
-                self.rightMotorCurrent = float(data[1])
-                self.leftMotorCurrent = float(data[2])
+                self.batteryVoltage = float(data[2])
+                self.rightMotorCurrent = float(data[0])
+                self.leftMotorCurrent = float(data[1])
                 self.status = data[3]
 
                 print("BATTERY ="+str(self.batteryVoltage))

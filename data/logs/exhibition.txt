@@ -1,0 +1,11 @@
+02/04/2019 18:27:49: INFO = Main Thread has accessed log file.
+02/04/2019 18:27:49: INFO = Control class has accessed log file.
+02/04/2019 18:27:50: INFO = 0 gamepads avalible.
+02/04/2019 18:27:50: INFO = Opened Log files for transmission and receive data.
+02/04/2019 18:27:52: ERROR = Could not access wheelchair API
+02/04/2019 18:27:52: ERROR = Wheelchair cannot be reset.
+02/04/2019 18:27:52: INFO = Control interface initialised succesfully.
+02/04/2019 18:27:52: INFO = Starting GUI.
+02/04/2019 18:27:55: ERROR = Could not access wheelchair API
+02/04/2019 18:27:57: ERROR = Could not access wheelchair API
+02/04/2019 18:27:59: ERROR = Could not access wheelchair API
