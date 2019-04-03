@@ -1,4 +1,3 @@
-
 #NAME: exhibition.py
 #DATE: 08/02/2019
 #AUTH: Ryan McCartney, EEE Undergraduate, Queen's University Belfast
@@ -38,7 +37,7 @@ def refreshData():
 
     batteryPercent["text"] = "Battery Voltage = "+str(wheelchair.batteryPercent())+"%"
     batteryVoltage["text"] = "Battery Voltage = "+str(wheelchair.batteryVoltage)+"V"
-    powerUsage["text"] = "Current Power Usage = "+str(wheelchair.batteryVoltage)+"w"
+    powerUsage["text"] = "Current Power Usage = "+str(wheelchair.powerConsumed())+"w"
     statusMessage["text"] = str(wheelchair.status)
 
     root.after(500,refreshData) 

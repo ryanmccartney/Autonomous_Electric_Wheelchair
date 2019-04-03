@@ -221,8 +221,8 @@ class Control:
 
             if len(data) >= 4:
                 self.batteryVoltage = float(data[2])
-                self.rightMotorCurrent = abs(float(data[0]))
-                self.leftMotorCurrent = abs(float(data[1]))
+                self.rightMotorCurrent = float(data[0])
+                self.leftMotorCurrent = float(data[1])
                 self.status = data[3]
         
         self.dataAge = time.time()
@@ -243,10 +243,10 @@ class Control:
     #Determine Power Consumption (in Watts)
     def powerConsumed(self):
 
-        self.transmitCommand(self.setSpeed,self.setAngle,"SEND")
+        #self.transmitCommand(self.setSpeed,self.setAngle,"SEND")
 
         #Accounting for Baseload Current Consumption (A)
-        current = 1.25
+        current = 0.9
 
         #Calculation Carried out using simple P=VI Equation
         current =  current + self.rightMotorCurrent + self.leftMotorCurrent

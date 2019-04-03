@@ -1,11 +1,12 @@
-02/04/2019 18:27:49: INFO = Main Thread has accessed log file.
-02/04/2019 18:27:49: INFO = Control class has accessed log file.
-02/04/2019 18:27:50: INFO = 0 gamepads avalible.
-02/04/2019 18:27:50: INFO = Opened Log files for transmission and receive data.
-02/04/2019 18:27:52: ERROR = Could not access wheelchair API
-02/04/2019 18:27:52: ERROR = Wheelchair cannot be reset.
-02/04/2019 18:27:52: INFO = Control interface initialised succesfully.
-02/04/2019 18:27:52: INFO = Starting GUI.
-02/04/2019 18:27:55: ERROR = Could not access wheelchair API
-02/04/2019 18:27:57: ERROR = Could not access wheelchair API
-02/04/2019 18:27:59: ERROR = Could not access wheelchair API
+03/04/2019 12:59:54: INFO = Main Thread has accessed log file.
+03/04/2019 12:59:54: INFO = Control class has accessed log file.
+03/04/2019 12:59:54: INFO = 1 gamepads avalible.
+03/04/2019 12:59:55: INFO = Gamepad with 5 axis has been initiated.
+03/04/2019 12:59:55: INFO = Opened Log files for transmission and receive data.
+03/04/2019 12:59:55: STATUS = Received data is as follows; 0.49,0.98,24.77,WARNING = Controller is resseting. Expect abnormal behaviour.
+03/04/2019 12:59:55: INFO = Wheelchair is being reset.
+03/04/2019 12:59:55: INFO = 8 seconds remaining until wheelchair completes boot up.
+03/04/2019 12:59:56: INFO = 7 seconds remaining until wheelchair completes boot up.
+03/04/2019 12:59:57: INFO = 6 seconds remaining until wheelchair completes boot up.
+03/04/2019 12:59:58: INFO = 5 seconds remaining until wheelchair completes boot up.
+03/04/2019 12:59:59: INFO = 4 seconds remaining until wheelchair completes boot up.
