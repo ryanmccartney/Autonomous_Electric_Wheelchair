@@ -1,5 +1,5 @@
-from open3d import *
 import numpy as np
+from open3d import *
 import time
 
 def main():
@@ -9,9 +9,8 @@ def main():
     #Read the point cloud
     pcd = read_point_cloud("testing/open3D/bunny.ply")
     #Visualize the point cloud
-    draw_geometries([pcd])
-
     end = time.time()
+    draw_geometries([pcd])
 
     processingTime = end - start
     print("INFO: Point Cloud processing took "+str(round(processingTime,2))+" seconds.")
