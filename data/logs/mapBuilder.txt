@@ -1,66 +1,66 @@
-08/04/2019 12:50:10: INFO = Main Thread has accessed log file.
-08/04/2019 12:50:10: INFO = Control class has accessed log file.
-08/04/2019 12:50:11: INFO = 0 gamepads avalible.
-08/04/2019 12:50:11: INFO = Opened Log files for transmission and receive data.
-08/04/2019 12:50:11: STATUS = Received data is as follows; 0.00,3.18,25.21,WARNING = Controller is resseting. Expect abnormal behaviour.
-08/04/2019 12:50:11: INFO = Wheelchair is being reset.
-08/04/2019 12:50:11: INFO = 8 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:12: INFO = 7 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:13: INFO = 6 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:14: INFO = 5 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:15: INFO = 4 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:16: INFO = 3 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:17: INFO = 2 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:18: INFO = 1 seconds remaining until wheelchair completes boot up.
-08/04/2019 12:50:19: INFO = Control interface initialised succesfully.
-08/04/2019 12:50:19: INFO = Starting Mapping Sequence.
-08/04/2019 12:50:21: INFO = 640 points translated.
-08/04/2019 12:50:21: INFO = Points rotated 0 degrees.
-08/04/2019 12:50:23: STATUS = Received data is as follows; 0.00,0.24,25.18,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:23: STATUS = Received data is as follows; 1.22,2.20,24.63,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:23: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:24: INFO = 45 degree phase Completed.
-08/04/2019 12:50:24: INFO = 640 points translated.
-08/04/2019 12:50:24: INFO = Points rotated 45 degrees.
-08/04/2019 12:50:25: STATUS = Received data is as follows; 0.00,0.24,25.15,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:26: STATUS = Received data is as follows; 0.98,1.96,24.36,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:26: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:26: INFO = 90 degree phase Completed.
-08/04/2019 12:50:26: INFO = 640 points translated.
-08/04/2019 12:50:26: INFO = Points rotated 90 degrees.
-08/04/2019 12:50:27: STATUS = Received data is as follows; 0.00,3.18,25.39,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:28: STATUS = Received data is as follows; 1.71,2.69,24.39,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:28: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:28: INFO = 135 degree phase Completed.
-08/04/2019 12:50:29: INFO = 640 points translated.
-08/04/2019 12:50:29: INFO = Points rotated 135 degrees.
-08/04/2019 12:50:30: STATUS = Received data is as follows; 0.00,2.69,25.12,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:31: STATUS = Received data is as follows; 0.98,2.20,24.19,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:31: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:31: INFO = 180 degree phase Completed.
-08/04/2019 12:50:32: INFO = 640 points translated.
-08/04/2019 12:50:32: INFO = Points rotated 180 degrees.
-08/04/2019 12:50:33: STATUS = Received data is as follows; 0.00,2.69,25.07,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:34: STATUS = Received data is as follows; 1.22,2.44,24.24,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:34: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:34: INFO = 225 degree phase Completed.
-08/04/2019 12:50:35: INFO = 640 points translated.
-08/04/2019 12:50:35: INFO = Points rotated 225 degrees.
-08/04/2019 12:50:36: STATUS = Received data is as follows; 0.00,0.00,25.27,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:37: STATUS = Received data is as follows; 0.73,2.44,24.10,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:37: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:37: INFO = 270 degree phase Completed.
-08/04/2019 12:50:38: INFO = 640 points translated.
-08/04/2019 12:50:38: INFO = Points rotated 270 degrees.
-08/04/2019 12:50:39: STATUS = Received data is as follows; 0.00,0.24,25.36,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:39: STATUS = Received data is as follows; 1.22,2.20,24.22,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:39: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:40: INFO = 315 degree phase Completed.
-08/04/2019 12:50:40: INFO = 640 points translated.
-08/04/2019 12:50:40: INFO = Points rotated 315 degrees.
-08/04/2019 12:50:41: STATUS = Received data is as follows; 0.00,0.00,25.42,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:42: STATUS = Received data is as follows; 0.73,2.69,24.19,STATUS = Data Mapped Succesfully
-08/04/2019 12:50:42: INFO = Wheelchair has turned 45 degrees.
-08/04/2019 12:50:42: INFO = 360 degree phase Completed.
-08/04/2019 12:50:42: INFO = 360 Degree Rotation Complete.
-08/04/2019 12:50:42: ACTION = Press any key to continue.
+08/04/2019 14:14:32: INFO = Main Thread has accessed log file.
+08/04/2019 14:14:32: INFO = Control class has accessed log file.
+08/04/2019 14:14:33: INFO = 0 gamepads avalible.
+08/04/2019 14:14:33: INFO = Opened Log files for transmission and receive data.
+08/04/2019 14:14:33: STATUS = Received data is as follows; -0.73,1.47,25.09,WARNING = Controller is resseting. Expect abnormal behaviour.
+08/04/2019 14:14:33: INFO = Wheelchair is being reset.
+08/04/2019 14:14:33: INFO = 8 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:34: INFO = 7 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:35: INFO = 6 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:36: INFO = 5 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:37: INFO = 4 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:38: INFO = 3 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:39: INFO = 2 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:40: INFO = 1 seconds remaining until wheelchair completes boot up.
+08/04/2019 14:14:41: INFO = Control interface initialised succesfully.
+08/04/2019 14:14:41: INFO = Starting Mapping Sequence.
+08/04/2019 14:14:43: INFO = 640 points translated.
+08/04/2019 14:14:43: INFO = Points rotated 0 degrees.
+08/04/2019 14:14:45: STATUS = Received data is as follows; -0.98,0.73,25.18,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:45: STATUS = Received data is as follows; 0.24,0.98,24.30,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:45: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:14:46: INFO = 45 degree phase Completed.
+08/04/2019 14:14:47: INFO = 640 points translated.
+08/04/2019 14:14:47: INFO = Points rotated 45 degrees.
+08/04/2019 14:14:48: STATUS = Received data is as follows; -0.98,1.22,25.12,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:48: STATUS = Received data is as follows; 0.00,1.47,24.24,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:48: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:14:49: INFO = 90 degree phase Completed.
+08/04/2019 14:14:49: INFO = 640 points translated.
+08/04/2019 14:14:49: INFO = Points rotated 90 degrees.
+08/04/2019 14:14:50: STATUS = Received data is as follows; -0.98,1.47,25.42,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:51: STATUS = Received data is as follows; -0.24,1.71,23.83,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:51: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:14:51: INFO = 135 degree phase Completed.
+08/04/2019 14:14:52: INFO = 640 points translated.
+08/04/2019 14:14:52: INFO = Points rotated 135 degrees.
+08/04/2019 14:14:53: STATUS = Received data is as follows; -0.98,0.98,25.09,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:54: STATUS = Received data is as follows; -0.24,1.47,24.22,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:54: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:14:54: INFO = 180 degree phase Completed.
+08/04/2019 14:14:55: INFO = 640 points translated.
+08/04/2019 14:14:55: INFO = Points rotated 180 degrees.
+08/04/2019 14:14:56: STATUS = Received data is as follows; -0.98,1.47,25.21,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:57: STATUS = Received data is as follows; -0.98,15.88,24.04,STATUS = Data Mapped Succesfully
+08/04/2019 14:14:57: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:14:57: INFO = 225 degree phase Completed.
+08/04/2019 14:14:58: INFO = 640 points translated.
+08/04/2019 14:14:58: INFO = Points rotated 225 degrees.
+08/04/2019 14:14:59: STATUS = Received data is as follows; -0.98,0.98,25.15,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:00: STATUS = Received data is as follows; -0.98,6.60,24.19,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:00: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:15:00: INFO = 270 degree phase Completed.
+08/04/2019 14:15:01: INFO = 640 points translated.
+08/04/2019 14:15:01: INFO = Points rotated 270 degrees.
+08/04/2019 14:15:02: STATUS = Received data is as follows; -0.98,1.22,25.24,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:02: STATUS = Received data is as follows; -0.24,2.20,23.83,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:02: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:15:03: INFO = 315 degree phase Completed.
+08/04/2019 14:15:04: INFO = 640 points translated.
+08/04/2019 14:15:04: INFO = Points rotated 315 degrees.
+08/04/2019 14:15:05: STATUS = Received data is as follows; -0.98,0.98,25.09,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:05: STATUS = Received data is as follows; 0.49,1.47,24.30,STATUS = Data Mapped Succesfully
+08/04/2019 14:15:05: INFO = Wheelchair has turned 45 degrees.
+08/04/2019 14:15:06: INFO = 360 degree phase Completed.
+08/04/2019 14:15:06: INFO = 360 Degree Rotation Complete.
+08/04/2019 14:15:06: ACTION = Press any key to continue.

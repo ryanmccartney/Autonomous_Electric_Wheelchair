@@ -34,11 +34,20 @@ def log(logFilePath,entry):
 
 #Returns infomraiton about how far away a point is in and image
 def distanceCalc(depth):
+    
+    a = -0.0000000069
+    b = 0.0000064344
+    c = -0.0019066199
+    d = 0.2331614352
+    e = -9.4
+    
+    #Second Order Custom Estimation
+    distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
 
     #First Order Custom Estimation
-    m = 0.0161
-    c = -1.4698
-    distance = (m*depth)+c
+    #m = 0.0161
+    #c = -1.4698
+    #distance = (m*depth)+c
 
     if distance < 0:
         distance = 0
@@ -46,7 +55,7 @@ def distanceCalc(depth):
     return distance
 
 #Optimised method for finding the closest point in each strip 
-@nb.jit(nopython=True)
+#@nb.jit(nopython=True)
 def scanStrip(depthImage):
 
     height = len(depthImage)
@@ -56,7 +65,14 @@ def scanStrip(depthImage):
     #Populate Array with Data
     for w in range (0,width):
 
-        strip[w] = depthImage[position,w]
+        minPoint = 255
+        for h in range (0,height):
+
+            if minPoint > depthImage[h,w]:
+                minPoint = depthImage[h,w]
+
+        strip[w] = minPoint
+        #strip[w] = depthImage[position,w]
     
     return strip
 

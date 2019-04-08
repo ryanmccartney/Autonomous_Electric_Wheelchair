@@ -320,7 +320,7 @@ class Control:
     #Function to change the turn the wheelchair a specific angle
     def turn(self,angle):
 
-        factor = 220
+        factor = 190
     
         if angle < 0:
             delay = (-angle)/factor
