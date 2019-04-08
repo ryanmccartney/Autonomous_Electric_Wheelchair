@@ -178,14 +178,6 @@ try:
                 array = np.asarray(bytearray(request.read()), dtype="uint8")
                 imageFrame = cv.imdecode(array,-1)
 
-                #Image Locations
-                #imagePath = 'testing/XYtranslations/Image.jpg'
-                #depthPath = 'testing/XYtranslations/Depth.jpg'
-
-                #Image Read
-                #imageFrame = cv.imread(imagePath,cv.IMREAD_COLOR)
-                #depthFrame = cv.imread(depthPath,cv.IMREAD_COLOR)
-
                 #Convert Depth Frame to Grayscale
                 #depthFrame = cv.cvtColor(depthFrame,cv.COLOR_BGR2GRAY)
 
