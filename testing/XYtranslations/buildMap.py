@@ -11,6 +11,7 @@ import json
 import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
+from urllib.request import urlopen
 from control import Control
 
 kinectWidthOfView = 64 #Degrees
@@ -152,22 +153,22 @@ try:
             for i in range (0,readPoints):
 
                 #Get a Depth Image
-                #request = urlopen(depthStreamURL, timeout=1)
-                #array = np.asarray(bytearray(request.read()), dtype="uint8")
-                #depthFrame = cv.imdecode(array,-1)
+                request = urlopen(depthStreamURL, timeout=1)
+                array = np.asarray(bytearray(request.read()), dtype="uint8")
+                depthFrame = cv.imdecode(array,-1)
 
                 #Get an RGB Image
-                #request = urlopen(imageStreamURL, timeout=1)
-                #array = np.asarray(bytearray(request.read()), dtype="uint8")
-                #imageFrame = cv.imdecode(array,-1)
+                request = urlopen(imageStreamURL, timeout=1)
+                array = np.asarray(bytearray(request.read()), dtype="uint8")
+                imageFrame = cv.imdecode(array,-1)
 
                 #Image Locations
-                imagePath = 'testing/XYtranslations/Image.jpg'
-                depthPath = 'testing/XYtranslations/Depth.jpg'
+                #imagePath = 'testing/XYtranslations/Image.jpg'
+                #depthPath = 'testing/XYtranslations/Depth.jpg'
 
                 #Image Read
-                imageFrame = cv.imread(imagePath,cv.IMREAD_COLOR)
-                depthFrame = cv.imread(depthPath,cv.IMREAD_COLOR)
+                #imageFrame = cv.imread(imagePath,cv.IMREAD_COLOR)
+                #depthFrame = cv.imread(depthPath,cv.IMREAD_COLOR)
 
                 #Convert Depth Frame to Grayscale
                 depthFrame = cv.cvtColor(depthFrame,cv.COLOR_BGR2GRAY)
