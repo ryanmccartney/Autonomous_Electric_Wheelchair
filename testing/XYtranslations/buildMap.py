@@ -18,7 +18,7 @@ kinectWidthOfView = 64 #Degrees
 kinectHeightOfView = 48 #Degrees
 width = 640
 height = 480
-position = 200
+position = 240
 
 #Logging Function (Pretty Console Output)
 def log(logFilePath,entry):    
@@ -171,7 +171,7 @@ try:
                 #depthFrame = cv.imread(depthPath,cv.IMREAD_COLOR)
 
                 #Convert Depth Frame to Grayscale
-                depthFrame = cv.cvtColor(depthFrame,cv.COLOR_BGR2GRAY)
+                #depthFrame = cv.cvtColor(depthFrame,cv.COLOR_BGR2GRAY)
 
                 #Image Resize
                 imageFrame = cv.resize(imageFrame,(width,height))

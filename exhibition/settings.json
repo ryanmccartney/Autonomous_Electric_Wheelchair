@@ -20,7 +20,7 @@
         "height":1.35
     },
     "control":{
-        "url":"http://192.168.1.100/scripts/serialSend.php?serialData=",
+        "url":"http://192.168.1.101/scripts/serialSend.php?serialData=",
         "maxSpeed":40,
         "minSpeed":-40,
         "maxAngle":50,
@@ -29,15 +29,15 @@
     },
     "streams":{
         "kinectDepth":{
-            "url":"http://192.168.1.100:8081/?action=snapshot",
+            "url":"http://192.168.1.101:8081/?action=snapshot",
             "name":"Microsoft Kienct V1 Depth Stream"
         },
         "kinectRGB":{
-            "url":"http://192.168.1.100:8080/?action=snapshot",
+            "url":"http://192.168.1.101:8080/?action=snapshot",
             "name":"Microsoft Kienct V1 RGB Stream"
         },
         "webcam":{
-            "url":"http://192.168.1.100:8082/?action=snapshot",
+            "url":"http://192.168.1.101:8082/?action=snapshot",
             "name":"Floor Webcam Stream"
         },
         "test":{
