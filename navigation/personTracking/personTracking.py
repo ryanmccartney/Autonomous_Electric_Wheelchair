@@ -90,7 +90,6 @@ class PersonTracking:
         self.hog = cv.HOGDescriptor()
         self.hog.setSVMDetector(cv.HOGDescriptor_getDefaultPeopleDetector())
 
-        
         #Allow opencv to capture the stream
         self.image = cv.VideoCapture(self.kinectImage_url)
         self.depth = cv.VideoCapture(self.kinectDepth_url)

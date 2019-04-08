@@ -364,7 +364,7 @@ class Control:
         c = -5.1123
         d = 3.3333
 
-        #Third Order Deceleration Custom Profile
+        #Third Order Deceleration Profile
         maxSpeedNew = (a*math.pow(x,3))+(b*math.pow(x,2))+(c*x)+d
         maxSpeedNew = round(maxSpeedNew,2)
 
