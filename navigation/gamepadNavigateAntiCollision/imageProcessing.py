@@ -265,10 +265,10 @@ class imageProcessing:
                 depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
 
                 #Apply Filtering
-                #depthFrame = self.applyFilter(0,depthFrame)
+                depthFrame = self.applyFilter(3,depthFrame)
 
                 #Reduce Resolution of Kinetic Depth to a Managable Size
-                #depthFrame = cv.resize(depthFrame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)   
+                depthFrame = cv.resize(depthFrame, (mappedWidth, mappedHeight), interpolation = cv.INTER_AREA)   
 
                 #Determine the Closest Point
                 closestPoint = self.scanImage(depthFrame)

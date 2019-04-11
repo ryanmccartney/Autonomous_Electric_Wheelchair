@@ -49,21 +49,14 @@ class cameraStream:
     @staticmethod
     def get_depth():
         array,_ = freenect.sync_get_depth()
-
-        array = np.clip(array,0,2**10 - 1)
-        array >>= 2
-        frame = array.astype(np.uint8)
-
-        #IMPROVED METHOD
-        #upperArray = array
-        #lowerArray = array
-        #upperArray >>= 2
-        
-        #upperArray = upperArray.astype(np.uint8)
-        #lowerArray = lowerArray.astype(np.uint8)
-        #padding = np.zeros(array.shape, dtype=np.uint8) 
-        #frame = np.dstack((lowerArray, upperArray, padding))
-           
+        redChannel = array       
+        redChannel = upperArray.astype(np.uint8)
+        blueChannel = array
+        blueChannel >>= 8
+        blueChannel = blueChannel.astype(np.uint8)
+        blueChannel <<= 6
+        greenChannel = np.zeros(array.shape, dtype=np.uint8) 
+        frame = np.dstack((redChannel, greenChannel, blueChannel))
         return frame
 
     #Method for streaming webcam at a port

@@ -60,11 +60,14 @@ int leftDirection = 1;
 int rightDirection = 1;
 
 //------------------------------------------------------------------------------------------------------------------
-//Main Programme operating loop
+//Setup runs on Powerup
 //------------------------------------------------------------------------------------------------------------------
 void setup() {
   //Deal with RESET Pin
   digitalWrite(Reset, HIGH);
+
+  //Change PWM Frequency to 31.25KHz
+  TCCR3B = TCCR3B & 0b11111000 | 0x01;
   
   //Initialise Ourput Pins
   pinMode(RightMotorDirection, OUTPUT);

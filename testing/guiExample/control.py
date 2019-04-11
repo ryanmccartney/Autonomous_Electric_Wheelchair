@@ -197,14 +197,24 @@ class Control:
             #Log Entry
             self.log("STATUS = No Gamepads are avalible. Have you connected any?")
                          
-    #Converts speed in m/s to arbitay speed for commans
-    def convertSeeed(self,speed):
-        #Linear Relationship is used for the conversion
-        m = 0.5
-        c = -5
+    #Converts speed in m/s to arbitary units for commands
+    def  getSpeedValue(self,speed):
+        #Linear Relationship parmamters for conversion
+        m = 0.0319
+        c = -0.1
 
-        speedArbitary = int(m*speed + c)
+        speedArbitary = int((speed - c)/m)
         return speedArbitary
+    
+    #Converts speed in arbitary unit to metrics
+    def  getSpeedMetric(self,speed):
+        #Linear Relationship parmamters for conversion
+        m = 0.0319
+        c = -0.1
+
+        speedMetric = (m*speed)+c
+        speedMetric = round(speedMetric,2)
+        return speedMetric
 
     #returns the distance travelled based on the speed 
     @staticmethod

@@ -26,7 +26,7 @@ class StreamCapture:
     showClock = False
     showFPS = False
     frameWidth = 640
-    fps = 120
+    fps = 55
     framesProcessed = 0
     
     def __init__(self,stream_url,stream_name):
