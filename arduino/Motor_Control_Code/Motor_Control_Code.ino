@@ -427,7 +427,7 @@ void stopWheelchair() {
 //------------------------------------------------------------------------------------------------------------------
 void readInputs() {
 
-   //Contants for senor readings conversion
+   //Constants for sensor readings conversion
    float voltageFactor = 0.02932551; //Voltage in Volts
    float voltageOffset = 1.65;
    float currentFactor = 0.244379; //Current in Amps
@@ -450,7 +450,7 @@ void sendData() {
 
    readInputs();
    
-   /*if(rightMotorFault == 0){
+   if(rightMotorFault == 0){
       statusMessage = "ERROR = Right motor has developed a fault.";
       stopWheelchair();
       
@@ -459,8 +459,7 @@ void sendData() {
       statusMessage = "ERROR = Left motor has developed a fault.";
       stopWheelchair();
    }
-   */
-   
+
    //Send Serial Information
    Serial.print(leftMotorCurrent,2);
    Serial.print(",");
@@ -470,7 +469,10 @@ void sendData() {
    Serial.print(",");
    Serial.print(statusMessage);    
    Serial.println("");
-   
+
+   //Ensure Data is Sent
+   Serial.flush();
+
    return; 
 }
 
@@ -534,8 +536,6 @@ void loop() {
           }
       }
       else{
-        //stopWheelchair();
-        Serial.flush();
         sendData();
         }
     }
