@@ -93,7 +93,6 @@ class PersonTracking:
         #Allow opencv to capture the stream
         self.image = cv.VideoCapture(self.kinectImage_url)
         self.depth = cv.VideoCapture(self.kinectDepth_url)
-        self.streamVideo()
     
     def log(self, entry):
         
@@ -161,6 +160,10 @@ class PersonTracking:
                 if self.collisionDetection == True:
                     frame = self.collisionPrevention(frame,depthFrame)
                 
+                text = "Speed adjusted to "+str(speed)+" and angle to "+str(angle)
+                font = cv.FONT_HERSHEY_SIMPLEX
+                cv.putText(frame,text,(16,68), font, 0.6,(0,0,255),1,cv.LINE_AA)
+
                 #Move the wheelchair
                 self.wheelchair.transmitCommand(speed,angle,command)
                 
@@ -170,6 +173,9 @@ class PersonTracking:
             else:
                 self.wheelchair.transmitCommand(0,0,"RUN")
                 frame = self.addText(frame,"No People to Track",self.green)
+                text = "Speed adjusted to "+str(0)+" and angle to "+str(0)
+                font = cv.FONT_HERSHEY_SIMPLEX
+                cv.putText(frame,text,(16,68), font, 0.6,(0,255,0),1,cv.LINE_AA)
 
             if self.showClock == True:
                 frame = self.addClock(frame)
@@ -215,32 +221,18 @@ class PersonTracking:
 
         return imageFrame
     
-    #Retrieve Frame
-    def getFrame(self,snapshotURL):
-        
-        try:
-            request = urlopen(snapshotURL, timeout=0.5)
-            array = np.asarray(bytearray(request.read()), dtype="uint8")
-            frame = cv.imdecode(array,-1)
-        except:
-            self.log("ERROR = Cannot Access Vision API.")
-            frame = cv.imread('testing/personTracking/nostream.jpg',cv.IMREAD_COLOR)
-            frame = cv.flip(frame,1)
-            
-
-        return frame
-
     def getFrames(self):
 
-        depthFrame  = self.getFrame(self.kinectDepth_url)
-        imageFrame  = self.getFrame(self.kinectImage_url)
+        returned, depthFrame  = self.depth.read()
+        returned, imageFrame  = self.image.read()
 
-        #Flip the frames
-        depthFrame = cv.flip(depthFrame,1)
-        imageFrame = cv.flip(imageFrame,1)
-        
+        if returned == False:
+            self.log("ERROR = Cannot Access Vision API.")
+            depthFrame = cv.imread('testing/personTracking/nostream.jpg',cv.IMREAD_COLOR)
+            imageFrame = cv.imread('testing/personTracking/nostream.jpg',cv.IMREAD_COLOR)
+         
         #Convert Depth Image to Grayscale
-        #depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
+        depthFrame = cv.cvtColor(depthFrame, cv.COLOR_BGR2GRAY)
 
         imageFrame = imutils.resize(imageFrame, width=self.frameWidth)
         depthFrame = imutils.resize(depthFrame, width=self.frameWidth)
@@ -272,14 +264,14 @@ class PersonTracking:
 
         #Add clock to the frame
         font = cv.FONT_HERSHEY_SIMPLEX
-        cv.putText(frame,text,(16,68), font, 0.6,colour,1,cv.LINE_AA)
+        cv.putText(frame,text,(16,90), font, 0.6,colour,1,cv.LINE_AA)
 
         return frame
 
     def detectPeople(self,image):
         
         #Detect people in the passed image
-        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(8, 8), padding=(8, 8), scale=1.2)
+        (boundingBoxes, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(4, 4), scale=1.2)
         boxes = len(boundingBoxes)
 
         if self.nms == True: 
@@ -289,10 +281,10 @@ class PersonTracking:
         if self.info == True:
             if self.nms == True:
                 #Show additional info
-                print("INFO: {}: {} original boxes, {} after suppression".format(self.kinectImage_name, boxes, boxesNMA))
+                print("INFO = {}: {} original boxes, {} after suppression".format(self.kinectImage_name, boxes, boxesNMA))
             else:
                 #Show additional info
-                print("INFO: {}: {} bounding boxes".format(self.kinectImage_name,boxes))
+                print("INFO = {}: {} bounding boxes".format(self.kinectImage_name,boxes))
         
         if  len(boundingBoxes) > 0:
             i = 0
@@ -313,7 +305,7 @@ class PersonTracking:
         
         #Applying NMS
         boundingBoxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boundingBoxes])
-        NMAboundingBoxes = non_max_suppression(boundingBoxes, probs=None, overlapThresh=0.80)
+        NMAboundingBoxes = non_max_suppression(boundingBoxes, probs=None, overlapThresh=0.65)
         
         return NMAboundingBoxes
 
@@ -334,8 +326,8 @@ class PersonTracking:
     def addBoundingBoxes(image,boxes,colour):
         
         #Draw boxes without NMS
-        for (x, y, w, h) in boxes:
-            cv.rectangle(image, (x, y), (x + w, y + h),colour, 2)
+        for (xA, yA, xB, yB) in boxes:
+            cv.rectangle(image, (xA, yA), (xB, yB),colour, 2)
   
         return image
 
@@ -385,7 +377,7 @@ class PersonTracking:
 
         personDistance = self.calcPersonDistance(personPosition,depthFrame)
 
-        self.log("INFO: Taret is "+str(round(personDistance,4))+"m away.")
+        self.log("INFO = Target is "+str(round(personDistance,4))+"m away.")
 
         if personDistance < 0.2:
             speed = 0
@@ -403,6 +395,7 @@ class PersonTracking:
         x = personPosition[1]
         y = personPosition[0]
 
+        depthFrame = cv.medianBlur(depthFrame,5)
         depthValue = depthFrame[x,y]
         distance = self.distanceCalc(depthValue)
 
@@ -420,7 +413,10 @@ class PersonTracking:
 
         #Second Order Custom Estimation
         distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
-    
+
+        if distance < 0:
+            distance = 0
+
         return distance
     
     #In image with multiple people, select a target

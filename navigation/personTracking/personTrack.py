@@ -22,7 +22,7 @@ def log(logFilePath,entry):
 
 try:
     #Open Configuration File
-    configurationFile = open('testing/personTracking/settings.json').read()
+    configurationFile = open('navigation/personTracking/settings.json').read()
     configuration = json.loads(configurationFile)
 
     #Get the details of the log file from the configuration

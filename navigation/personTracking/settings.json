@@ -28,11 +28,11 @@
     },
     "streams":{
         "kinectDepth":{
-            "url":"http://192.168.1.102:8081/?action=snapshot",
+            "url":"data/video/Kinect Depth Data_17.01.2019-13.19.39.avi",
             "name":"Microsoft Kienct V1 Depth Stream"
         },
         "kinectRGB":{
-            "url":"http://192.168.1.102:8080/?action=snapshot",
+            "url":"data/video/Kinect RGB Data_17.01.2019-13.19.39.avi",
             "name":"Microsoft Kienct V1 RGB Stream"
         },
         "webcam":{
