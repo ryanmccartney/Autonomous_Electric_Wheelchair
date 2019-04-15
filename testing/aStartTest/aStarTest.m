@@ -62,13 +62,13 @@ while isequal(currentPosition,goalPosition) == 0
         adjacentPath = currentPosition+paths(i,:);
         pixelValue = impixel(Map,adjacentPath(2),adjacentPath(1));
         if pixelValue == [255,0,0]
-            %disp("Obstacle, not a valid path. Ignoring.")
+            disp("Obstacle, not a valid path. Ignoring.")
         elseif pixelValue == [255,0,50]
-            %disp("Open list, no need to calculate again.")
+            disp("Open list, no need to calculate again.")
         elseif impixel(Map,adjacentPath(1),adjacentPath(2)) == [0,0,255]
-            %disp("Closed List, need not check again.")
+            disp("Closed List, need not check again.")
         elseif (adjacentPath(1) < 1) || (adjacentPath(2) < 1)
-            %disp("Edge of Image has been reacehd, ignoring.")
+            disp("Edge of Image has been reacehd, ignoring.")
         elseif pixelValue == [255,255,255]
             %Determine Path Score for this Path
             G = abs(adjacentPath(1)-initialPosition(1)) + abs(adjacentPath(2)-initialPosition(2));
@@ -101,7 +101,7 @@ while isequal(currentPosition,goalPosition) == 0
     %Remove the point from the open list
     OpenList(lowestScoringPath,:) = [];
     %Determine How Many Loops Have Passed
-    %disp(['Iteration number ',num2str(iterations),' complete.'])
+    disp(['Iteration number ',num2str(iterations),' complete.'])
     iterations = iterations + 1;
 end
 
