@@ -3,9 +3,9 @@ Computer vision has many applications in robotics. This project aims to use comp
 
 Contorl and Response signals can be sent and received from the wheelchair with a GET function written in PHP. This has demonstrated a high-speed respnse to commands. Kinect Camera Streams for both the RGB and Depth Image are also avalible for processing through an MJPEG stream. This allows computationally intesive image processing and navigation decisions to be made remotely reducing power consumption at the wheelchair itself. 
 
-##System
+## System
 
-![Screenshot](media/annotatedWheelchair.jpg)
+![Screenshot](media/annotatedWheelchair.jpg | width=200)
 
 ## Dependencies
 This project is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
