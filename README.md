@@ -5,7 +5,7 @@ Contorl and Response signals can be sent and received from the wheelchair with a
 
 ## System
 
-![Screenshot](media/annotatedWheelchair.jpg | width=200)
+![System](media/annotatedWheelchair.jpg)
 
 ## Dependencies
 This project is based largely on interfacing with a physcial hardware, such as motor, relays, etc. As a result a list of hardware dependencies has also been included.
