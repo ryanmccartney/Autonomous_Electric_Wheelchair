@@ -51,12 +51,17 @@ def getAverage(frame):
 
 #Use Ceter Average to Determine the Size of the ROI
 def determineSize(frame,average):
-    normalisedAverage = (average/255)
+    normalisedAverage = 1-(average/255)
     heightRatio = frame.shape[1]/frame.shape[0]
     widthRatio = frame.shape[0]/frame.shape[1]
     #ROI Location and Size
     roiWidth = int(frame.shape[1]*(normalisedAverage*widthRatio))
     roiHeight = int(frame.shape[0]*(normalisedAverage*heightRatio))
+
+    if roiWidth < frame.shape[1]*0.3:
+        roiWidth = int(frame.shape[1]*0.3)   
+    if roiHeight < frame.shape[0]*0.6:
+        roiHeight = int(frame.shape[0]*0.6)
 
     return roiWidth,roiHeight
 
