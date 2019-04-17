@@ -76,9 +76,7 @@ class Navigation:
 
         #Reduce Resolution of Kinetic Depth to a Managable Size
         resizedFrame = cv.resize(frame, (mappedWidth, mappedHeight), interpolation = cv.INTER_CUBIC)
-        
         pointCloud = self.populateMatrix(resizedFrame)
- 
         return pointCloud
 
     #Optimised method for finding the closest point in an image
@@ -241,7 +239,6 @@ class Navigation:
         pointCloudFile.write(dataEntry)
 
         print("INFO: The dimensions of the inputted array are ",arrayDimensions)
-
         #Write data into CSV file
         for x in range (0,arrayDimensions[0]):
 
