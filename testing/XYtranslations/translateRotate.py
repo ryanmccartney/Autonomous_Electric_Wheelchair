@@ -19,10 +19,14 @@ position = 200
 #Returns infomraiton about how far away a point is in and image
 def distanceCalc(depth):
 
-    #First Order Custom Estimation
-    m = 0.0161
-    c = -1.4698
-    distance = (m*depth)+c
+    a = -0.0000000069
+    b = 0.0000064344
+    c = -0.0019066199
+    d = 0.2331614352
+    e = -9.5744837865
+    
+    #Second Order Custom Estimation
+    distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
 
     if distance < 0:
         distance = 0
@@ -78,6 +82,12 @@ def rotate(xValues,yValues,angle):
         print("ERROR: Input Arrays Mismatched, length of X is not the same as length of Y.")
     
     return xValuesRotated, yValuesRotated
+
+#Translate Points for Wheelhcair Movement
+def move(xValues,yValues,xMove,yMove):
+    xValuesMove = xValues + xMove
+    yValuesMove = yValues + yMove
+    return xValuesMove, yValuesMove
 
 #Image Locations
 imagePath = 'testing/XYtranslations/Image.jpg'
