@@ -44,11 +44,6 @@ def distanceCalc(depth):
     #Second Order Custom Estimation
     distance = (a*math.pow(depth,4))+(b*math.pow(depth,3))+(c*math.pow(depth,2))+(d*depth)+e
 
-    #First Order Custom Estimation
-    #m = 0.0161
-    #c = -1.4698
-    #distance = (m*depth)+c
-
     if distance < 0:
         distance = 0
 
