@@ -8,6 +8,10 @@
 
 #define PI 3.1415926535897932384626433832795
 
+//Receive Data Variables
+String inputString = "";
+bool stringComplete = false;
+
 //Encoder Info
 #define rightEncoderA 2
 #define rightEncoderB 3
@@ -73,7 +77,11 @@ float calcPos(float leftDistance, float rightDsitance){
   yPos = yPos + yPosDelta;
   }
 
-
+void storePos(){
+  EEPROM.update(0, xPos);
+  EEPROM.update(1, yPos);
+  EEPROM.update(2, bearing);
+}
 void caclConstants(){
   
   float wheelbase = 0.4;
@@ -92,6 +100,11 @@ void setup() {
 
   //Determine Constants for Tracking 
   caclConstants();
+
+  //Load from Memory
+  xPos = EEPROM.read(0);
+  yPos = EEPROM.read(1);
+  bearing = EEPROM.read(2);
   
   //Attach Interupts
   attachInterrupt(digitalPinToInterrupt(rightEncoderA), rightEncoderAPulse, RISING);
@@ -119,5 +132,33 @@ void loop() {
   Serial.print(yPos,2);
   Serial.println(") in the X,Y grid.");
 
+  storePos();
   delayMicroseconds(1E9);
+
+  if(stringComplete == true){
+    if(inputString == "SETHOME"){
+      xPos = 0;
+      yPos = 0;
+      bearing = 0;
+    }
+  }
+}
+
+//------------------------------------------------------------------------------------------------------------------
+//Rertieve Serial Data
+//------------------------------------------------------------------------------------------------------------------
+void serialEvent() {
+
+  while (Serial.available()){
+
+    //Gets the next byte
+    char inputChar = (char)Serial.read();
+    
+    //Add latest char to string
+    inputString += inputChar;
+      
+    if (inputChar == '\n') {
+      stringComplete = true;
+    }
+  }
 }
