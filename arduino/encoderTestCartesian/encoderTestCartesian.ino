@@ -83,8 +83,8 @@ void caclConstants(){
    
   float distanceDelta = 1*((PI*wheelDiameter)/(gearRatio*pulsesPerRev));
   bearingDelta = atan(distanceDelta/wheelbase);    
-  xPosDelta = distanceDelta*sin(bearingDelta);
-  yPosDelta = distanceDelta*cos(bearingDelta);
+  xPosDelta = (distanceDelta/2)*sin(bearingDelta);
+  yPosDelta = (distanceDelta/2)*cos(bearingDelta);
   
 }
 
